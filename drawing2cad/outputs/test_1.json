@@ -1,17 +1,12 @@
 {
   "units": "mm",
-  "profile_kind": "rectangle",
-  "width": 76.0,
-  "height": 76.0,
+  "profile_kind": "circle",
+  "width": null,
+  "height": null,
+  "diameter": 76.0,
+  "profile_points": [],
   "thickness": 26.0,
   "holes": [
-    {
-      "x": 38.0,
-      "y": 38.0,
-      "diameter": 28.0,
-      "through": true,
-      "depth": null
-    },
     {
       "x": 38.0,
       "y": 38.0,
@@ -21,7 +16,35 @@
     },
     {
       "x": 38.0,
+      "y": 38.0,
+      "diameter": 28.0,
+      "through": true,
+      "depth": null
+    },
+    {
+      "x": 38.0,
       "y": 66.0,
+      "diameter": 5.3,
+      "through": true,
+      "depth": null
+    },
+    {
+      "x": 38.0,
+      "y": 10.0,
+      "diameter": 5.3,
+      "through": true,
+      "depth": null
+    },
+    {
+      "x": 10.0,
+      "y": 38.0,
+      "diameter": 5.3,
+      "through": true,
+      "depth": null
+    },
+    {
+      "x": 66.0,
+      "y": 38.0,
       "diameter": 5.3,
       "through": true,
       "depth": null
@@ -36,27 +59,6 @@
     {
       "x": 38.0,
       "y": 10.0,
-      "diameter": 5.3,
-      "through": true,
-      "depth": null
-    },
-    {
-      "x": 38.0,
-      "y": 10.0,
-      "diameter": 7.8,
-      "through": false,
-      "depth": 4.0
-    },
-    {
-      "x": 66.0,
-      "y": 38.0,
-      "diameter": 5.3,
-      "through": true,
-      "depth": null
-    },
-    {
-      "x": 66.0,
-      "y": 38.0,
       "diameter": 7.8,
       "through": false,
       "depth": 4.0
@@ -64,12 +66,12 @@
     {
       "x": 10.0,
       "y": 38.0,
-      "diameter": 5.3,
-      "through": true,
-      "depth": null
+      "diameter": 7.8,
+      "through": false,
+      "depth": 4.0
     },
     {
-      "x": 10.0,
+      "x": 66.0,
       "y": 38.0,
       "diameter": 7.8,
       "through": false,
@@ -95,32 +97,32 @@
       "tol_minus": 0.1
     },
     {
-      "name": "central_bore_diameter",
-      "nominal": 28.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "counterbore_diameter",
-      "nominal": 38.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "counterbore_depth",
-      "nominal": 16.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
       "name": "step_diameter",
       "nominal": 48.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "step_depth",
+      "name": "step_length",
       "nominal": 18.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "bore_diameter_1",
+      "nominal": 38.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "bore_depth_1",
+      "nominal": 16.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "bore_diameter_2",
+      "nominal": 28.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
@@ -131,19 +133,19 @@
       "tol_minus": 0.1
     },
     {
-      "name": "bolt_hole_diameter",
+      "name": "hole_diameter",
       "nominal": 5.3,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "bolt_counterbore_diameter",
+      "name": "counterbore_diameter",
       "nominal": 7.8,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "bolt_counterbore_depth",
+      "name": "counterbore_depth",
       "nominal": 4.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
@@ -165,7 +167,13 @@
       "nominal": 2.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
+    },
+    {
+      "name": "section_angle",
+      "nominal": 30.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
     }
   ],
-  "notes": "Turned flange with 4x counterbored bolt holes, central bore, and radial hole"
+  "notes": "Approximated stepped flange. Outer step and radial hole omitted due to 2.5D schema limitations."
 }

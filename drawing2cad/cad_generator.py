@@ -35,6 +35,9 @@ def normalize_to_mm(spec: PartSpec) -> PartSpec:
         "units": "mm",
         "width": None if spec.width is None else spec.width * s,
         "height": None if spec.height is None else spec.height * s,
+        "diameter": None if spec.diameter is None else spec.diameter * s,
+        "profile_points": [p.model_copy(update={"x": p.x * s, "y": p.y * s})
+                           for p in spec.profile_points],
         "thickness": spec.thickness * s,
         "holes": [h.model_copy(update={
             "x": h.x * s, "y": h.y * s, "diameter": h.diameter * s,
@@ -50,19 +53,37 @@ def normalize_to_mm(spec: PartSpec) -> PartSpec:
 
 
 def spec_to_code(spec: PartSpec) -> str:
-    """Deterministic PartSpec -> CadQuery source. Rectangle + through/blind holes.
+    """Deterministic PartSpec -> CadQuery source. Rectangle or circle profile, extruded
+    to thickness, with through/blind holes and rectangular cuts.
 
-    Origin convention: part corner at (0,0,0), so model coords == profile coords and the
-    validator can use bb.xmin/ymin/zmin == 0. No -width/2 arithmetic. Holes are cut as
-    absolute cylinders on the world XY plane, avoiding workplane-origin/axis ambiguity."""
+    Origin convention: part bounding-box corner at (0,0,0), so model coords == profile
+    coords and the validator can use bb.xmin/ymin/zmin == 0. A circle is centered at
+    (radius, radius) so its bbox corner is also at the origin. Holes are cut as absolute
+    cylinders on the world XY plane, avoiding workplane-origin/axis ambiguity."""
     spec = normalize_to_mm(spec)
-    if spec.profile_kind != "rectangle" or spec.width is None or spec.height is None:
-        raise ValueError("spec_to_code supports rectangular profiles only.")
+    if spec.profile_kind == "rectangle":
+        if spec.width is None or spec.height is None:
+            raise ValueError("rectangle profile needs width and height.")
+    elif spec.profile_kind == "circle":
+        if spec.diameter is None:
+            raise ValueError("circle profile needs diameter.")
+    elif spec.profile_kind == "polygon":
+        if len(spec.profile_points) < 3:
+            raise ValueError("polygon profile needs at least 3 points.")
+    else:
+        raise ValueError(f"unsupported profile_kind: {spec.profile_kind!r}")
 
     lines = ["import cadquery as cq", ""]
     lines.append("# --- parameters (editable) ---")
-    lines.append(f"width = {float(spec.width)}")
-    lines.append(f"height = {float(spec.height)}")
+    if spec.profile_kind == "rectangle":
+        lines.append(f"width = {float(spec.width)}")
+        lines.append(f"height = {float(spec.height)}")
+    elif spec.profile_kind == "circle":
+        lines.append(f"diameter = {float(spec.diameter)}")
+        lines.append("radius = diameter / 2")
+    else:  # polygon
+        pts = ", ".join(f"({float(p.x)}, {float(p.y)})" for p in spec.profile_points)
+        lines.append(f"profile_pts = [{pts}]")
     lines.append(f"thickness = {float(spec.thickness)}")
     for i, h in enumerate(spec.holes):
         lines.append(f"hole{i}_x = {float(h.x)}")
@@ -79,18 +100,30 @@ def spec_to_code(spec: PartSpec) -> str:
         lines.append(f"cut{i}_dz = {float(c.dz)}")
     lines.append("")
 
-    lines.append("# --- build: corner at origin, so model coords == profile coords ---")
-    lines.append("result = cq.Workplane('XY').box(width, height, thickness, "
-                 "centered=(False, False, False))")
+    lines.append("# --- build: bbox corner at origin, so model coords == profile coords ---")
+    if spec.profile_kind == "rectangle":
+        lines.append("result = cq.Workplane('XY').box(width, height, thickness, "
+                     "centered=(False, False, False))")
+    elif spec.profile_kind == "circle":
+        # Cylinder: center axis at (radius, radius) so the bbox corner sits at (0,0,0),
+        # matching the rectangle convention. Extrude spans z = 0..thickness.
+        lines.append("result = cq.Workplane('XY').center(radius, radius).circle(radius)"
+                     ".extrude(thickness)")
+    else:  # polygon
+        # Closed polyline of the ordered outline points, extruded z = 0..thickness.
+        lines.append("result = cq.Workplane('XY').polyline(profile_pts).close()"
+                     ".extrude(thickness)")
 
-    # Fillets/chamfers FIRST, while the box still has exactly 4 outer vertical edges.
+    # Fillets/chamfers FIRST, while the profile still has only its outer vertical edges.
     # Doing them after cuts would let '|Z' also grab inner pocket corners, where the wall
     # may be too thin for the radius (BRep_API: command not done). Use the largest radius
-    # (the outer-corner one); inner pocket corners stay sharp.
-    if spec.fillets:
-        lines.append(f"result = result.edges('|Z').fillet({float(max(spec.fillets))})")
-    if spec.chamfers:
-        lines.append(f"result = result.edges('|Z').chamfer({float(max(spec.chamfers))})")
+    # (the outer-corner one); inner pocket corners stay sharp. Skipped for a circle --
+    # a cylinder has no straight vertical edges for '|Z' to select.
+    if spec.profile_kind != "circle":
+        if spec.fillets:
+            lines.append(f"result = result.edges('|Z').fillet({float(max(spec.fillets))})")
+        if spec.chamfers:
+            lines.append(f"result = result.edges('|Z').chamfer({float(max(spec.chamfers))})")
 
     # Holes: cut absolute cylinders from the top face downward (no workplane ambiguity).
     for i, h in enumerate(spec.holes):
@@ -110,7 +143,9 @@ def spec_to_code(spec: PartSpec) -> str:
 
     # Rectangular cuts (L-steps, slots, notches). Overshoot only the faces the cut
     # actually reaches, so open slots boolean cleanly while internal pockets stay exact.
-    w, ht, th = float(spec.width), float(spec.height), float(spec.thickness)
+    # w/ht are the profile bounding box (diameter for a circle, point span for a polygon).
+    w, ht = spec.bbox()
+    th = float(spec.thickness)
     _tol = 1e-6
     for i, c in enumerate(spec.cuts):
         ox = _EPS if c.x <= _tol else 0.0                       # reaches left face
@@ -175,7 +210,7 @@ if __name__ == "__main__":
     import json
     import sys
 
-    json_path = sys.argv[1] if len(sys.argv) > 1 else "drawing2cad/outputs/test_5.json"
+    json_path = sys.argv[1] if len(sys.argv) > 1 else "drawing2cad/outputs/test_1.json"
 
     # 1. Load PartSpec from JSON file
     spec = PartSpec.model_validate_json(Path(json_path).read_text())

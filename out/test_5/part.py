@@ -26,7 +26,7 @@ cut2_dx = 70.0
 cut2_dy = 12.0
 cut2_dz = 50.0
 
-# --- build: corner at origin, so model coords == profile coords ---
+# --- build: bbox corner at origin, so model coords == profile coords ---
 result = cq.Workplane('XY').box(width, height, thickness, centered=(False, False, False))
 result = result.edges('|Z').fillet(7.0)
 result = result.cut(cq.Workplane('XY').workplane(offset=thickness + 0.01).pushPoints([(hole0_x, hole0_y)]).circle(hole0_dia / 2).extrude(-(thickness + 0.02)))

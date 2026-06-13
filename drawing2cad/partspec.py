@@ -2,6 +2,12 @@ from pydantic import BaseModel
 from typing import Literal
 
 
+class Point(BaseModel):
+    """A 2D point on the profile, measured from the bottom-left of the bounding box."""
+    x: float
+    y: float
+
+
 class Hole(BaseModel):
     x: float                      # center X, mm, from profile origin (bottom-left)
     y: float                      # center Y, mm
@@ -31,9 +37,11 @@ class Dimension(BaseModel):
 
 class PartSpec(BaseModel):
     units: Literal["mm", "in"] = "mm"
-    profile_kind: Literal["rectangle"] = "rectangle"   # polygons out of scope
-    width: float | None = None
-    height: float | None = None
+    profile_kind: Literal["rectangle", "circle", "polygon"] = "rectangle"
+    width: float | None = None        # rectangle
+    height: float | None = None       # rectangle
+    diameter: float | None = None     # circle
+    profile_points: list[Point] = []  # polygon: ordered outline, bottom-left of bbox at (0,0)
     thickness: float
     holes: list[Hole] = []
     cuts: list[RectCut] = []
@@ -42,19 +50,43 @@ class PartSpec(BaseModel):
     dimensions: list[Dimension] = []
     notes: str | None = None
 
+    def bbox(self) -> tuple[float, float]:
+        """Profile bounding-box (width, height) in the spec's units. A circle's box is
+        diameter x diameter; a polygon's spans its points. Used by the checks below and
+        the generator."""
+        if self.profile_kind == "circle":
+            d = self.diameter or 0.0
+            return d, d
+        if self.profile_kind == "polygon":
+            if not self.profile_points:
+                return 0.0, 0.0
+            xs = [p.x for p in self.profile_points]
+            ys = [p.y for p in self.profile_points]
+            return max(xs) - min(xs), max(ys) - min(ys)
+        return self.width or 0.0, self.height or 0.0
+
     def sanity_check(self) -> list[str]:
         """Plausibility checks on the spec itself, run BEFORE code generation.
         Catches bad extractions that would otherwise build a 'valid' wrong part."""
         errs: list[str] = []
-        if not self.width or not self.height:
+        if self.profile_kind == "circle":
+            if not self.diameter:
+                errs.append("circle profile missing diameter")
+                return errs
+        elif self.profile_kind == "polygon":
+            if len(self.profile_points) < 3:
+                errs.append("polygon profile needs at least 3 points")
+                return errs
+        elif not self.width or not self.height:
             errs.append("rectangle profile missing width/height")
             return errs                          # nothing else is checkable
+        bw, bh = self.bbox()
         for i, h in enumerate(self.holes):
-            if not (0 < h.x < self.width and 0 < h.y < self.height):
+            if not (0 < h.x < bw and 0 < h.y < bh):
                 errs.append(f"hole{i} center ({h.x},{h.y}) outside profile")
-            if h.diameter >= min(self.width, self.height):
+            if h.diameter >= min(bw, bh):
                 errs.append(f"hole{i} diameter {h.diameter} >= part size")
         for r in self.fillets:
-            if r >= min(self.width, self.height) / 2:
+            if r >= min(bw, bh) / 2:
                 errs.append(f"fillet r={r} too large for profile")
         return errs
