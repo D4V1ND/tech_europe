@@ -1,8 +1,10 @@
+from pathlib import Path
 from dotenv import load_dotenv
-from langchain_openai import ChatOpenAI 
+from langchain_openai import ChatOpenAI
 from langchain_google_genai import ChatGoogleGenerativeAI
 
-load_dotenv()
+# Load .env from the same directory as this file
+load_dotenv(Path(__file__).parent / ".env")
 
 model_gemini = ChatGoogleGenerativeAI(
                             model="gemini-3.1-pro-preview",

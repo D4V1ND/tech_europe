@@ -173,7 +173,7 @@ if __name__ == "__main__":
     import json
     import sys
 
-    json_path = sys.argv[1] if len(sys.argv) > 1 else "drawing2cad/outputs/test_4.json"
+    json_path = sys.argv[1] if len(sys.argv) > 1 else "drawing2cad/outputs/test_1.json"
 
     # 1. Load PartSpec from JSON file
     spec = PartSpec.model_validate_json(Path(json_path).read_text())
