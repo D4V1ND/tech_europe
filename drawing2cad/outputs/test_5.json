@@ -1,0 +1,169 @@
+{
+  "units": "mm",
+  "profile_kind": "rectangle",
+  "width": 116.0,
+  "height": 105.0,
+  "thickness": 100.0,
+  "holes": [
+    {
+      "x": 58.0,
+      "y": 50.0,
+      "diameter": 82.0,
+      "through": true,
+      "depth": null
+    }
+  ],
+  "cuts": [
+    {
+      "x": 3.0,
+      "y": 11.0,
+      "z": 0.0,
+      "dx": 110.0,
+      "dy": 95.0,
+      "dz": 97.0
+    },
+    {
+      "x": 3.0,
+      "y": 0.0,
+      "z": 0.0,
+      "dx": 110.0,
+      "dy": 8.0,
+      "dz": 97.0
+    },
+    {
+      "x": 23.0,
+      "y": 0.0,
+      "z": 0.0,
+      "dx": 70.0,
+      "dy": 12.0,
+      "dz": 50.0
+    }
+  ],
+  "fillets": [
+    7.0
+  ],
+  "chamfers": [],
+  "dimensions": [
+    {
+      "name": "overall_width",
+      "nominal": 116.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "overall_height",
+      "nominal": 105.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "overall_depth",
+      "nominal": 100.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "large_hole_diameter",
+      "nominal": 82.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "large_hole_y",
+      "nominal": 50.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "small_hole_diameter",
+      "nominal": 12.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "small_hole_spacing",
+      "nominal": 100.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "small_hole_x_edge",
+      "nominal": 8.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "small_hole_z_edge",
+      "nominal": 25.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "cutout_width",
+      "nominal": 70.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "cutout_half_width",
+      "nominal": 35.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "cutout_depth",
+      "nominal": 50.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "bottom_flange_y",
+      "nominal": 8.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "top_flat_depth",
+      "nominal": 12.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "diagonal_angle",
+      "nominal": 37.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "diagonal_radius",
+      "nominal": 30.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "diagonal_radius_z",
+      "nominal": 30.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "wall_thickness",
+      "nominal": 3.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "bend_radius",
+      "nominal": 5.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "fillet_radius",
+      "nominal": 7.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    }
+  ],
+  "notes": "Sheet metal bracket with side walls, raised bottom flange with U-cutout, and large back hole."
+}

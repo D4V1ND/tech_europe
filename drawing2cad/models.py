@@ -4,7 +4,7 @@ from langchain_openai import ChatOpenAI
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 # Load .env from the same directory as this file
-load_dotenv(Path(__file__).parent / ".env")
+load_dotenv()
 
 model_gemini = ChatGoogleGenerativeAI(
                             model="gemini-3.1-pro-preview",

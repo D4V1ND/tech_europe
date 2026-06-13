@@ -83,6 +83,15 @@ def spec_to_code(spec: PartSpec) -> str:
     lines.append("result = cq.Workplane('XY').box(width, height, thickness, "
                  "centered=(False, False, False))")
 
+    # Fillets/chamfers FIRST, while the box still has exactly 4 outer vertical edges.
+    # Doing them after cuts would let '|Z' also grab inner pocket corners, where the wall
+    # may be too thin for the radius (BRep_API: command not done). Use the largest radius
+    # (the outer-corner one); inner pocket corners stay sharp.
+    if spec.fillets:
+        lines.append(f"result = result.edges('|Z').fillet({float(max(spec.fillets))})")
+    if spec.chamfers:
+        lines.append(f"result = result.edges('|Z').chamfer({float(max(spec.chamfers))})")
+
     # Holes: cut absolute cylinders from the top face downward (no workplane ambiguity).
     for i, h in enumerate(spec.holes):
         if h.through or h.depth is None:
@@ -116,16 +125,6 @@ def spec_to_code(spec: PartSpec) -> str:
             f"centered=(False, False, False))"
             f".translate((cut{i}_x - {ox}, cut{i}_y - {oy}, cut{i}_z - {oz})))"
         )
-
-    # Fillets/chamfers LAST: a top-edge fillet changes the >Z face, so holes must be
-    # cut before this. '|Z' selects the 4 vertical corner edges.
-    # Only one pass per selector: '|Z' picks the SAME outer corner edges every time, so a
-    # second fillet would re-fillet already-rounded edges (no suitable edges -> kernel
-    # error). Use the largest radius, which is the outer-corner one.
-    if spec.fillets:
-        lines.append(f"result = result.edges('|Z').fillet({float(max(spec.fillets))})")
-    if spec.chamfers:
-        lines.append(f"result = result.edges('|Z').chamfer({float(max(spec.chamfers))})")
 
     return "\n".join(lines) + "\n"
 
@@ -176,7 +175,7 @@ if __name__ == "__main__":
     import json
     import sys
 
-    json_path = sys.argv[1] if len(sys.argv) > 1 else "drawing2cad/outputs/test_3.json"
+    json_path = sys.argv[1] if len(sys.argv) > 1 else "drawing2cad/outputs/test_5.json"
 
     # 1. Load PartSpec from JSON file
     spec = PartSpec.model_validate_json(Path(json_path).read_text())
