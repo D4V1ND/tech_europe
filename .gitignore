@@ -3,4 +3,4 @@ __pycache__/
 *.pyc
 .venv/
 .pytest_cache/
-drawing2cad/outputs/*.json
+# drawing2cad/outputs/*.json
