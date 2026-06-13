@@ -1,8 +1,6 @@
 from pathlib import Path
 import cadquery as cq
 from .partspec import PartSpec
-from drawing2cad.models import model_gemini
-from drawing2cad.prompts import GEN_SYSTEM
 
 # Small overshoot (mm) so hole cuts don't leave coplanar faces that confuse the kernel.
 _EPS = 0.01
@@ -117,6 +115,7 @@ def _strip_fences(text: str) -> str:
 def _generate_code_llm(spec: PartSpec, feedback: str | None, *, model) -> str:
     """Turn a PartSpec into CadQuery source via an LLM. `feedback` carries validation
     diffs on retry."""
+    from drawing2cad.prompts import GEN_SYSTEM   # lazy import — only when LLM is used
     user = f"PartSpec JSON:\n{spec.model_dump_json(indent=2)}"
     if feedback:
         user += ("\n\nThe previous attempt FAILED these checks. Fix the code so the "
