@@ -1,0 +1,68 @@
+{
+  "units": "mm",
+  "profile_kind": "rectangle",
+  "width": 55.0,
+  "height": 30.0,
+  "thickness": 7.0,
+  "holes": [],
+  "cuts": [
+    {
+      "x": 1.6,
+      "y": 1.6,
+      "z": 1.6,
+      "dx": 51.8,
+      "dy": 26.8,
+      "dz": 5.4
+    }
+  ],
+  "fillets": [
+    8.0,
+    6.4
+  ],
+  "chamfers": [],
+  "dimensions": [
+    {
+      "name": "overall_width",
+      "nominal": 55.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "overall_height",
+      "nominal": 30.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "overall_thickness",
+      "nominal": 7.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "wall_thickness",
+      "nominal": 1.6,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "bottom_thickness",
+      "nominal": 1.6,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "outer_fillet_radius",
+      "nominal": 8.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "inner_fillet_radius",
+      "nominal": 6.4,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    }
+  ],
+  "notes": "Rectangular tray with uniform 1.6mm wall thickness and rounded corners."
+}

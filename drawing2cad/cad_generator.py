@@ -173,7 +173,7 @@ if __name__ == "__main__":
     import json
     import sys
 
-    json_path = sys.argv[1] if len(sys.argv) > 1 else "drawing2cad/outputs/test_2.json"
+    json_path = sys.argv[1] if len(sys.argv) > 1 else "drawing2cad/outputs/test_4.json"
 
     # 1. Load PartSpec from JSON file
     spec = PartSpec.model_validate_json(Path(json_path).read_text())
@@ -184,6 +184,7 @@ if __name__ == "__main__":
     print("=== Generated CadQuery code ===")
     print(code)
 
-    # 3. run_code executes the code and writes part.py / part.step / part.stl to out/
-    result = run_code(code, out_dir="out")
-    print("Output written to out/  (part.py, part.step, part.stl)")
+    # 3. run_code executes the code and writes part.py / part.step / part.stl to out/<name>/
+    out_dir = Path("out") / Path(json_path).stem
+    result = run_code(code, out_dir=out_dir)
+    print(f"Output written to {out_dir}/  (part.py, part.step, part.stl)")
