@@ -150,7 +150,9 @@ def validate(spec: PartSpec, result, tol: float = 0.5) -> ValidationReport:
     their own tolerances from the spec."""
     spec = normalize_to_mm(spec)
     checks: list[Check] = []
-    if isinstance(spec.geometry, UnsupportedGeometry):
+    is_unsupported = isinstance(spec.geometry, UnsupportedGeometry)
+    if is_unsupported and not spec.geometry.has_envelope():
+        # No envelope to approximate from -> nothing was built, hard fail.
         return ValidationReport(checks=[Check(
             name="geometry_supported", expected="supported", measured="unsupported",
             tol=0, passed=False, detail=spec.geometry.reason,
@@ -187,6 +189,17 @@ def validate(spec: PartSpec, result, tol: float = 0.5) -> ValidationReport:
         tol=round(vol_band, 1), passed=abs(meas_vol - exp_vol) <= vol_band,
         detail=f"+/-{_VOLUME_REL_TOL:.0%} band (advisory)",
     )]
+
+    # An unsupported part is built as a plain bounding block: holes/cuts/dims are not
+    # modeled, so only the envelope (solid_count + bbox) is meaningful. Flag it as an
+    # approximation and skip the feature-level checks.
+    if is_unsupported:
+        advisory.append(Check(
+            name="approximation", expected="exact", measured="bounding-block",
+            tol=0, passed=False,
+            detail=f"unsupported part approximated as its envelope: {spec.geometry.reason}",
+        ))
+        return ValidationReport(checks=checks, advisory=advisory)
 
     # --- holes present: the hole axis point should be void, not material ---
     solid_wrapped = solids[0].wrapped if solids else None

@@ -55,14 +55,81 @@ class RevolvedGeometry(BaseModel):
         return diameter, diameter, z_max - z_min
 
 
+class Body(BaseModel):
+    """One sub-solid of a multi-body part: an axis-aligned box or a cylinder, placed in
+    the shared part frame. operation 'add' unions it in, 'cut' subtracts it (use a cut
+    cylinder for a hole/opening in any face -- pick its axis to match the face normal).
+
+    box:      size (dx, dy, dz); (x, y, z) is the MIN corner.
+    cylinder: diameter + length along `axis`; (x, y, z) is the CENTER of the base face."""
+
+    shape: Literal["box", "cylinder"] = "box"
+    operation: Literal["add", "cut"] = "add"
+    x: float = 0.0
+    y: float = 0.0
+    z: float = 0.0
+    dx: float | None = None
+    dy: float | None = None
+    dz: float | None = None
+    diameter: float | None = None
+    length: float | None = None
+    axis: Literal["x", "y", "z"] = "z"
+
+    def aabb(self) -> tuple[tuple[float, float, float], tuple[float, float, float]]:
+        """Axis-aligned (min_corner, max_corner) of this body in the part frame."""
+        if self.shape == "box":
+            dx, dy, dz = self.dx or 0.0, self.dy or 0.0, self.dz or 0.0
+            return (self.x, self.y, self.z), (self.x + dx, self.y + dy, self.z + dz)
+        r = (self.diameter or 0.0) / 2.0
+        ln = self.length or 0.0
+        if self.axis == "z":
+            return (self.x - r, self.y - r, self.z), (self.x + r, self.y + r, self.z + ln)
+        if self.axis == "y":
+            return (self.x - r, self.y, self.z - r), (self.x + r, self.y + ln, self.z + r)
+        return (self.x, self.y - r, self.z - r), (self.x + ln, self.y + r, self.z + r)
+
+
+class MultiBodyGeometry(BaseModel):
+    """A part assembled from several positioned boxes/cylinders unioned (and cut) into one
+    solid. Approximates brackets, weldments, and bent sheet metal as oriented plates."""
+
+    kind: Literal["multibody"] = "multibody"
+    bodies: list[Body] = Field(default_factory=list)
+
+    def bbox(self) -> tuple[float, float, float]:
+        adds = [b for b in self.bodies if b.operation == "add"]
+        if not adds:
+            return 0.0, 0.0, 0.0
+        mins = [b.aabb()[0] for b in adds]
+        maxs = [b.aabb()[1] for b in adds]
+        span = lambda i: max(m[i] for m in maxs) - min(m[i] for m in mins)
+        return span(0), span(1), span(2)
+
+
 class UnsupportedGeometry(BaseModel):
     kind: Literal["unsupported"] = "unsupported"
     reason: str
     visible_features: list[str] = Field(default_factory=list)
+    # Best-effort overall bounding box (mm/in per spec.units). When provided, the part is
+    # approximated as a solid block of this size for partial geometric credit instead of
+    # producing nothing. Leave None only if no overall dimensions are readable at all.
+    envelope_width: float | None = None
+    envelope_height: float | None = None
+    envelope_depth: float | None = None
+
+    def has_envelope(self) -> bool:
+        return bool(self.envelope_width and self.envelope_height and self.envelope_depth)
+
+    def bbox(self) -> tuple[float, float, float]:
+        return (
+            self.envelope_width or 0.0,
+            self.envelope_height or 0.0,
+            self.envelope_depth or 0.0,
+        )
 
 
 Geometry = Annotated[
-    ExtrudedGeometry | RevolvedGeometry | UnsupportedGeometry,
+    ExtrudedGeometry | RevolvedGeometry | MultiBodyGeometry | UnsupportedGeometry,
     Field(discriminator="kind"),
 ]
 
@@ -150,8 +217,6 @@ class PartSpec(BaseModel):
         return legacy
 
     def bbox(self) -> tuple[float, float, float]:
-        if isinstance(self.geometry, UnsupportedGeometry):
-            return 0.0, 0.0, 0.0
         return self.geometry.bbox()
 
     def sanity_check(self) -> list[str]:
@@ -160,7 +225,23 @@ class PartSpec(BaseModel):
         geometry = self.geometry
 
         if isinstance(geometry, UnsupportedGeometry):
-            return [f"unsupported geometry: {geometry.reason}"]
+            # Approximate as a bounding-block when an envelope is given; only truly fail
+            # when there are no overall dimensions to approximate from.
+            if not geometry.has_envelope():
+                return [f"unsupported geometry (no envelope): {geometry.reason}"]
+            return []          # build the envelope block; holes/cuts skipped downstream
+
+        if isinstance(geometry, MultiBodyGeometry):
+            # Multi-body manages its own features via its bodies; validate those and stop.
+            adds = [b for b in geometry.bodies if b.operation == "add"]
+            if not adds:
+                return ["multibody needs at least one 'add' body"]
+            for i, b in enumerate(geometry.bodies):
+                if b.shape == "box" and not (b.dx and b.dy and b.dz):
+                    errors.append(f"body{i} box missing positive dx/dy/dz")
+                if b.shape == "cylinder" and not (b.diameter and b.length):
+                    errors.append(f"body{i} cylinder missing positive diameter/length")
+            return errors
 
         if isinstance(geometry, ExtrudedGeometry):
             if geometry.thickness <= 0:
@@ -173,7 +254,7 @@ class PartSpec(BaseModel):
                     errors.append("polygon profile needs at least 3 points")
             elif not geometry.width or not geometry.height:
                 errors.append("rectangle profile missing width/height")
-        else:
+        elif isinstance(geometry, RevolvedGeometry):
             if not geometry.segments:
                 errors.append("revolved geometry needs at least one segment")
             elif min(segment.z_start for segment in geometry.segments) != 0:

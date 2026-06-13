@@ -1,35 +1,18 @@
 import cadquery as cq
 
-# --- parameters (editable) ---
-width = 116.0
-height = 105.0
-thickness = 100.0
-hole0_x = 58.0
-hole0_y = 50.0
-hole0_dia = 82.0
-cut0_x = 3.0
-cut0_y = 11.0
-cut0_z = 0.0
-cut0_dx = 110.0
-cut0_dy = 95.0
-cut0_dz = 97.0
-cut1_x = 3.0
-cut1_y = 0.0
-cut1_z = 0.0
-cut1_dx = 110.0
-cut1_dy = 8.0
-cut1_dz = 97.0
-cut2_x = 23.0
-cut2_y = 0.0
-cut2_z = 0.0
-cut2_dx = 70.0
-cut2_dy = 12.0
-cut2_dz = 50.0
-
-# --- build: bbox corner at origin, so model coords == profile coords ---
-result = cq.Workplane('XY').box(width, height, thickness, centered=(False, False, False))
-result = result.edges('|Z').fillet(7.0)
-result = result.cut(cq.Workplane('XY').workplane(offset=thickness + 0.01).pushPoints([(hole0_x, hole0_y)]).circle(hole0_dia / 2).extrude(-(thickness + 0.02)))
-result = result.cut(cq.Workplane('XY').box(cut0_dx + 0.0, cut0_dy + 0.01, cut0_dz + 0.01, centered=(False, False, False)).translate((cut0_x - 0.0, cut0_y - 0.0, cut0_z - 0.01)))
-result = result.cut(cq.Workplane('XY').box(cut1_dx + 0.0, cut1_dy + 0.01, cut1_dz + 0.01, centered=(False, False, False)).translate((cut1_x - 0.0, cut1_y - 0.01, cut1_z - 0.01)))
-result = result.cut(cq.Workplane('XY').box(cut2_dx + 0.0, cut2_dy + 0.01, cut2_dz + 0.01, centered=(False, False, False)).translate((cut2_x - 0.0, cut2_y - 0.01, cut2_z - 0.01)))
+# --- multi-body assembly ---
+result = None
+add0 = cq.Workplane('XY').box(100.0, 3.0, 100.0, centered=(False, False, False)).translate((8.0, 0.0, 0.0))
+result = add0 if result is None else result.union(add0)
+add1 = cq.Workplane('XY').box(116.0, 105.0, 3.0, centered=(False, False, False)).translate((0.0, 0.0, 97.0))
+result = add1 if result is None else result.union(add1)
+add2 = cq.Workplane('XY').box(3.0, 70.0, 100.0, centered=(False, False, False)).translate((0.0, 0.0, 0.0))
+result = add2 if result is None else result.union(add2)
+add3 = cq.Workplane('XY').box(3.0, 70.0, 100.0, centered=(False, False, False)).translate((113.0, 0.0, 0.0))
+result = add3 if result is None else result.union(add3)
+cut0 = cq.Workplane('XY').add(cq.Solid.makeCylinder(41.0, 8.02, cq.Vector(58.0, 55.0, 93.99), cq.Vector(0, 0, 1)))
+result = result.cut(cut0)
+cut1 = cq.Workplane('XY').add(cq.Solid.makeCylinder(6.0, 8.02, cq.Vector(35.0, -2.01, 25.0), cq.Vector(0, 1, 0)))
+result = result.cut(cut1)
+cut2 = cq.Workplane('XY').add(cq.Solid.makeCylinder(6.0, 8.02, cq.Vector(81.0, -2.01, 25.0), cq.Vector(0, 1, 0)))
+result = result.cut(cut2)

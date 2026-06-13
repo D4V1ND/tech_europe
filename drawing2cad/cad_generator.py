@@ -5,6 +5,7 @@ import cadquery as cq
 from .partspec import (
     Dimension,
     ExtrudedGeometry,
+    MultiBodyGeometry,
     PartSpec,
     RevolvedGeometry,
     UnsupportedGeometry,
@@ -53,6 +54,23 @@ def normalize_to_mm(spec: PartSpec) -> PartSpec:
                 "outer_diameter": segment.outer_diameter * scale,
                 "inner_diameter": segment.inner_diameter * scale,
             }) for segment in geometry.segments]
+        })
+    elif isinstance(geometry, MultiBodyGeometry):
+        geometry = geometry.model_copy(update={
+            "bodies": [b.model_copy(update={
+                "x": b.x * scale, "y": b.y * scale, "z": b.z * scale,
+                "dx": None if b.dx is None else b.dx * scale,
+                "dy": None if b.dy is None else b.dy * scale,
+                "dz": None if b.dz is None else b.dz * scale,
+                "diameter": None if b.diameter is None else b.diameter * scale,
+                "length": None if b.length is None else b.length * scale,
+            }) for b in geometry.bodies]
+        })
+    elif isinstance(geometry, UnsupportedGeometry):
+        geometry = geometry.model_copy(update={
+            "envelope_width": None if geometry.envelope_width is None else geometry.envelope_width * scale,
+            "envelope_height": None if geometry.envelope_height is None else geometry.envelope_height * scale,
+            "envelope_depth": None if geometry.envelope_depth is None else geometry.envelope_depth * scale,
         })
     return spec.model_copy(update={
         "units": "mm",
@@ -143,6 +161,34 @@ def _append_hole_cuts(lines: list[str], spec: PartSpec, thickness: float) -> Non
             lines.append(f"result = result.cut(hole{index}_csink)")
 
 
+_AXIS_DIR = {"x": "(1, 0, 0)", "y": "(0, 1, 0)", "z": "(0, 0, 1)"}
+
+
+def _body_expr(body) -> str:
+    """CadQuery expression for one multi-body Body (box or oriented cylinder)."""
+    if body.shape == "box":
+        return (
+            f"cq.Workplane('XY').box({float(body.dx)}, {float(body.dy)}, "
+            f"{float(body.dz)}, centered=(False, False, False))"
+            f".translate(({float(body.x)}, {float(body.y)}, {float(body.z)}))"
+        )
+    radius = (body.diameter or 0.0) / 2.0
+    length = body.length or 0.0
+    x, y, z = body.x, body.y, body.z
+    if body.operation == "cut":           # overshoot through the wall for a clean cut
+        length += 2 * _EPS
+        if body.axis == "x":
+            x -= _EPS
+        elif body.axis == "y":
+            y -= _EPS
+        else:
+            z -= _EPS
+    return (
+        f"cq.Workplane('XY').add(cq.Solid.makeCylinder({float(radius)}, {float(length)}, "
+        f"cq.Vector({float(x)}, {float(y)}, {float(z)}), cq.Vector{_AXIS_DIR[body.axis]}))"
+    )
+
+
 def spec_to_code(spec: PartSpec) -> str:
     """Generate deterministic CadQuery source for supported PartSpec geometry."""
     spec = normalize_to_mm(spec)
@@ -151,7 +197,34 @@ def spec_to_code(spec: PartSpec) -> str:
         raise ValueError("invalid PartSpec: " + "; ".join(errors))
     geometry = spec.geometry
     if isinstance(geometry, UnsupportedGeometry):
-        raise ValueError(f"unsupported geometry: {geometry.reason}")
+        # Best-effort: approximate an un-encodable part (e.g. bent sheet metal) as a solid
+        # bounding block so it still earns overall-size credit. Holes/cuts are skipped --
+        # on such parts they lie in faces the axial model can't place reliably.
+        if not geometry.has_envelope():
+            raise ValueError(f"unsupported geometry (no envelope): {geometry.reason}")
+        ew, eh, ed = geometry.bbox()
+        return (
+            "import cadquery as cq\n\n"
+            "# --- APPROXIMATION: unsupported part built as its bounding block ---\n"
+            f"# reason: {geometry.reason}\n"
+            f"envelope_width = {float(ew)}\n"
+            f"envelope_height = {float(eh)}\n"
+            f"envelope_depth = {float(ed)}\n"
+            "result = cq.Workplane('XY').box(envelope_width, envelope_height, "
+            "envelope_depth, centered=(False, False, False))\n"
+        )
+
+    if isinstance(geometry, MultiBodyGeometry):
+        # Union every 'add' body, then subtract every 'cut' body (cut cylinders = holes
+        # in any face). Approximates brackets/weldments/bent sheet metal as oriented plates.
+        blines = ["import cadquery as cq", "", "# --- multi-body assembly ---", "result = None"]
+        for i, body in enumerate(b for b in geometry.bodies if b.operation == "add"):
+            blines.append(f"add{i} = {_body_expr(body)}")
+            blines.append(f"result = add{i} if result is None else result.union(add{i})")
+        for j, body in enumerate(b for b in geometry.bodies if b.operation == "cut"):
+            blines.append(f"cut{j} = {_body_expr(body)}")
+            blines.append(f"result = result.cut(cut{j})")
+        return "\n".join(blines) + "\n"
 
     lines = ["import math", "import cadquery as cq", "", "# --- parameters ---"]
     if isinstance(geometry, ExtrudedGeometry):
@@ -279,7 +352,7 @@ def generate_code(spec: PartSpec, feedback: str | None = None, *, model=None, us
 if __name__ == "__main__":
     import sys
 
-    json_path = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("drawing2cad/outputs/test_5.json")
+    json_path = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("drawing2cad/outputs/test_1.json")
     loaded_spec = PartSpec.model_validate_json(json_path.read_text(encoding="utf-8"))
     generated_code = generate_code(loaded_spec)
     output_dir = Path("out") / json_path.stem

@@ -31,14 +31,32 @@ Choose exactly one geometry variant:
    Represent a coaxial center bore with segment inner_diameter; do not duplicate that
    bore as a Hole feature.
 
-3. unsupported: use ONLY when the part's PRIMARY body cannot be represented by extruded
-   or revolved geometry at all -- bent sheet metal, sweeps, lofts, cast/freeform shapes.
-   Do NOT mark a part unsupported just because a few MINOR features (e.g. a radial/cross
-   hole, an angled set-screw hole, a small groove) cannot be encoded. In that case emit
-   the best-effort extruded or revolved body plus every hole/cut/fillet you CAN represent,
-   and list the un-encodable minor features in notes. A revolved flange with one radial
-   hole is "revolved" with a note, NOT "unsupported". Never replace an unsupported primary
-   body with an approximate box or cylinder.
+3. multibody: a part made of several flat plates / blocks at different orientations --
+   brackets, weldments, angle/gusset plates, and bent sheet metal approximated as plates.
+   Provide a `bodies` list. Each body is a "box" or a "cylinder" placed in ONE shared 3D
+   frame whose origin is the overall bounding-box bottom-left corner: X = width (front
+   view), Y = height (vertical), Z = depth (into the page). A box has size dx, dy, dz with
+   (x, y, z) at its MIN corner -- model each plate/leg as a thin box (thickness = wall
+   thickness) oriented along the face it lies in (a horizontal floor plate is thin in Y,
+   a vertical front/back plate is thin in Z, a side web is thin in X). A cylinder has
+   diameter + length along `axis` (x/y/z) with (x, y, z) at its base-face center. Set
+   operation "add" to union a body in, or "cut" to remove one -- use a "cut" cylinder for
+   a hole/opening in ANY face by choosing its axis to match that face's normal (a hole in
+   a horizontal floor is a cut cylinder with axis y; a hole in a vertical plate, axis z).
+   Make the plates overlap slightly where they join so the union stays a single solid.
+   Prefer multibody over unsupported for bent sheet metal whenever you can read the plate
+   sizes and bend locations -- it scores far better than a plain block. Triangular webs
+   and small bend radii may be approximated by rectangular plates; note the approximation.
+
+4. unsupported: use ONLY when the part cannot be represented as extruded, revolved, OR a
+   multibody assembly of plates -- true freeform/cast/lofted/swept bodies. Do NOT mark a
+   part unsupported just because a few MINOR features (a radial hole, a small groove)
+   cannot be encoded; emit the best-effort body and note them. A revolved flange with one
+   radial hole is "revolved" with a note. A plate bracket is "multibody", NOT "unsupported".
+   When you DO use unsupported, ALWAYS fill envelope_width, envelope_height, and
+   envelope_depth with the part's overall bounding-box dimensions (X, Y, Z) read from the
+   views. These let the part still be approximated as a solid block. Only leave them null
+   if no overall dimensions are readable at all.
 
 Holes use the overall XY bounding-box coordinate frame. The origin is its bottom-left;
 for round/revolved parts the axis is at (maximum_diameter/2, maximum_diameter/2). Create
