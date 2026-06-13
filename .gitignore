@@ -4,3 +4,5 @@ __pycache__/
 .venv/
 .pytest_cache/
 # drawing2cad/outputs/*.json
+.DS_Store
+drawing2cad/runs/

@@ -1,0 +1,179 @@
+import sys
+import time
+import uuid
+import mimetypes
+import threading
+from pathlib import Path
+
+# Ensure the parent directory is on sys.path so `drawing2cad` is importable
+# regardless of where the script is invoked from.
+_here = Path(__file__).parent
+sys.path.insert(0, str(_here.parent))
+
+# Load .env from the drawing2cad directory before any model imports
+from dotenv import load_dotenv
+load_dotenv(_here / ".env")
+
+from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi.responses import FileResponse
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+
+app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+RUNS_DIR = Path(__file__).parent / "runs"
+
+# In-memory job store: run_id → job dict
+_jobs: dict[str, dict] = {}
+
+
+class RerunBody(BaseModel):
+    run_id: str
+    code: str
+
+
+# ── Endpoints ────────────────────────────────────────────────────────────────
+
+@app.post("/api/reconstruct")
+async def start_reconstruct(file: UploadFile = File(...)):
+    run_id = str(uuid.uuid4())
+    out_dir = RUNS_DIR / run_id
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    suffix = Path(file.filename or "drawing.png").suffix or ".png"
+    drawing_path = out_dir / f"drawing{suffix}"
+    drawing_path.write_bytes(await file.read())
+
+    _jobs[run_id] = {
+        "status": "running",
+        "step": 0,
+        "drawing_path": str(drawing_path),
+        "out_dir": str(out_dir),
+        "result": None,
+        "error": None,
+    }
+
+    threading.Thread(
+        target=_run_job,
+        args=(run_id, drawing_path, out_dir),
+        daemon=True,
+    ).start()
+    return {"run_id": run_id}
+
+
+@app.get("/runs/{run_id}")
+def get_run(run_id: str):
+    job = _jobs.get(run_id)
+    if not job:
+        raise HTTPException(404, "Run not found")
+    if job["status"] == "running":
+        return {"run_id": run_id, "status": "running", "step": job["step"]}
+    if job["status"] == "error":
+        raise HTTPException(500, detail=job.get("error", "Reconstruction failed"))
+    return _build_response(run_id, job)
+
+
+@app.get("/runs/{run_id}/stl")
+def get_stl(run_id: str):
+    job = _require_done(run_id)
+    path = Path(job["out_dir"]) / "part.stl"
+    if not path.exists():
+        raise HTTPException(404, "STL not generated")
+    return FileResponse(path, media_type="model/stl", filename="part.stl")
+
+
+@app.get("/runs/{run_id}/step")
+def get_step_file(run_id: str):
+    job = _require_done(run_id)
+    path = Path(job["out_dir"]) / "part.step"
+    if not path.exists():
+        raise HTTPException(404, "STEP not generated")
+    return FileResponse(path, media_type="application/octet-stream", filename="part.step")
+
+
+@app.get("/runs/{run_id}/drawing")
+def get_drawing(run_id: str):
+    job = _jobs.get(run_id)
+    if not job:
+        raise HTTPException(404, "Run not found")
+    path = Path(job["drawing_path"])
+    if not path.exists():
+        raise HTTPException(404, "Drawing not found")
+    mime, _ = mimetypes.guess_type(str(path))
+    return FileResponse(path, media_type=mime or "image/png")
+
+
+@app.post("/api/rerun")
+async def rerun(body: RerunBody):
+    job = _require_done(body.run_id)
+    out_dir = Path(job["out_dir"])
+    try:
+        from drawing2cad.cad_generator import run_code
+        run_code(body.code, out_dir)
+    except Exception as e:
+        raise HTTPException(400, detail=str(e))
+
+    job["result"]["code"] = body.code
+    # Bust the browser cache so the 3D viewer reloads the new STL
+    return _build_response(body.run_id, job, cache_bust=True)
+
+
+# ── Helpers ──────────────────────────────────────────────────────────────────
+
+def _run_job(run_id: str, drawing_path: Path, out_dir: Path):
+    def on_step(step: int):
+        _jobs[run_id]["step"] = step
+
+    try:
+        from drawing2cad.orchestrator import reconstruct
+        result = reconstruct(drawing_path, out_dir=out_dir, on_step=on_step)
+        _jobs[run_id]["status"] = "done"
+        _jobs[run_id]["result"] = result
+    except Exception as e:
+        _jobs[run_id]["status"] = "error"
+        _jobs[run_id]["error"] = str(e)
+
+
+def _require_done(run_id: str) -> dict:
+    job = _jobs.get(run_id)
+    if not job:
+        raise HTTPException(404, "Run not found")
+    if job["status"] != "done":
+        raise HTTPException(409, "Run not complete")
+    return job
+
+
+def _build_response(run_id: str, job: dict, cache_bust: bool = False) -> dict:
+    result = job["result"]
+    spec = result.get("spec")
+    report = result.get("report")
+    suffix = f"?t={int(time.time())}" if cache_bust else ""
+    return {
+        "run_id": run_id,
+        "status": "done",
+        "passed": result["passed"],
+        "attempts": result["attempts"],
+        "score": result["score"],
+        "spec": spec.model_dump() if spec else None,
+        "report": {
+            "passed": report.passed,
+            "attempts": result["attempts"],
+            "checks": [c.model_dump() for c in report.checks],
+        } if report else None,
+        "code": result.get("code") or "",
+        "stl_url": f"/runs/{run_id}/stl{suffix}",
+        "step_url": f"/runs/{run_id}/step{suffix}",
+        "drawing_url": f"/runs/{run_id}/drawing",
+    }
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=5001)

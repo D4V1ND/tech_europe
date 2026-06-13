@@ -23,6 +23,7 @@ def reconstruct(
     threshold: float = DEFAULT_THRESHOLD,
     tol: float = 0.5,
     validate: bool = True,
+    on_step=None,
 ) -> dict:
     """Full pipeline: drawing image → validated parametric CAD.
 
@@ -38,6 +39,7 @@ def reconstruct(
     out_dir.mkdir(parents=True, exist_ok=True)
 
     # --- Step 1: Extract PartSpec from drawing ---
+    if on_step: on_step(1)
     from drawing2cad.extractor import extract_drawing_info   # lazy: needs API key at runtime
     if model is None:
         from drawing2cad.models import model_gemini
@@ -55,6 +57,7 @@ def reconstruct(
         }
 
     # --- Step 3: Generate → Run → Validate loop ---
+    if on_step: on_step(2)
     feedback = None
     last_code = ""
     last_score = -1.0
@@ -72,6 +75,8 @@ def reconstruct(
         except Exception as e:
             feedback = f"Generated code raised an error: {e}"
             continue
+
+        if on_step: on_step(3)
 
         # Skip validation if not requested or validator not yet available
         if not validate:

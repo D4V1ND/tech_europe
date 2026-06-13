@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 48" fill="none">
+  <!-- Kyrall mark: stylized ⌲K -->
+  <!-- Left vertical bar -->
+  <line x1="8" y1="4" x2="8" y2="44" stroke="white" stroke-width="7" stroke-linecap="round"/>
+  <!-- Upper diagonal: center-left → top-right -->
+  <line x1="8" y1="24" x2="32" y2="4" stroke="white" stroke-width="7" stroke-linecap="round"/>
+  <!-- Lower diagonal: center-left → bottom-right -->
+  <line x1="8" y1="24" x2="32" y2="44" stroke="white" stroke-width="7" stroke-linecap="round"/>
+  <!-- Cross stroke (the distinctive ⌲ slash through the upper arm) -->
+  <line x1="18" y1="14" x2="26" y2="24" stroke="white" stroke-width="5" stroke-linecap="round"/>
+  <!-- Kyrall wordmark text -->
+  <text x="42" y="35" font-family="Poppins, system-ui, sans-serif" font-size="26" font-weight="700" fill="white" letter-spacing="-0.5">Kyrall</text>
+</svg>

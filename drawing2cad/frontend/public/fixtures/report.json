@@ -1,0 +1,12 @@
+{
+  "passed": false,
+  "attempts": 2,
+  "checks": [
+    { "name": "overall_width",  "target": 50.0, "actual": 50.0, "tolerance": 0.5, "passed": true  },
+    { "name": "overall_height", "target": 30.0, "actual": 30.0, "tolerance": 0.5, "passed": true  },
+    { "name": "thickness",      "target": 5.0,  "actual": 8.0,  "tolerance": 0.5, "passed": false },
+    { "name": "hole0_dia",      "target": 10.0, "actual": 10.0, "tolerance": 0.5, "passed": true  },
+    { "name": "hole0_x",        "target": 25.0, "actual": 25.1, "tolerance": 0.5, "passed": true  },
+    { "name": "hole0_y",        "target": 15.0, "actual": 15.0, "tolerance": 0.5, "passed": true  }
+  ]
+}
