@@ -10,13 +10,6 @@
     {
       "x": 38.0,
       "y": 38.0,
-      "diameter": 38.0,
-      "through": false,
-      "depth": 16.0
-    },
-    {
-      "x": 38.0,
-      "y": 38.0,
       "diameter": 28.0,
       "through": true,
       "depth": null
@@ -29,6 +22,13 @@
       "depth": null
     },
     {
+      "x": 66.0,
+      "y": 38.0,
+      "diameter": 5.3,
+      "through": true,
+      "depth": null
+    },
+    {
       "x": 38.0,
       "y": 10.0,
       "diameter": 5.3,
@@ -37,13 +37,6 @@
     },
     {
       "x": 10.0,
-      "y": 38.0,
-      "diameter": 5.3,
-      "through": true,
-      "depth": null
-    },
-    {
-      "x": 66.0,
       "y": 38.0,
       "diameter": 5.3,
       "through": true,
@@ -57,6 +50,13 @@
       "depth": 4.0
     },
     {
+      "x": 66.0,
+      "y": 38.0,
+      "diameter": 7.8,
+      "through": false,
+      "depth": 4.0
+    },
+    {
       "x": 38.0,
       "y": 10.0,
       "diameter": 7.8,
@@ -65,13 +65,6 @@
     },
     {
       "x": 10.0,
-      "y": 38.0,
-      "diameter": 7.8,
-      "through": false,
-      "depth": 4.0
-    },
-    {
-      "x": 66.0,
       "y": 38.0,
       "diameter": 7.8,
       "through": false,
@@ -85,7 +78,7 @@
   "chamfers": [],
   "dimensions": [
     {
-      "name": "overall_diameter",
+      "name": "outer_diameter",
       "nominal": 76.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
@@ -97,50 +90,20 @@
       "tol_minus": 0.1
     },
     {
-      "name": "step_diameter",
-      "nominal": 48.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "step_length",
+      "name": "rear_step_depth",
       "nominal": 18.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "bore_diameter_1",
-      "nominal": 38.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "bore_depth_1",
+      "name": "recess_depth",
       "nominal": 16.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "bore_diameter_2",
-      "nominal": 28.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "bolt_circle_diameter",
-      "nominal": 56.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "hole_diameter",
-      "nominal": 5.3,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "counterbore_diameter",
-      "nominal": 7.8,
+      "name": "small_step_width",
+      "nominal": 7.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
@@ -151,14 +114,44 @@
       "tol_minus": 0.1
     },
     {
-      "name": "radial_hole_diameter",
-      "nominal": 5.0,
+      "name": "bolt_circle_diameter",
+      "nominal": 56.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "radial_hole_position",
-      "nominal": 7.0,
+      "name": "center_bore_diameter",
+      "nominal": 28.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "boss_diameter",
+      "nominal": 48.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "internal_diameter",
+      "nominal": 38.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "mounting_hole_counterbore_diameter",
+      "nominal": 7.8,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "mounting_hole_diameter",
+      "nominal": 5.3,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "small_hole_diameter",
+      "nominal": 5.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
@@ -167,13 +160,7 @@
       "nominal": 2.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
-    },
-    {
-      "name": "section_angle",
-      "nominal": 30.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
     }
   ],
-  "notes": "Approximated stepped flange. Outer step and radial hole omitted due to 2.5D schema limitations."
+  "notes": "round flange/bushing approximated as largest circular envelope, with central bore and 4x mounting holes on a 56 mm bolt circle; stepped axial diameters shown in section are noted as approximation."
 }
