@@ -7,3 +7,8 @@ load_dotenv()
 model_gemini = ChatGoogleGenerativeAI(
                             model="gemini-3.1-pro-preview",
                             temperature=0.0)
+
+model_openai = ChatOpenAI(
+                            model="gpt-5.5", 
+                            temperature=0.0
+                        )

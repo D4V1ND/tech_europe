@@ -1,6 +1,8 @@
 from pathlib import Path
 import cadquery as cq
 from .partspec import PartSpec
+from drawing2cad.models import model_gemini
+from drawing2cad.prompts import GEN_SYSTEM
 
 # Small overshoot (mm) so hole cuts don't leave coplanar faces that confuse the kernel.
 _EPS = 0.01
@@ -102,20 +104,6 @@ def spec_to_code(spec: PartSpec) -> str:
 # Optional LLM fallback (kept behind a flag for the "agentic" story / exotic specs).
 # Deterministic spec_to_code is the default and can never die from generator variance.
 # ---------------------------------------------------------------------------
-
-GEN_SYSTEM = """You are a CAD engineer. Given a PartSpec as JSON, write a CadQuery
-(Python) script that reconstructs the part. Requirements:
-- Put EVERY dimension as a named variable at the top of the script.
-- Build the solid into a variable named exactly `result`.
-- Origin convention: build the box with centered=(False, False, False) so its corner is
-  at (0,0,0). The PartSpec hole coordinates (x, y) are then ABSOLUTE world coordinates.
-- Cut holes as cylinders on the world XY plane at the absolute (x, y); do NOT use
-  .faces('>Z').workplane() (its local origin/axes are ambiguous).
-- Through holes span the full thickness; blind holes go down by `depth` from the top.
-- Apply corner fillets/chamfers via .edges('|Z') AFTER cutting all holes.
-- Output ONLY Python code, no prose, no markdown fences.
-"""
-
 
 def _strip_fences(text: str) -> str:
     t = text.strip()

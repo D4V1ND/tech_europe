@@ -1,12 +1,16 @@
+from pathlib import Path
+
 from dotenv import load_dotenv
 from langchain_core.messages import HumanMessage
 
 from drawing2cad.drawing_loader import load_image_part
-from drawing2cad.models import model_gemini
+from drawing2cad.models import model_gemini, model_openai
 from drawing2cad.partspec import PartSpec
 from drawing2cad.prompts import EXTRACTION_PROMPT
 
 load_dotenv()
+
+DEFAULT_OUTPUT_DIR = Path(__file__).resolve().parent / "outputs"
 
 
 def extract(image_part: dict, model=model_gemini) -> PartSpec:
@@ -19,12 +23,30 @@ def extract(image_part: dict, model=model_gemini) -> PartSpec:
     return structured.invoke([message])
 
 
-def extract_drawing_info(path: str, model=model_gemini) -> PartSpec:
-    """Convenience wrapper: load a drawing file from disk, then extract a PartSpec."""
+def save_part_spec(spec: PartSpec, output_path: str | Path) -> Path:
+    """Save an extracted PartSpec as formatted JSON and return its path."""
+    destination = Path(output_path)
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    destination.write_text(spec.model_dump_json(indent=2), encoding="utf-8")
+    return destination
+
+
+def extract_drawing_info(
+    path: str | Path,
+    model=model_gemini,
+    output_path: str | Path | None = None,
+) -> PartSpec:
+    """Load a drawing, extract its PartSpec, and optionally save it as JSON."""
     image_part = load_image_part(path)
-    return extract(image_part, model=model)
+    spec = extract(image_part, model=model)
+    if output_path is not None:
+        save_part_spec(spec, output_path)
+    return spec
 
 
 if __name__ == "__main__":
-    spec = extract_drawing_info("tests/images/test_1.png")
+    drawing_path = Path("tests/images/test_2.png")
+    json_path = DEFAULT_OUTPUT_DIR / f"{drawing_path.stem}.json"
+    spec = extract_drawing_info(drawing_path, output_path=json_path)
     print(spec.model_dump_json(indent=2))
+    print(f"Saved extraction to {json_path}")
