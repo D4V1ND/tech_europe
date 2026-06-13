@@ -12,7 +12,7 @@ import math
 
 from pydantic import BaseModel
 
-from .partspec import PartSpec
+from .partspec import ExtrudedGeometry, PartSpec, RevolvedGeometry, UnsupportedGeometry
 from .cad_generator import normalize_to_mm
 
 # Loose relative band for the volume sanity check. Fillets, overlapping cuts and
@@ -56,13 +56,16 @@ class ValidationReport(BaseModel):
 
 def _profile_area(spec: PartSpec) -> float:
     """Flat-face area in mm^2 for the analytic volume estimate."""
-    if spec.profile_kind == "rectangle":
-        return float(spec.width) * float(spec.height)
-    if spec.profile_kind == "circle":
-        r = float(spec.diameter) / 2.0
+    geometry = spec.geometry
+    if not isinstance(geometry, ExtrudedGeometry):
+        raise ValueError("profile area only applies to extruded geometry")
+    if geometry.profile_kind == "rectangle":
+        return float(geometry.width) * float(geometry.height)
+    if geometry.profile_kind == "circle":
+        r = float(geometry.diameter) / 2.0
         return math.pi * r * r
     # polygon: shoelace on the ordered outline points
-    pts = [(p.x, p.y) for p in spec.profile_points]
+    pts = [(p.x, p.y) for p in geometry.profile_points]
     s = 0.0
     for (x0, y0), (x1, y1) in zip(pts, pts[1:] + pts[:1]):
         s += x0 * y1 - x1 * y0
@@ -72,13 +75,27 @@ def _profile_area(spec: PartSpec) -> float:
 def _expected_volume(spec: PartSpec) -> float:
     """Analytic volume in mm^3: profile prism minus holes minus cuts (nominal sizes,
     overlaps ignored -- this is a loose estimate by design)."""
-    th = float(spec.thickness)
-    vol = _profile_area(spec) * th
+    geometry = spec.geometry
+    if isinstance(geometry, ExtrudedGeometry):
+        th = float(geometry.thickness)
+        vol = _profile_area(spec) * th
+    elif isinstance(geometry, RevolvedGeometry):
+        th = geometry.bbox()[2]
+        vol = sum(
+            math.pi * (segment.outer_diameter ** 2 - segment.inner_diameter ** 2) / 4
+            * (segment.z_end - segment.z_start)
+            for segment in geometry.segments
+        )
+    else:
+        return 0.0
     for h in spec.holes:
         r = h.diameter / 2.0
-        depth = th if (h.through or h.depth is None) else h.depth
+        depth = th if h.hole_type == "through" or h.depth is None else h.depth
         vol -= math.pi * r * r * depth
-    bw, bh = spec.bbox()
+        if h.hole_type == "counterbore":
+            extra_area = math.pi * (h.counterbore_diameter ** 2 - h.diameter ** 2) / 4
+            vol -= extra_area * h.counterbore_depth
+    bw, bh, _ = spec.bbox()
     for c in spec.cuts:
         # clamp the cut to the part box so overshoot/over-size doesn't over-subtract
         dx = max(0.0, min(c.x + c.dx, bw) - max(c.x, 0.0))
@@ -132,6 +149,11 @@ def validate(spec: PartSpec, result, tol: float = 0.5) -> ValidationReport:
     their own tolerances from the spec."""
     spec = normalize_to_mm(spec)
     checks: list[Check] = []
+    if isinstance(spec.geometry, UnsupportedGeometry):
+        return ValidationReport(checks=[Check(
+            name="geometry_supported", expected="supported", measured="unsupported",
+            tol=0, passed=False, detail=spec.geometry.reason,
+        )])
 
     # --- solid count: a clean part is exactly one solid ---
     solids = result.solids().vals()
@@ -146,8 +168,7 @@ def validate(spec: PartSpec, result, tol: float = 0.5) -> ValidationReport:
     bb = shape.BoundingBox()
 
     # --- bounding box: precise overall dimensions (fillets round inward, don't shrink) ---
-    bw, bh = spec.bbox()
-    th = float(spec.thickness)
+    bw, bh, th = spec.bbox()
     for axis, exp, meas in (("x", bw, bb.xlen), ("y", bh, bb.ylen), ("z", th, bb.zlen)):
         checks.append(Check(
             name=f"bbox_{axis}", expected=round(exp, 3), measured=round(meas, 3),
@@ -167,7 +188,7 @@ def validate(spec: PartSpec, result, tol: float = 0.5) -> ValidationReport:
     # --- holes present: the hole axis point should be void, not material ---
     solid_wrapped = solids[0].wrapped if solids else None
     for i, h in enumerate(spec.holes):
-        if h.through or h.depth is None:
+        if h.hole_type == "through" or h.depth is None:
             probe_z = th / 2.0
         else:
             probe_z = th - h.depth / 2.0          # inside the blind pocket

@@ -1,34 +1,47 @@
 {
   "units": "in",
-  "profile_kind": "rectangle",
-  "width": 1.75,
-  "height": 1.25,
-  "thickness": 1.25,
+  "geometry": {
+    "kind": "extruded",
+    "profile_kind": "rectangle",
+    "width": 1.75,
+    "height": 1.25,
+    "diameter": null,
+    "profile_points": [],
+    "thickness": 1.25
+  },
   "holes": [],
   "cuts": [
     {
       "x": 0.5,
-      "y": 0.0,
-      "z": 0.5,
+      "y": 0.5,
+      "z": 0.0,
       "dx": 1.25,
-      "dy": 1.25,
-      "dz": 0.75
+      "dy": 0.75,
+      "dz": 1.25
     },
     {
-      "x": 0.0,
-      "y": 0.25,
-      "z": 1.0,
-      "dx": 0.5,
-      "dy": 0.75,
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.25,
+      "dx": 0.75,
+      "dy": 0.5,
       "dz": 0.25
     },
     {
-      "x": 1.125,
-      "y": 0.5,
-      "z": 0.0,
-      "dx": 0.625,
+      "x": 0.0,
+      "y": 1.0,
+      "z": 0.25,
+      "dx": 1.75,
       "dy": 0.25,
-      "dz": 0.5
+      "dz": 0.75
+    },
+    {
+      "x": 1.0,
+      "y": 0.5,
+      "z": 0.25,
+      "dx": 0.75,
+      "dy": 0.25,
+      "dz": 0.75
     }
   ],
   "fillets": [],
@@ -41,47 +54,47 @@
       "tol_minus": 0.005
     },
     {
-      "name": "base_length",
-      "nominal": 1.25,
-      "tol_plus": 0.005,
-      "tol_minus": 0.005
-    },
-    {
-      "name": "overall_width",
-      "nominal": 1.25,
-      "tol_plus": 0.005,
-      "tol_minus": 0.005
-    },
-    {
-      "name": "base_slot_width",
-      "nominal": 0.25,
-      "tol_plus": 0.005,
-      "tol_minus": 0.005
-    },
-    {
       "name": "overall_height",
       "nominal": 1.25,
       "tol_plus": 0.005,
       "tol_minus": 0.005
     },
     {
-      "name": "base_thickness",
+      "name": "overall_depth",
+      "nominal": 1.25,
+      "tol_plus": 0.005,
+      "tol_minus": 0.005
+    },
+    {
+      "name": "lower_base_height",
       "nominal": 0.5,
       "tol_plus": 0.005,
       "tol_minus": 0.005
     },
     {
-      "name": "top_slot_width",
+      "name": "clear_span_from_upright_to_right_end",
+      "nominal": 1.25,
+      "tol_plus": 0.005,
+      "tol_minus": 0.005
+    },
+    {
+      "name": "end_view_top_notch_width",
       "nominal": 0.75,
       "tol_plus": 0.005,
       "tol_minus": 0.005
     },
     {
-      "name": "top_slot_depth",
+      "name": "end_view_top_notch_depth",
+      "nominal": 0.25,
+      "tol_plus": 0.005,
+      "tol_minus": 0.005
+    },
+    {
+      "name": "front_view_side_slot_height_or_offset",
       "nominal": 0.25,
       "tol_plus": 0.005,
       "tol_minus": 0.005
     }
   ],
-  "notes": "L-shaped block with top and base slots"
+  "notes": "Best-effort interpretation of an inch-dimensioned forked bracket from the orthographic and isometric views. Base stock modeled as 1.75 L x 1.25 H x 1.25 D rectangular prism. Cuts encode the large upper/right relief creating the L side profile, a bottom/front fork slot, and a top U-shaped notch shown in the end/isometric views. Some notch positions and exact correspondence of the .25 front-view slot callout were estimated from view proportions; review against the source drawing is recommended."
 }

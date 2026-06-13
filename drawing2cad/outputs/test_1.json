@@ -1,74 +1,81 @@
 {
   "units": "mm",
-  "profile_kind": "circle",
-  "width": null,
-  "height": null,
-  "diameter": 76.0,
-  "profile_points": [],
-  "thickness": 26.0,
+  "geometry": {
+    "kind": "revolved",
+    "axis": "z",
+    "segments": [
+      {
+        "z_start": 0.0,
+        "z_end": 16.0,
+        "outer_diameter": 76.0,
+        "inner_diameter": 38.0
+      },
+      {
+        "z_start": 16.0,
+        "z_end": 18.0,
+        "outer_diameter": 76.0,
+        "inner_diameter": 28.0
+      },
+      {
+        "z_start": 18.0,
+        "z_end": 26.0,
+        "outer_diameter": 48.0,
+        "inner_diameter": 28.0
+      }
+    ]
+  },
   "holes": [
     {
-      "x": 38.0,
-      "y": 38.0,
-      "diameter": 28.0,
-      "through": true,
-      "depth": null
-    },
-    {
+      "id": "bolt_hole_top",
       "x": 38.0,
       "y": 66.0,
       "diameter": 5.3,
-      "through": true,
-      "depth": null
+      "hole_type": "counterbore",
+      "depth": null,
+      "counterbore_diameter": 7.8,
+      "counterbore_depth": 4.0,
+      "countersink_diameter": null,
+      "countersink_angle": null,
+      "thread": null
     },
     {
+      "id": "bolt_hole_right",
       "x": 66.0,
       "y": 38.0,
       "diameter": 5.3,
-      "through": true,
-      "depth": null
+      "hole_type": "counterbore",
+      "depth": null,
+      "counterbore_diameter": 7.8,
+      "counterbore_depth": 4.0,
+      "countersink_diameter": null,
+      "countersink_angle": null,
+      "thread": null
     },
     {
+      "id": "bolt_hole_bottom",
       "x": 38.0,
       "y": 10.0,
       "diameter": 5.3,
-      "through": true,
-      "depth": null
+      "hole_type": "counterbore",
+      "depth": null,
+      "counterbore_diameter": 7.8,
+      "counterbore_depth": 4.0,
+      "countersink_diameter": null,
+      "countersink_angle": null,
+      "thread": null
     },
     {
+      "id": "bolt_hole_left",
       "x": 10.0,
       "y": 38.0,
       "diameter": 5.3,
-      "through": true,
-      "depth": null
-    },
-    {
-      "x": 38.0,
-      "y": 66.0,
-      "diameter": 7.8,
-      "through": false,
-      "depth": 4.0
-    },
-    {
-      "x": 66.0,
-      "y": 38.0,
-      "diameter": 7.8,
-      "through": false,
-      "depth": 4.0
-    },
-    {
-      "x": 38.0,
-      "y": 10.0,
-      "diameter": 7.8,
-      "through": false,
-      "depth": 4.0
-    },
-    {
-      "x": 10.0,
-      "y": 38.0,
-      "diameter": 7.8,
-      "through": false,
-      "depth": 4.0
+      "hole_type": "counterbore",
+      "depth": null,
+      "counterbore_diameter": 7.8,
+      "counterbore_depth": 4.0,
+      "countersink_diameter": null,
+      "countersink_angle": null,
+      "thread": null
     }
   ],
   "cuts": [],
@@ -80,36 +87,6 @@
     {
       "name": "outer_diameter",
       "nominal": 76.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "overall_thickness",
-      "nominal": 26.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "rear_step_depth",
-      "nominal": 18.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "recess_depth",
-      "nominal": 16.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "small_step_width",
-      "nominal": 7.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "counterbore_depth",
-      "nominal": 4.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
@@ -126,41 +103,77 @@
       "tol_minus": 0.1
     },
     {
-      "name": "boss_diameter",
-      "nominal": 48.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "internal_diameter",
+      "name": "left_recess_diameter",
       "nominal": 38.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "mounting_hole_counterbore_diameter",
+      "name": "right_boss_diameter",
+      "nominal": 48.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "overall_length",
+      "nominal": 26.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "flange_length_to_boss_shoulder",
+      "nominal": 18.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "left_recess_depth",
+      "nominal": 16.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "bolt_hole_counterbore_depth",
+      "nominal": 4.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "bolt_hole_counterbore_diameter",
       "nominal": 7.8,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "mounting_hole_diameter",
+      "name": "bolt_hole_pilot_diameter",
       "nominal": 5.3,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "small_hole_diameter",
+      "name": "radial_hole_diameter",
       "nominal": 5.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "fillet_radius",
+      "name": "radial_hole_axial_position",
+      "nominal": 7.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "section_angle_to_radial_hole",
+      "nominal": 30.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "internal_fillet_radius",
       "nominal": 2.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     }
   ],
-  "notes": "round flange/bushing approximated as largest circular envelope, with central bore and 4x mounting holes on a 56 mm bolt circle; stepped axial diameters shown in section are noted as approximation."
+  "notes": "Best-effort metric interpretation from drawing. Primary body is a stepped revolved flange: Ø76 flange to z=18, Ø48 boss from z=18 to z=26, left recess Ø38 to depth 16, and through center bore Ø28. Four axial counterbored bolt holes are placed on the explicitly dimensioned Ø56 bolt circle. The drawing also shows an off-axis/radial Ø5 hole at 30 degrees with axial position 7; this minor feature cannot be represented by the available axial hole schema and is recorded only in dimensions/notes. No title-block tolerance was visible, so ±0.1 mm provisional tolerance is used."
 }
