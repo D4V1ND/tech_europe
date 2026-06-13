@@ -5,57 +5,83 @@
   "height": 1.25,
   "thickness": 1.25,
   "holes": [],
+  "cuts": [
+    {
+      "x": 0.5,
+      "y": 0.0,
+      "z": 0.5,
+      "dx": 1.25,
+      "dy": 1.25,
+      "dz": 0.75
+    },
+    {
+      "x": 0.0,
+      "y": 0.25,
+      "z": 1.0,
+      "dx": 0.5,
+      "dy": 0.75,
+      "dz": 0.25
+    },
+    {
+      "x": 1.125,
+      "y": 0.5,
+      "z": 0.0,
+      "dx": 0.625,
+      "dy": 0.25,
+      "dz": 0.5
+    }
+  ],
   "fillets": [],
   "chamfers": [],
   "dimensions": [
     {
-      "name": "overall_width",
+      "name": "overall_length",
       "nominal": 1.75,
-      "tol_plus": 0.5,
-      "tol_minus": 0.5
+      "tol_plus": 0.005,
+      "tol_minus": 0.005
+    },
+    {
+      "name": "base_length",
+      "nominal": 1.25,
+      "tol_plus": 0.005,
+      "tol_minus": 0.005
+    },
+    {
+      "name": "overall_width",
+      "nominal": 1.25,
+      "tol_plus": 0.005,
+      "tol_minus": 0.005
+    },
+    {
+      "name": "base_slot_width",
+      "nominal": 0.25,
+      "tol_plus": 0.005,
+      "tol_minus": 0.005
     },
     {
       "name": "overall_height",
       "nominal": 1.25,
-      "tol_plus": 0.5,
-      "tol_minus": 0.5
-    },
-    {
-      "name": "overall_thickness",
-      "nominal": 1.25,
-      "tol_plus": 0.5,
-      "tol_minus": 0.5
-    },
-    {
-      "name": "slot_width",
-      "nominal": 0.25,
-      "tol_plus": 0.5,
-      "tol_minus": 0.5
+      "tol_plus": 0.005,
+      "tol_minus": 0.005
     },
     {
       "name": "base_thickness",
       "nominal": 0.5,
-      "tol_plus": 0.5,
-      "tol_minus": 0.5
-    },
-    {
-      "name": "step_length",
-      "nominal": 1.25,
-      "tol_plus": 0.5,
-      "tol_minus": 0.5
+      "tol_plus": 0.005,
+      "tol_minus": 0.005
     },
     {
       "name": "top_slot_width",
       "nominal": 0.75,
-      "tol_plus": 0.5,
-      "tol_minus": 0.5
+      "tol_plus": 0.005,
+      "tol_minus": 0.005
     },
     {
       "name": "top_slot_depth",
       "nominal": 0.25,
-      "tol_plus": 0.5,
-      "tol_minus": 0.5
+      "tol_plus": 0.005,
+      "tol_minus": 0.005
     }
   ],
-  "notes": null
+  "notes": "L-shaped block with top and base slots"
 }

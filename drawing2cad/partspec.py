@@ -10,6 +10,18 @@ class Hole(BaseModel):
     depth: float | None = None    # for blind holes
 
 
+class RectCut(BaseModel):
+    """An axis-aligned rectangular block subtracted from the part. Models L-steps,
+    slots, notches, pockets. Coords share the part frame: origin at the bottom-left-front
+    corner, X along width, Y along height, Z along thickness."""
+    x: float                      # min corner X (along width)
+    y: float                      # min corner Y (along height)
+    z: float                      # min corner Z (along thickness)
+    dx: float                     # cut size along X
+    dy: float                     # cut size along Y
+    dz: float                     # cut size along Z
+
+
 class Dimension(BaseModel):
     name: str
     nominal: float
@@ -24,6 +36,7 @@ class PartSpec(BaseModel):
     height: float | None = None
     thickness: float
     holes: list[Hole] = []
+    cuts: list[RectCut] = []
     fillets: list[float] = []
     chamfers: list[float] = []
     dimensions: list[Dimension] = []

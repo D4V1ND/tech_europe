@@ -40,6 +40,10 @@ def normalize_to_mm(spec: PartSpec) -> PartSpec:
             "x": h.x * s, "y": h.y * s, "diameter": h.diameter * s,
             "depth": None if h.depth is None else h.depth * s,
         }) for h in spec.holes],
+        "cuts": [c.model_copy(update={
+            "x": c.x * s, "y": c.y * s, "z": c.z * s,
+            "dx": c.dx * s, "dy": c.dy * s, "dz": c.dz * s,
+        }) for c in spec.cuts],
         "fillets": [r * s for r in spec.fillets],
         "chamfers": [c * s for c in spec.chamfers],
     })
@@ -66,6 +70,13 @@ def spec_to_code(spec: PartSpec) -> str:
         lines.append(f"hole{i}_dia = {float(h.diameter)}")
         if not h.through and h.depth is not None:
             lines.append(f"hole{i}_depth = {float(h.depth)}")
+    for i, c in enumerate(spec.cuts):
+        lines.append(f"cut{i}_x = {float(c.x)}")
+        lines.append(f"cut{i}_y = {float(c.y)}")
+        lines.append(f"cut{i}_z = {float(c.z)}")
+        lines.append(f"cut{i}_dx = {float(c.dx)}")
+        lines.append(f"cut{i}_dy = {float(c.dy)}")
+        lines.append(f"cut{i}_dz = {float(c.dz)}")
     lines.append("")
 
     lines.append("# --- build: corner at origin, so model coords == profile coords ---")
@@ -86,6 +97,24 @@ def spec_to_code(spec: PartSpec) -> str:
             f"result = result.cut(cq.Workplane('XY').workplane(offset={top})"
             f".pushPoints([(hole{i}_x, hole{i}_y)]).circle(hole{i}_dia / 2)"
             f".extrude(-({length})))"
+        )
+
+    # Rectangular cuts (L-steps, slots, notches). Overshoot only the faces the cut
+    # actually reaches, so open slots boolean cleanly while internal pockets stay exact.
+    w, ht, th = float(spec.width), float(spec.height), float(spec.thickness)
+    _tol = 1e-6
+    for i, c in enumerate(spec.cuts):
+        ox = _EPS if c.x <= _tol else 0.0                       # reaches left face
+        ex = _EPS if c.x + c.dx >= w - _tol else 0.0            # reaches right face
+        oy = _EPS if c.y <= _tol else 0.0
+        ey = _EPS if c.y + c.dy >= ht - _tol else 0.0
+        oz = _EPS if c.z <= _tol else 0.0
+        ez = _EPS if c.z + c.dz >= th - _tol else 0.0
+        lines.append(
+            f"result = result.cut(cq.Workplane('XY')"
+            f".box(cut{i}_dx + {ox + ex}, cut{i}_dy + {oy + ey}, cut{i}_dz + {oz + ez}, "
+            f"centered=(False, False, False))"
+            f".translate((cut{i}_x - {ox}, cut{i}_y - {oy}, cut{i}_z - {oz})))"
         )
 
     # Fillets/chamfers LAST: a top-edge fillet changes the >Z face, so holes must be
@@ -137,3 +166,24 @@ def generate_code(spec: PartSpec, feedback: str | None = None, *,
             raise ValueError("use_llm=True requires a `model`.")
         return _generate_code_llm(spec, feedback, model=model)
     return spec_to_code(spec)
+
+# generate_code -> spec_to_code -> run_code -> normalize_to_mm
+
+if __name__ == "__main__":
+    import json
+    import sys
+
+    json_path = sys.argv[1] if len(sys.argv) > 1 else "drawing2cad/outputs/test_2.json"
+
+    # 1. Load PartSpec from JSON file
+    spec = PartSpec.model_validate_json(Path(json_path).read_text())
+    print(f"Loaded spec from {json_path}")
+
+    # 2. generate_code calls spec_to_code (which calls normalize_to_mm internally)
+    code = generate_code(spec)
+    print("=== Generated CadQuery code ===")
+    print(code)
+
+    # 3. run_code executes the code and writes part.py / part.step / part.stl to out/
+    result = run_code(code, out_dir="out")
+    print("Output written to out/  (part.py, part.step, part.stl)")
