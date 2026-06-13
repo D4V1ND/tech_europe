@@ -1,0 +1,171 @@
+{
+  "units": "mm",
+  "profile_kind": "rectangle",
+  "width": 76.0,
+  "height": 76.0,
+  "thickness": 26.0,
+  "holes": [
+    {
+      "x": 38.0,
+      "y": 38.0,
+      "diameter": 28.0,
+      "through": true,
+      "depth": null
+    },
+    {
+      "x": 38.0,
+      "y": 38.0,
+      "diameter": 38.0,
+      "through": false,
+      "depth": 16.0
+    },
+    {
+      "x": 38.0,
+      "y": 66.0,
+      "diameter": 5.3,
+      "through": true,
+      "depth": null
+    },
+    {
+      "x": 38.0,
+      "y": 66.0,
+      "diameter": 7.8,
+      "through": false,
+      "depth": 4.0
+    },
+    {
+      "x": 38.0,
+      "y": 10.0,
+      "diameter": 5.3,
+      "through": true,
+      "depth": null
+    },
+    {
+      "x": 38.0,
+      "y": 10.0,
+      "diameter": 7.8,
+      "through": false,
+      "depth": 4.0
+    },
+    {
+      "x": 66.0,
+      "y": 38.0,
+      "diameter": 5.3,
+      "through": true,
+      "depth": null
+    },
+    {
+      "x": 66.0,
+      "y": 38.0,
+      "diameter": 7.8,
+      "through": false,
+      "depth": 4.0
+    },
+    {
+      "x": 10.0,
+      "y": 38.0,
+      "diameter": 5.3,
+      "through": true,
+      "depth": null
+    },
+    {
+      "x": 10.0,
+      "y": 38.0,
+      "diameter": 7.8,
+      "through": false,
+      "depth": 4.0
+    }
+  ],
+  "cuts": [],
+  "fillets": [
+    2.0
+  ],
+  "chamfers": [],
+  "dimensions": [
+    {
+      "name": "overall_diameter",
+      "nominal": 76.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "overall_thickness",
+      "nominal": 26.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "central_bore_diameter",
+      "nominal": 28.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "counterbore_diameter",
+      "nominal": 38.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "counterbore_depth",
+      "nominal": 16.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "step_diameter",
+      "nominal": 48.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "step_depth",
+      "nominal": 18.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "bolt_circle_diameter",
+      "nominal": 56.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "bolt_hole_diameter",
+      "nominal": 5.3,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "bolt_counterbore_diameter",
+      "nominal": 7.8,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "bolt_counterbore_depth",
+      "nominal": 4.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "radial_hole_diameter",
+      "nominal": 5.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "radial_hole_position",
+      "nominal": 7.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "fillet_radius",
+      "nominal": 2.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    }
+  ],
+  "notes": "Turned flange with 4x counterbored bolt holes, central bore, and radial hole"
+}

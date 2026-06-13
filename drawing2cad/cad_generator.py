@@ -119,10 +119,13 @@ def spec_to_code(spec: PartSpec) -> str:
 
     # Fillets/chamfers LAST: a top-edge fillet changes the >Z face, so holes must be
     # cut before this. '|Z' selects the 4 vertical corner edges.
-    for r in spec.fillets:
-        lines.append(f"result = result.edges('|Z').fillet({float(r)})")
-    for c in spec.chamfers:
-        lines.append(f"result = result.edges('|Z').chamfer({float(c)})")
+    # Only one pass per selector: '|Z' picks the SAME outer corner edges every time, so a
+    # second fillet would re-fillet already-rounded edges (no suitable edges -> kernel
+    # error). Use the largest radius, which is the outer-corner one.
+    if spec.fillets:
+        lines.append(f"result = result.edges('|Z').fillet({float(max(spec.fillets))})")
+    if spec.chamfers:
+        lines.append(f"result = result.edges('|Z').chamfer({float(max(spec.chamfers))})")
 
     return "\n".join(lines) + "\n"
 
@@ -173,7 +176,7 @@ if __name__ == "__main__":
     import json
     import sys
 
-    json_path = sys.argv[1] if len(sys.argv) > 1 else "drawing2cad/outputs/test_1.json"
+    json_path = sys.argv[1] if len(sys.argv) > 1 else "drawing2cad/outputs/test_3.json"
 
     # 1. Load PartSpec from JSON file
     spec = PartSpec.model_validate_json(Path(json_path).read_text())
