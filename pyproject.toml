@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "drawing2cad"
+version = "0.1.0"
+requires-python = ">=3.11"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["drawing2cad*"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
