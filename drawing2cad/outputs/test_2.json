@@ -1,63 +1,82 @@
 {
   "units": "in",
   "geometry": {
-    "kind": "extruded",
-    "profile_kind": "polygon",
-    "width": null,
-    "height": null,
-    "diameter": null,
-    "profile_points": [
+    "kind": "multibody",
+    "bodies": [
       {
+        "shape": "box",
+        "operation": "add",
         "x": 0.0,
-        "y": 0.0
+        "y": 0.0,
+        "z": 0.0,
+        "dx": 1.75,
+        "dy": 0.5,
+        "dz": 1.25,
+        "diameter": null,
+        "length": null,
+        "axis": "z"
       },
       {
-        "x": 1.75,
-        "y": 0.0
-      },
-      {
-        "x": 1.75,
-        "y": 0.5
-      },
-      {
-        "x": 0.5,
-        "y": 0.5
-      },
-      {
-        "x": 0.5,
-        "y": 1.25
-      },
-      {
+        "shape": "box",
+        "operation": "add",
         "x": 0.0,
-        "y": 1.25
+        "y": 0.0,
+        "z": 0.0,
+        "dx": 0.5,
+        "dy": 1.25,
+        "dz": 1.25,
+        "diameter": null,
+        "length": null,
+        "axis": "z"
+      },
+      {
+        "shape": "box",
+        "operation": "add",
+        "x": 0.0,
+        "y": 1.0,
+        "z": 0.0,
+        "dx": 1.75,
+        "dy": 0.25,
+        "dz": 1.25,
+        "diameter": null,
+        "length": null,
+        "axis": "z"
+      },
+      {
+        "shape": "box",
+        "operation": "cut",
+        "x": 1.0,
+        "y": 0.0,
+        "z": 0.25,
+        "dx": 0.75,
+        "dy": 0.5,
+        "dz": 0.5,
+        "diameter": null,
+        "length": null,
+        "axis": "z"
+      },
+      {
+        "shape": "box",
+        "operation": "cut",
+        "x": 1.0,
+        "y": 1.0,
+        "z": 0.25,
+        "dx": 0.75,
+        "dy": 0.25,
+        "dz": 0.75,
+        "diameter": null,
+        "length": null,
+        "axis": "z"
       }
-    ],
-    "thickness": 1.25
+    ]
   },
   "holes": [],
-  "cuts": [
-    {
-      "x": 0.5,
-      "y": 1.0,
-      "z": 0.25,
-      "dx": 1.25,
-      "dy": 0.25,
-      "dz": 0.75
-    },
-    {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0,
-      "dx": 0.25,
-      "dy": 0.5,
-      "dz": 1.25
-    }
-  ],
+  "cuts": [],
   "fillets": [],
   "chamfers": [],
   "dimensions": [
     {
-      "name": "overall_length",
+      "name": "overall_width",
       "nominal": 1.75,
       "tol_plus": 0.005,
       "tol_minus": 0.005
@@ -69,35 +88,35 @@
       "tol_minus": 0.005
     },
     {
-      "name": "base_thickness",
-      "nominal": 0.5,
-      "tol_plus": 0.005,
-      "tol_minus": 0.005
-    },
-    {
-      "name": "inside_horizontal_span",
+      "name": "side_extension_length",
       "nominal": 1.25,
       "tol_plus": 0.005,
       "tol_minus": 0.005
     },
     {
-      "name": "upper_notch_depth",
-      "nominal": 0.25,
+      "name": "bottom_leg_thickness",
+      "nominal": 0.5,
       "tol_plus": 0.005,
       "tol_minus": 0.005
     },
     {
-      "name": "end_view_top_slot_width",
+      "name": "top_slot_width",
       "nominal": 0.75,
       "tol_plus": 0.005,
       "tol_minus": 0.005
     },
     {
-      "name": "end_view_top_slot_depth",
+      "name": "top_slot_depth",
+      "nominal": 0.25,
+      "tol_plus": 0.005,
+      "tol_minus": 0.005
+    },
+    {
+      "name": "front_slot_height",
       "nominal": 0.25,
       "tol_plus": 0.005,
       "tol_minus": 0.005
     }
   ],
-  "notes": "Best-effort interpretation of the orthographic/isometric drawing as an inch-unit block bracket. Primary L-shaped side silhouette is modeled as a polygon extruded through the 1.25 in depth/width. The side profile captures the 1.75 in overall length, 1.25 in height, 0.50 in base thickness, and 1.25 in internal horizontal span, implying an estimated 0.50 in rear upright thickness. Added a through rectangular cut opening on the upper/front face to represent the 0.25 in deep, approximately 0.75 in wide top notch/slot seen in the end/isometric views; its longitudinal extent is estimated as 1.25 in because only the side/top relationship is partially dimensioned. Added a central rectangular through slot in the base/fork, estimated at 0.25 in wide from the visible lower view divisions; exact position is estimated centered in the 1.25 in depth. Review orientation and estimated slot/notch placements against the source drawing."
+  "notes": "Best-effort multibody/block model of the forked bracket shown. Inch units inferred from decimal dimensions. Overall bounding box interpreted as X=1.75 wide, Y=1.25 high, Z=1.25 deep. Model uses three rectangular add bodies for the lower/base mass, left upright/web, and upper arm, plus two rectangular cut bodies for the front lower fork opening and the top rear U-notch. Several undimensioned positions/thicknesses are estimated from view proportions: left upright/web thickness about 0.50 in, upper arm thickness 0.25 in, front lower fork opening starts about x=1.00 and z=0.25, top notch located approximately x=1.00 to 1.75 and z=0.25 to 1.00. No holes, fillets, or chamfers are shown."
 }

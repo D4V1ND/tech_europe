@@ -129,3 +129,8 @@ def reconstruct(
         "report": report,
         "stop_reason": stop_reason,
     }
+
+if __name__ == "__main__":
+    result = reconstruct("tests/images/test_2.png", out_dir="out/test_3_reconstruct",
+                         model=None, use_llm=False, threshold=0.9, tol=0.5, validate=True)
+    print(f"Final score: {result['score']:.0%}  Passed:{result['passed']}  Attempts: {result['attempts']}  Stop reason: {result['stop_reason']}")
