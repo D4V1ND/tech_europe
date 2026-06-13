@@ -99,7 +99,11 @@ class Hole(BaseModel):
 
 
 class RectCut(BaseModel):
-    """An axis-aligned rectangular block subtracted from an extruded part."""
+    """An axis-aligned rectangular block subtracted from an extruded part.
+
+    corner_radius rounds the four vertical (Z) corners of the removed block -- set it for
+    pockets/trays whose inner corners are filleted (e.g. inner_corner_radius), so the wall
+    stays continuous around the corner. 0 means sharp corners."""
 
     x: float
     y: float
@@ -107,6 +111,7 @@ class RectCut(BaseModel):
     dx: float
     dy: float
     dz: float
+    corner_radius: float = 0.0
 
 
 class Dimension(BaseModel):

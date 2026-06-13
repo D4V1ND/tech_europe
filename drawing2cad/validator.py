@@ -31,13 +31,14 @@ class Check(BaseModel):
 
 
 class ValidationReport(BaseModel):
-    checks: list[Check] = []
+    checks: list[Check] = []          # scored: gate pass/fail and drive the retry loop
+    advisory: list[Check] = []        # measured for insight, NOT scored (e.g. volume)
 
     def ok(self) -> bool:
         return all(c.passed for c in self.checks)
 
     def feedback(self) -> str:
-        """Human/LLM-readable lines for the FAILED checks only."""
+        """Human/LLM-readable lines for the FAILED scored checks only."""
         fails = [c for c in self.checks if not c.passed]
         if not fails:
             return "All checks passed."
@@ -175,15 +176,17 @@ def validate(spec: PartSpec, result, tol: float = 0.5) -> ValidationReport:
             tol=tol, passed=abs(meas - exp) <= tol,
         ))
 
-    # --- volume: loose global sanity check ---
+    # --- volume: ADVISORY only (not scored). The analytic estimate ignores fillets and
+    # double-counts overlapping cuts, so it false-fails geometrically-correct parts. Kept
+    # for human insight, but excluded from the gate and the retry feedback. ---
     exp_vol = _expected_volume(spec)
     meas_vol = shape.Volume()
     vol_band = max(_VOLUME_REL_TOL * exp_vol, tol)
-    checks.append(Check(
+    advisory: list[Check] = [Check(
         name="volume", expected=round(exp_vol, 1), measured=round(meas_vol, 1),
         tol=round(vol_band, 1), passed=abs(meas_vol - exp_vol) <= vol_band,
-        detail=f"+/-{_VOLUME_REL_TOL:.0%} band",
-    ))
+        detail=f"+/-{_VOLUME_REL_TOL:.0%} band (advisory)",
+    )]
 
     # --- holes present: the hole axis point should be void, not material ---
     solid_wrapped = solids[0].wrapped if solids else None
@@ -218,7 +221,7 @@ def validate(spec: PartSpec, result, tol: float = 0.5) -> ValidationReport:
             tol=round(max(d.tol_plus, d.tol_minus), 3), passed=(lo <= meas <= hi),
         ))
 
-    return ValidationReport(checks=checks)
+    return ValidationReport(checks=checks, advisory=advisory)
 
 
 if __name__ == "__main__":
@@ -243,6 +246,13 @@ if __name__ == "__main__":
         flag = "OK " if c.passed else "XX "
         detail = f"  [{c.detail}]" if c.detail else ""
         print(f"  {flag} {c.name}: expected={c.expected}  measured={c.measured}  tol={c.tol}{detail}")
+
+    if report.advisory:
+        print("\nAdvisory (not scored):")
+        for c in report.advisory:
+            flag = "ok " if c.passed else ".. "
+            detail = f"  [{c.detail}]" if c.detail else ""
+            print(f"  {flag} {c.name}: expected={c.expected}  measured={c.measured}{detail}")
 
     if not report.ok():
         print("\nFeedback for retry:\n" + report.feedback())

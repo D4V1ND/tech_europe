@@ -16,6 +16,13 @@ Choose exactly one geometry variant:
    For rectangle fill width and height. For circle fill diameter. For polygon fill the
    counter-clockwise outline points without repeating the first point. Put the profile
    bounding-box bottom-left at (0, 0). Fill thickness for every extruded part.
+   STRATEGY -- choose the profile to MINIMIZE cuts: pick the single view whose outline is
+   the most detailed/complex (the L, T, U, or stepped silhouette) and make THAT the
+   extruded profile (a polygon if it is non-rectangular), extruding along the third axis.
+   A feature already captured by the profile outline must NOT also be added as a cut.
+   Reserve cuts only for features that lie OFF that silhouette (e.g. a notch or slot on a
+   different face). Fewer, well-placed cuts beat many overlapping ones. Do not default to
+   a plain rectangle plus many cuts when a polygon profile captures the shape in one step.
 
 2. revolved: a rotationally symmetric stepped part defined by an axial section view.
    Set axis to z and create one segment for every constant-diameter axial interval. Each
@@ -42,8 +49,16 @@ For a countersink fill countersink_diameter and countersink_angle. For a blind h
 depth. Preserve an explicit thread callout in thread. Assign a clear stable id.
 
 Rectangular cuts apply only to extruded geometry. Each cut is an axis-aligned removed
-box {x, y, z, dx, dy, dz} in the same coordinate frame. Use cuts for rectangular slots,
-notches, steps, and pockets. Fillets and chamfers contain explicitly shown sizes.
+box {x, y, z, dx, dy, dz, corner_radius} in the SAME coordinate frame as the profile: x
+along the profile width, y along the profile height, z along the extrude/thickness axis.
+Use cuts only for features NOT already formed by the profile outline -- typically
+slots/notches on a face perpendicular to the profile, or a pocket/tray cavity. Keep cuts
+to the minimum: if the silhouette already removes material there, do not add a redundant
+cut. Before emitting each cut, state to yourself which face it opens onto and confirm its
+x/y/z match that face in the profile frame. Set corner_radius when the cavity has rounded
+inner corners (e.g. a tray pocket with an inner_corner_radius): use that inner radius so
+the wall stays continuous; leave it 0 for sharp-cornered slots. Fillets and chamfers
+contain explicitly shown sizes (fillets are the OUTER corner radii of the profile).
 
 Record every explicit callout in dimensions as {name, nominal, tol_plus, tol_minus} with
 a clear snake_case name. Use the printed tolerance. If no individual tolerance is shown,

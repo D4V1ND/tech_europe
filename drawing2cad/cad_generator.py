@@ -77,6 +77,7 @@ def normalize_to_mm(spec: PartSpec) -> PartSpec:
         "cuts": [cut.model_copy(update={
             "x": cut.x * scale, "y": cut.y * scale, "z": cut.z * scale,
             "dx": cut.dx * scale, "dy": cut.dy * scale, "dz": cut.dz * scale,
+            "corner_radius": cut.corner_radius * scale,
         }) for cut in spec.cuts],
         "fillets": [radius * scale for radius in spec.fillets],
         "chamfers": [distance * scale for distance in spec.chamfers],
@@ -186,6 +187,8 @@ def spec_to_code(spec: PartSpec) -> str:
             f"cut{index}_z = {float(cut.z)}", f"cut{index}_dx = {float(cut.dx)}",
             f"cut{index}_dy = {float(cut.dy)}", f"cut{index}_dz = {float(cut.dz)}",
         ])
+        if cut.corner_radius > 0:
+            lines.append(f"cut{index}_radius = {float(cut.corner_radius)}")
 
     lines.extend(["", "# --- base geometry ---"])
     if isinstance(geometry, ExtrudedGeometry):
@@ -229,9 +232,18 @@ def spec_to_code(spec: PartSpec) -> str:
             oz = _EPS if cut.z <= 1e-6 else 0.0
             ez = _EPS if cut.z + cut.dz >= thickness - 1e-6 else 0.0
             lines.append(
-                f"result = result.cut(cq.Workplane('XY')"
+                f"cut{index}_solid = (cq.Workplane('XY')"
                 f".box(cut{index}_dx + {ox + ex}, cut{index}_dy + {oy + ey}, "
-                f"cut{index}_dz + {oz + ez}, centered=(False, False, False))"
+                f"cut{index}_dz + {oz + ez}, centered=(False, False, False)))"
+            )
+            if cut.corner_radius > 0:
+                # Round the pocket's 4 vertical corners so the wall stays continuous
+                # around the matching outer fillet (tray/pocket case).
+                lines.append(
+                    f"cut{index}_solid = cut{index}_solid.edges('|Z').fillet(cut{index}_radius)"
+                )
+            lines.append(
+                f"result = result.cut(cut{index}_solid"
                 f".translate((cut{index}_x - {ox}, cut{index}_y - {oy}, cut{index}_z - {oz})))"
             )
     return "\n".join(lines) + "\n"
@@ -267,7 +279,7 @@ def generate_code(spec: PartSpec, feedback: str | None = None, *, model=None, us
 if __name__ == "__main__":
     import sys
 
-    json_path = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("drawing2cad/outputs/test_2.json")
+    json_path = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("drawing2cad/outputs/test_5.json")
     loaded_spec = PartSpec.model_validate_json(json_path.read_text(encoding="utf-8"))
     generated_code = generate_code(loaded_spec)
     output_dir = Path("out") / json_path.stem

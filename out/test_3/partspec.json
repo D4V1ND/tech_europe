@@ -17,29 +17,29 @@
       "z": 1.6,
       "dx": 51.8,
       "dy": 26.8,
-      "dz": 5.4,
-      "corner_radius": 6.4
+      "dz": 5.4
     }
   ],
   "fillets": [
-    8.0
+    8.0,
+    6.4
   ],
   "chamfers": [],
   "dimensions": [
     {
-      "name": "overall_length",
+      "name": "overall_width",
       "nominal": 55.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "overall_width",
+      "name": "overall_height",
       "nominal": 30.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "overall_height",
+      "name": "overall_thickness",
       "nominal": 7.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
@@ -57,17 +57,17 @@
       "tol_minus": 0.1
     },
     {
-      "name": "outer_corner_radius_4_places",
+      "name": "outer_corner_radius",
       "nominal": 8.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "inner_corner_radius_4_places",
+      "name": "inner_corner_radius",
       "nominal": 6.4,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     }
   ],
-  "notes": "Open-top rounded-rectangle tray/box. Overall outside plan is 55 x 30 mm with 7 mm height. Typical wall thickness is 1.6 mm and bottom thickness shown as 1.6 mm, so modeled as a top-opening pocket cut starting at z=1.6 and extending to the top. Outer vertical corners have R8 fillets, and the pocket uses R6.4 inner vertical corner radius. No holes or chamfers are shown. General tolerances were not visible, so provisional ±0.1 mm used for dimensions."
+  "notes": "Rectangular tray with rounded corners. Modeled as an extruded rectangle with a rectangular cut for the interior. The inner and outer corner radii are captured in the fillets array."
 }

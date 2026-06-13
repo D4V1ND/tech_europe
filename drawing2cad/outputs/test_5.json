@@ -1,52 +1,107 @@
 {
   "units": "mm",
-  "profile_kind": "rectangle",
-  "width": 116.0,
-  "height": 105.0,
-  "thickness": 100.0,
+  "geometry": {
+    "kind": "unsupported",
+    "reason": "Primary body is a bent sheet-metal angle bracket with multiple bends/flanges; cannot be represented as a single straight extruded or revolved solid without replacing the bent sheet with an approximate box/cylinder.",
+    "visible_features": [
+      "3 mm default wall thickness sheet-metal bracket",
+      "R5 default inside bend radius",
+      "two side triangular gusset/cheek plates rising to rear panel",
+      "rear upright panel with large circular through opening",
+      "bottom/base with two forward mounting tabs/feet",
+      "two Ø12 through holes in base feet",
+      "large Ø82 through hole in rear upright panel",
+      "top/front return flange or lip with rounded outside corners",
+      "six R7 outside corner radii called out",
+      "bottom/back flange/step details visible in front/top views"
+    ]
+  },
   "holes": [
     {
+      "id": "left_base_mount_hole",
+      "x": 35.0,
+      "y": 25.0,
+      "diameter": 12.0,
+      "hole_type": "through",
+      "depth": null,
+      "counterbore_diameter": null,
+      "counterbore_depth": null,
+      "countersink_diameter": null,
+      "countersink_angle": null,
+      "thread": null
+    },
+    {
+      "id": "right_base_mount_hole",
+      "x": 81.0,
+      "y": 25.0,
+      "diameter": 12.0,
+      "hole_type": "through",
+      "depth": null,
+      "counterbore_diameter": null,
+      "counterbore_depth": null,
+      "countersink_diameter": null,
+      "countersink_angle": null,
+      "thread": null
+    },
+    {
+      "id": "rear_panel_large_hole",
       "x": 58.0,
       "y": 50.0,
       "diameter": 82.0,
-      "through": true,
-      "depth": null
+      "hole_type": "through",
+      "depth": null,
+      "counterbore_diameter": null,
+      "counterbore_depth": null,
+      "countersink_diameter": null,
+      "countersink_angle": null,
+      "thread": null
     }
   ],
-  "cuts": [
-    {
-      "x": 3.0,
-      "y": 11.0,
-      "z": 0.0,
-      "dx": 110.0,
-      "dy": 95.0,
-      "dz": 97.0
-    },
-    {
-      "x": 3.0,
-      "y": 0.0,
-      "z": 0.0,
-      "dx": 110.0,
-      "dy": 8.0,
-      "dz": 97.0
-    },
-    {
-      "x": 23.0,
-      "y": 0.0,
-      "z": 0.0,
-      "dx": 70.0,
-      "dy": 12.0,
-      "dz": 50.0
-    }
-  ],
+  "cuts": [],
   "fillets": [
     7.0
   ],
   "chamfers": [],
   "dimensions": [
     {
-      "name": "overall_width",
+      "name": "default_wall_thickness",
+      "nominal": 3.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "default_inside_bend_radius",
+      "nominal": 5.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "outer_corner_radius_six_places",
+      "nominal": 7.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "overall_front_width",
       "nominal": 116.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "top_outer_width",
+      "nominal": 100.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "top_inner_opening_width",
+      "nominal": 70.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "side_overall_depth",
+      "nominal": 100.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
@@ -57,113 +112,77 @@
       "tol_minus": 0.1
     },
     {
-      "name": "overall_depth",
-      "nominal": 100.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "large_hole_diameter",
+      "name": "rear_panel_hole_diameter",
       "nominal": 82.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "large_hole_y",
+      "name": "rear_panel_hole_center_height",
       "nominal": 50.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "small_hole_diameter",
+      "name": "base_mount_hole_diameter_two_places",
       "nominal": 12.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "small_hole_spacing",
-      "nominal": 100.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "small_hole_x_edge",
-      "nominal": 8.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "small_hole_z_edge",
+      "name": "base_mount_hole_center_y_from_front",
       "nominal": 25.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "cutout_width",
-      "nominal": 70.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "cutout_half_width",
+      "name": "base_mount_hole_center_x_from_left",
       "nominal": 35.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "cutout_depth",
+      "name": "right_mount_foot_height",
       "nominal": 50.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "bottom_flange_y",
+      "name": "side_short_vertical_height",
       "nominal": 8.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "top_flat_depth",
+      "name": "side_bottom_flat_to_bend_start",
+      "nominal": 30.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "side_top_lip_width",
       "nominal": 12.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "diagonal_angle",
+      "name": "inclined_side_angle",
       "nominal": 37.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "diagonal_radius",
+      "name": "curved_side_radius",
       "nominal": 30.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "diagonal_radius_z",
-      "nominal": 30.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "wall_thickness",
-      "nominal": 3.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "bend_radius",
-      "nominal": 5.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "fillet_radius",
-      "nominal": 7.0,
+      "name": "front_edge_offset",
+      "nominal": 8.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     }
   ],
-  "notes": "Sheet metal bracket with side walls, raised bottom flange with U-cutout, and large back hole."
+  "notes": "Unit system from title block: MMGS, modeled as unsupported because primary part is bent sheet metal. Material: plain carbon steel, density 7800 kg/m^3. Drawing asks for mass tolerance ±1 g but no direct mass dimension. Hole coordinates are recorded in the visible/front bounding frame approximately: base mount holes are symmetric about centerline; right-hole x estimated as 116-35=81 mm. Large Ø82 rear panel hole center taken at x=58 mm on centerline and y=50 mm from bottom per front view. Several sheet-metal bend/formed features, flanges, and side plates are visible but not encodable in the available PartSpec geometry variants without flattening or approximating the bent body."
 }

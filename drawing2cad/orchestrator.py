@@ -91,6 +91,13 @@ def reconstruct(
             stop_reason = "threshold_reached"
             break
 
+        # Deterministic codegen is a pure function of the spec: feedback is ignored, so a
+        # retry would rebuild identical geometry. Stop after one pass instead of wasting a
+        # second build only to "plateau".
+        if not use_llm:
+            stop_reason = "deterministic_single_pass"
+            break
+
         # Plateau: no improvement since last attempt → LLM is stuck, give up
         if score <= last_score:
             stop_reason = f"plateau_at_score_{score:.0%}"
