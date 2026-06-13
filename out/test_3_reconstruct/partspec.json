@@ -1,0 +1,105 @@
+{
+  "units": "in",
+  "geometry": {
+    "kind": "extruded",
+    "profile_kind": "polygon",
+    "width": null,
+    "height": null,
+    "diameter": null,
+    "profile_points": [
+      {
+        "x": 0.0,
+        "y": 0.0
+      },
+      {
+        "x": 1.75,
+        "y": 0.0
+      },
+      {
+        "x": 1.75,
+        "y": 0.5
+      },
+      {
+        "x": 0.5,
+        "y": 0.5
+      },
+      {
+        "x": 0.5,
+        "y": 1.25
+      },
+      {
+        "x": 0.0,
+        "y": 1.25
+      }
+    ],
+    "thickness": 1.25
+  },
+  "holes": [],
+  "cuts": [
+    {
+      "x": 0.0,
+      "y": 1.0,
+      "z": 0.25,
+      "dx": 0.5,
+      "dy": 0.25,
+      "dz": 0.75,
+      "corner_radius": 0.0
+    },
+    {
+      "x": 1.125,
+      "y": 0.0,
+      "z": 0.5,
+      "dx": 0.625,
+      "dy": 0.5,
+      "dz": 0.25,
+      "corner_radius": 0.0
+    }
+  ],
+  "fillets": [],
+  "chamfers": [],
+  "dimensions": [
+    {
+      "name": "overall_length",
+      "nominal": 1.75,
+      "tol_plus": 0.005,
+      "tol_minus": 0.005
+    },
+    {
+      "name": "base_length",
+      "nominal": 1.25,
+      "tol_plus": 0.005,
+      "tol_minus": 0.005
+    },
+    {
+      "name": "overall_height",
+      "nominal": 1.25,
+      "tol_plus": 0.005,
+      "tol_minus": 0.005
+    },
+    {
+      "name": "base_height",
+      "nominal": 0.5,
+      "tol_plus": 0.005,
+      "tol_minus": 0.005
+    },
+    {
+      "name": "vertical_slot_depth",
+      "nominal": 0.25,
+      "tol_plus": 0.005,
+      "tol_minus": 0.005
+    },
+    {
+      "name": "vertical_slot_width",
+      "nominal": 0.75,
+      "tol_plus": 0.005,
+      "tol_minus": 0.005
+    },
+    {
+      "name": "horizontal_slot_width",
+      "nominal": 0.25,
+      "tol_plus": 0.005,
+      "tol_minus": 0.005
+    }
+  ],
+  "notes": "The depth of the horizontal slot is not explicitly dimensioned; it is estimated as 0.625 (exactly half of the 1.25 base length) based on the centered position of its hidden line in the front view."
+}

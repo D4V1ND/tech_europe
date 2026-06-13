@@ -1,148 +1,164 @@
 {
   "units": "mm",
-  "profile_kind": "rectangle",
-  "width": 116.0,
-  "height": 105.0,
-  "thickness": 100.0,
+  "geometry": {
+    "kind": "multibody",
+    "bodies": [
+      {
+        "shape": "box",
+        "operation": "add",
+        "x": 8.0,
+        "y": 0.0,
+        "z": 0.0,
+        "dx": 100.0,
+        "dy": 3.0,
+        "dz": 100.0,
+        "diameter": null,
+        "length": null,
+        "axis": "z"
+      },
+      {
+        "shape": "box",
+        "operation": "add",
+        "x": 0.0,
+        "y": 0.0,
+        "z": 97.0,
+        "dx": 116.0,
+        "dy": 105.0,
+        "dz": 3.0,
+        "diameter": null,
+        "length": null,
+        "axis": "z"
+      },
+      {
+        "shape": "box",
+        "operation": "add",
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "dx": 3.0,
+        "dy": 70.0,
+        "dz": 100.0,
+        "diameter": null,
+        "length": null,
+        "axis": "z"
+      },
+      {
+        "shape": "box",
+        "operation": "add",
+        "x": 113.0,
+        "y": 0.0,
+        "z": 0.0,
+        "dx": 3.0,
+        "dy": 70.0,
+        "dz": 100.0,
+        "diameter": null,
+        "length": null,
+        "axis": "z"
+      },
+      {
+        "shape": "cylinder",
+        "operation": "cut",
+        "x": 58.0,
+        "y": 55.0,
+        "z": 94.0,
+        "dx": null,
+        "dy": null,
+        "dz": null,
+        "diameter": 82.0,
+        "length": 8.0,
+        "axis": "z"
+      },
+      {
+        "shape": "cylinder",
+        "operation": "cut",
+        "x": 35.0,
+        "y": -2.0,
+        "z": 25.0,
+        "dx": null,
+        "dy": null,
+        "dz": null,
+        "diameter": 12.0,
+        "length": 8.0,
+        "axis": "y"
+      },
+      {
+        "shape": "cylinder",
+        "operation": "cut",
+        "x": 81.0,
+        "y": -2.0,
+        "z": 25.0,
+        "dx": null,
+        "dy": null,
+        "dz": null,
+        "diameter": 12.0,
+        "length": 8.0,
+        "axis": "y"
+      }
+    ]
+  },
   "holes": [
     {
+      "id": "left_base_mount_hole",
+      "x": 35.0,
+      "y": 25.0,
+      "diameter": 12.0,
+      "hole_type": "through",
+      "depth": null,
+      "counterbore_diameter": null,
+      "counterbore_depth": null,
+      "countersink_diameter": null,
+      "countersink_angle": null,
+      "thread": null
+    },
+    {
+      "id": "right_base_mount_hole",
+      "x": 81.0,
+      "y": 25.0,
+      "diameter": 12.0,
+      "hole_type": "through",
+      "depth": null,
+      "counterbore_diameter": null,
+      "counterbore_depth": null,
+      "countersink_diameter": null,
+      "countersink_angle": null,
+      "thread": null
+    },
+    {
+      "id": "back_plate_large_hole",
       "x": 58.0,
-      "y": 50.0,
+      "y": 55.0,
       "diameter": 82.0,
-      "through": true,
-      "depth": null
+      "hole_type": "through",
+      "depth": null,
+      "counterbore_diameter": null,
+      "counterbore_depth": null,
+      "countersink_diameter": null,
+      "countersink_angle": null,
+      "thread": null
     }
   ],
-  "cuts": [
-    {
-      "x": 3.0,
-      "y": 11.0,
-      "z": 0.0,
-      "dx": 110.0,
-      "dy": 95.0,
-      "dz": 97.0
-    },
-    {
-      "x": 3.0,
-      "y": 0.0,
-      "z": 0.0,
-      "dx": 110.0,
-      "dy": 8.0,
-      "dz": 97.0
-    },
-    {
-      "x": 23.0,
-      "y": 0.0,
-      "z": 0.0,
-      "dx": 70.0,
-      "dy": 12.0,
-      "dz": 50.0
-    }
-  ],
+  "cuts": [],
   "fillets": [
-    7.0
+    7.0,
+    30.0
   ],
   "chamfers": [],
   "dimensions": [
     {
-      "name": "overall_width",
+      "name": "overall_width_back_plate",
       "nominal": 116.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "overall_height",
-      "nominal": 105.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "overall_depth",
+      "name": "front_base_outer_width",
       "nominal": 100.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "large_hole_diameter",
-      "nominal": 82.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "large_hole_y",
-      "nominal": 50.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "small_hole_diameter",
-      "nominal": 12.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "small_hole_spacing",
-      "nominal": 100.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "small_hole_x_edge",
-      "nominal": 8.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "small_hole_z_edge",
-      "nominal": 25.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "cutout_width",
+      "name": "front_base_inner_gap_width",
       "nominal": 70.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "cutout_half_width",
-      "nominal": 35.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "cutout_depth",
-      "nominal": 50.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "bottom_flange_y",
-      "nominal": 8.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "top_flat_depth",
-      "nominal": 12.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "diagonal_angle",
-      "nominal": 37.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "diagonal_radius",
-      "nominal": 30.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "diagonal_radius_z",
-      "nominal": 30.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
@@ -153,17 +169,107 @@
       "tol_minus": 0.1
     },
     {
-      "name": "bend_radius",
+      "name": "inside_bend_radius",
       "nominal": 5.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "fillet_radius",
+      "name": "corner_radius_six_places",
       "nominal": 7.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "front_side_radius",
+      "nominal": 30.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "base_mount_hole_diameter",
+      "nominal": 12.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "large_back_hole_diameter",
+      "nominal": 82.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "overall_depth",
+      "nominal": 100.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "overall_height",
+      "nominal": 105.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "side_plate_top_slope_angle",
+      "nominal": 37.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "rear_vertical_offset",
+      "nominal": 12.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "small_edge_offset",
+      "nominal": 8.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "base_hole_longitudinal_location",
+      "nominal": 25.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "base_hole_transverse_location_from_outer_side",
+      "nominal": 35.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "base_hole_transverse_spacing",
+      "nominal": 46.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "large_hole_center_from_top",
+      "nominal": 50.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "front_foot_length",
+      "nominal": 50.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "bottom_formed_lip_height",
+      "nominal": 8.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "rear_bend_setback",
+      "nominal": 30.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     }
   ],
-  "notes": "Sheet metal bracket with side walls, raised bottom flange with U-cutout, and large back hole."
+  "notes": "Sheet-metal angle bracket in plain carbon steel, density 7800 kg/m^3 per title block. Modeled as multibody plates with 3 mm default wall thickness: horizontal base, rear vertical plate, and left/right side webs. The side webs are shown with a 37 degree sloped top and R30 nose, but multibody only supports boxes/cylinders, so they are approximated as rectangular side plates; bend radii R5 and visible R7/R30 rounds are recorded but not geometrically exact. Large Ø82 through hole is in the rear vertical plate; two Ø12 through holes are in the horizontal base feet. Some coordinates are estimated from views: rear plate hole center placed at X=58 (centered in 116 width) and Y=55 from bottom based on 50 mm from top with 105 overall height; base hole Z location taken as 25 mm from the front edge and X locations as 35 mm from each side of the 116 mm bounding width (right at 81). Horizontal base plate width taken as 100 mm centered within the 116 mm rear plate, matching the 8 mm side offsets. Overall frame: X width, Y vertical height, Z depth."
 }
