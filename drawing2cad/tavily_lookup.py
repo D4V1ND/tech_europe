@@ -30,6 +30,7 @@ def _search(query: str, *, max_results: int = 5) -> dict:
     api_key = os.getenv("TAVILY_API_KEY")
     if not api_key:
         raise TavilyError("TAVILY_API_KEY is not set -- add it to your .env")
+    query = query.strip()[:400]          # Tavily rejects queries over 400 chars
     resp = requests.post(_TAVILY_URL, json={
         "api_key": api_key,
         "query": query,
@@ -64,12 +65,31 @@ _FIELD_QUERIES = {
 }
 
 
+_MAX_QUERY = 400          # Tavily hard limit
+_MAX_CONTEXT = 180        # keep the notes short so the full query fits
+
+
+def _trim_context(notes: str | None) -> str:
+    """spec.notes is often a long paragraph; keep just the first sentence/clause so the
+    query stays well under Tavily's 400-char cap."""
+    text = (notes or "").strip()
+    if not text:
+        return "a mechanical part"
+    # prefer the first sentence; fall back to a hard char cap
+    first = text.split(".")[0].strip() or text
+    if len(first) > _MAX_CONTEXT:
+        first = first[:_MAX_CONTEXT].rsplit(" ", 1)[0]
+    return first
+
+
 def research_field(spec, field: str) -> dict:
     """Look up a standard value for `field` given the part's context (from spec.notes),
     and return a suggestion shaped for the frontend TavilyQuestion card."""
-    context = (getattr(spec, "notes", None) or "").strip() or "a mechanical part"
+    context = _trim_context(getattr(spec, "notes", None))
     aspect = _FIELD_QUERIES.get(field, f"typical {field.replace('_', ' ')} in mm")
     query = f"What is the {aspect} for {context}? Give the standard engineering value."
+    if len(query) > _MAX_QUERY:
+        query = query[:_MAX_QUERY]
 
     data = _search(query)
     answer = data.get("answer") or ""
