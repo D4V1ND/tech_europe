@@ -67,7 +67,9 @@
   ],
   "cuts": [],
   "fillets": [],
-  "chamfers": [],
+  "chamfers": [
+    0.005
+  ],
   "dimensions": [
     {
       "name": "overall_width",
@@ -112,5 +114,5 @@
       "tol_minus": 0.01
     }
   ],
-  "notes": "Mounting plate with 4 through holes. Hole positions are derived from the 'EQUALLY SPACED FROM EDGES' note and the spacing dimensions. The corners are visually scalloped inward, so corner_style is set to 'scallop' despite the 'ROUNDED CORNERS' note in the title block."
+  "notes": "Mounting plate with 4 through holes and scalloped corners. Break all sharp edges 0.005-0.010."
 }

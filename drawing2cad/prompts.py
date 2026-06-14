@@ -70,11 +70,22 @@ Choose exactly one geometry variant:
    forcing a full rectangle: give profile_points as the 2D outline (absolute coordinates in
    the plane perpendicular to `axis`: axis x -> (y, z), axis y -> (x, z), axis z -> (x, y),
    counter-clockwise, first point not repeated) and `length` = the plate thickness along
-   `axis`; (x, y, z) only sets the base position along `axis`. Approximate a curved edge
-   (a radius like R30) with a few polygon points. A prism plate is far more faithful than a
+   `axis`; (x, y, z) only sets the base position along `axis`. A prism plate is far more faithful than a
    rectangular box for sloped/curved sheet-metal walls -- prefer it whenever the silhouette
-   is clearly non-rectangular. Triangular webs and small bend radii may still be approximated
-   by rectangular plates when the outline is unclear; note the approximation.
+   is clearly non-rectangular. For profiles containing dimensioned circular arcs, use
+   profile_start plus profile_segments instead of profile_points. Each segment has kind
+   "line" or "arc" and an end point; an arc also requires a mid point lying on the arc.
+   Keep all body fields complete: never emit placeholder bodies, and never emit a box
+   without positive dx/dy/dz or a cylinder without positive diameter/length. Triangular
+   webs and unclear bend radii may still be approximated; note the approximation.
+
+   MULTIBODY FINAL CHECK: compute the union bounding box of every operation="add" body
+   before returning JSON. Its X, Y, Z spans must match the drawing's explicit overall
+   width, height, and depth. Do not swap height and depth. A local 8 mm offset, lip, or
+   bend callout is not sheet thickness and must not become an 8 mm solid slab when the
+   drawing states a 3 mm default wall thickness. A hole's cylinder axis must be normal to
+   the face containing that hole: holes in horizontal feet usually use axis y in this
+   coordinate frame; holes in the rear X-Y plate use axis z.
 
 4. unsupported: use ONLY when the part cannot be represented as extruded, revolved, OR a
    multibody assembly of plates -- true freeform/cast/lofted/swept bodies. Do NOT mark a

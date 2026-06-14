@@ -39,8 +39,6 @@ def main(image_dir: Path) -> None:
     for img in images:
         out_dir = Path("out") / img.stem
         try:
-            if out_dir == Path("out/test_5"):
-                break
             res = reconstruct(img, out_dir=out_dir)
             rows.append({
                 "name": img.name,

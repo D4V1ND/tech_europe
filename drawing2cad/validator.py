@@ -12,7 +12,13 @@ import math
 
 from pydantic import BaseModel
 
-from .partspec import ExtrudedGeometry, PartSpec, RevolvedGeometry, UnsupportedGeometry
+from .partspec import (
+    ExtrudedGeometry,
+    MultiBodyGeometry,
+    PartSpec,
+    RevolvedGeometry,
+    UnsupportedGeometry,
+)
 from .cad_generator import normalize_to_mm
 
 # Loose relative band for the volume sanity check. Fillets, overlapping cuts and
@@ -203,24 +209,43 @@ def validate(spec: PartSpec, result, tol: float = 0.5) -> ValidationReport:
 
     # --- holes present: the hole axis point should be void, not material ---
     solid_wrapped = solids[0].wrapped if solids else None
-    for i, h in enumerate(spec.holes):
-        if h.hole_type == "through" or h.depth is None:
-            probe_z = th / 2.0
-        else:
-            probe_z = th - h.depth / 2.0          # inside the blind pocket
+    if isinstance(spec.geometry, MultiBodyGeometry):
+        hole_probes = []
+        for i, body in enumerate(spec.geometry.bodies):
+            if body.operation != "cut" or body.shape != "cylinder":
+                continue
+            half = body.length / 2.0
+            probe = {
+                "x": (body.x + half, body.y, body.z),
+                "y": (body.x, body.y + half, body.z),
+                "z": (body.x, body.y, body.z + half),
+            }[body.axis]
+            hole_probes.append((f"body{i}_cut_present", probe))
+    else:
+        hole_probes = []
+        for i, h in enumerate(spec.holes):
+            if h.hole_type == "through" or h.depth is None:
+                probe_z = th / 2.0
+            else:
+                probe_z = th - h.depth / 2.0
+            hole_probes.append((f"hole{i}_present", (h.x, h.y, probe_z)))
+
+    for name, (probe_x, probe_y, probe_z) in hole_probes:
         inside = None if solid_wrapped is None else _point_is_inside(
-            solid_wrapped, h.x, h.y, probe_z)
+            solid_wrapped, probe_x, probe_y, probe_z)
         if inside is None:
             checks.append(Check(
-                name=f"hole{i}_present", expected="void", measured="unknown", tol=0,
+                name=name, expected="void", measured="unknown", tol=0,
                 passed=True, detail="point-membership test unavailable; skipped",
             ))
         else:
             checks.append(Check(
-                name=f"hole{i}_present", expected="void",
+                name=name, expected="void",
                 measured=("material" if inside else "void"), tol=0,
                 passed=(not inside),
-                detail="" if not inside else f"no opening at ({h.x},{h.y})",
+                detail="" if not inside else (
+                    f"no opening at ({probe_x},{probe_y},{probe_z})"
+                ),
             ))
 
     # --- named dimensions: each callout against its own tolerance ---

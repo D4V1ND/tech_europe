@@ -82,7 +82,7 @@ def repair_loop(spec, out_dir, *, model=None, image_path=None,
                                  feedback=feedback, image_part=img)
 
         try:
-            result = run_code(code, out_dir)
+            result = run_code(code, out_dir, spec=spec)
         except Exception:
             feedback = "The code raised an exception:\n" + _tb.format_exc(limit=6)
             stop_reason = "crash"

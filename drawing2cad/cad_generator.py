@@ -14,7 +14,7 @@ from .partspec import (
 _EPS = 0.01
 
 
-def run_code(code: str, out_dir) -> cq.Workplane:
+def run_code(code: str, out_dir, *, spec: PartSpec | None = None) -> cq.Workplane:
     """Execute generated CadQuery code and export its source, STEP, and STL files."""
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -24,6 +24,10 @@ def run_code(code: str, out_dir) -> cq.Workplane:
         raise ValueError("Generated code did not define a `result` variable.")
     result = namespace["result"]
     (out_dir / "part.py").write_text(code, encoding="utf-8")
+    if spec is not None:
+        (out_dir / "partspec.json").write_text(
+            spec.model_dump_json(indent=2), encoding="utf-8"
+        )
     cq.exporters.export(result, str(out_dir / "part.step"))
     cq.exporters.export(result, str(out_dir / "part.stl"))
     return result
@@ -69,6 +73,19 @@ def normalize_to_mm(spec: PartSpec) -> PartSpec:
                     p.model_copy(update={"x": p.x * scale, "y": p.y * scale})
                     for p in b.profile_points
                 ],
+                "profile_start": (
+                    None if b.profile_start is None else b.profile_start.model_copy(
+                        update={"x": b.profile_start.x * scale, "y": b.profile_start.y * scale}
+                    )
+                ),
+                "profile_segments": [segment.model_copy(update={
+                    "end": segment.end.model_copy(update={
+                        "x": segment.end.x * scale, "y": segment.end.y * scale,
+                    }),
+                    "mid": None if segment.mid is None else segment.mid.model_copy(update={
+                        "x": segment.mid.x * scale, "y": segment.mid.y * scale,
+                    }),
+                }) for segment in b.profile_segments],
             }) for b in geometry.bodies]
         })
     elif isinstance(geometry, UnsupportedGeometry):
@@ -181,17 +198,31 @@ def _prism_expr(body) -> str:
     if body.operation == "cut":               # overshoot both faces for a clean cut
         offset -= _EPS
         length += 2 * _EPS
-    points = ", ".join(f"({float(p.x)}, {float(p.y)})" for p in body.profile_points)
+    if body.profile_segments:
+        start = body.profile_start
+        profile = f".moveTo({float(start.x)}, {float(start.y)})"
+        for segment in body.profile_segments:
+            if segment.kind == "arc":
+                profile += (
+                    f".threePointArc(({float(segment.mid.x)}, {float(segment.mid.y)}), "
+                    f"({float(segment.end.x)}, {float(segment.end.y)}))"
+                )
+            else:
+                profile += f".lineTo({float(segment.end.x)}, {float(segment.end.y)})"
+        profile += ".close()"
+    else:
+        points = ", ".join(f"({float(p.x)}, {float(p.y)})" for p in body.profile_points)
+        profile = f".polyline([{points}]).close()"
     # 'XZ' has a -Y normal in CadQuery: workplane(offset=-o) sits at global y=+o, and
     # extrude(-length) then advances toward +Y, so the prism spans y in [offset, offset+length].
     if body.axis == "y":
         return (
             f"cq.Workplane('XZ').workplane(offset={float(-offset)})"
-            f".polyline([{points}]).close().extrude({float(-length)})"
+            f"{profile}.extrude({float(-length)})"
         )
     return (
         f"cq.Workplane('{_PRISM_PLANE[body.axis]}').workplane(offset={float(offset)})"
-        f".polyline([{points}]).close().extrude({float(length)})"
+        f"{profile}.extrude({float(length)})"
     )
 
 
@@ -401,9 +432,16 @@ def generate_code(spec: PartSpec, feedback: str | None = None, *, model=None, us
 if __name__ == "__main__":
     import sys
 
-    json_path = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("drawing2cad/outputs/test_1.json")
+    if len(sys.argv) > 1:
+        json_path = Path(sys.argv[1])
+        output_name = json_path.stem
+    else:
+        # json_path = Path("drawing2cad/outputs/test_5_corrected.json")
+        json_path = Path("drawing2cad/outputs/test_1.json")
+        output_name = "test_1"
     loaded_spec = PartSpec.model_validate_json(json_path.read_text(encoding="utf-8"))
     generated_code = generate_code(loaded_spec)
-    output_dir = Path("out") / json_path.stem
-    run_code(generated_code, output_dir)
+    output_dir = Path("out") / output_name
+    run_code(generated_code, output_dir, spec=loaded_spec)
+    print(f"Loaded spec from {json_path}")
     print(f"Output written to {output_dir}")

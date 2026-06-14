@@ -71,7 +71,7 @@ def reconstruct(
 
         # Execute code → build solid + export files
         try:
-            result = run_code(code, out_dir)
+            result = run_code(code, out_dir, spec=spec)
         except Exception as e:
             feedback = f"Generated code raised an error: {e}"
             continue

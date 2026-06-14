@@ -51,7 +51,7 @@
       "tol_minus": 0.1
     },
     {
-      "name": "bottom_thickness",
+      "name": "floor_thickness",
       "nominal": 1.6,
       "tol_plus": 0.1,
       "tol_minus": 0.1
@@ -69,5 +69,5 @@
       "tol_minus": 0.1
     }
   ],
-  "notes": "Rectangular tray with rounded corners and uniform wall thickness. Modeled as an extruded rectangle with a pocket cut."
+  "notes": "Rectangular tray/lid with rounded corners and uniform wall thickness."
 }

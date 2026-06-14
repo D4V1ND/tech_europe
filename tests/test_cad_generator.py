@@ -1,6 +1,8 @@
+from pathlib import Path
+
 import pytest
 
-from drawing2cad.cad_generator import spec_to_code
+from drawing2cad.cad_generator import run_code, spec_to_code
 from drawing2cad.partspec import (
     Body,
     ExtrudedGeometry,
@@ -8,10 +10,12 @@ from drawing2cad.partspec import (
     MultiBodyGeometry,
     PartSpec,
     Point,
+    ProfileSegment,
     RevolvedGeometry,
     RevolvedSegment,
     UnsupportedGeometry,
 )
+from drawing2cad.validator import validate
 
 
 def _build(code: str):
@@ -98,6 +102,32 @@ def test_multibody_prism_plate_builds_sloped_profile():
     assert result.val().Volume() == pytest.approx(0.5 * 80 * 100 * 8, rel=1e-3)
 
 
+def test_multibody_prism_supports_circular_profile_arcs():
+    plate = Body(
+        shape="prism", operation="add", axis="z", length=3,
+        profile_start=Point(x=0, y=5),
+        profile_segments=[
+            ProfileSegment(kind="arc", mid=Point(x=1.465, y=1.465), end=Point(x=5, y=0)),
+            ProfileSegment(end=Point(x=20, y=0)),
+            ProfileSegment(end=Point(x=20, y=20)),
+            ProfileSegment(end=Point(x=0, y=20)),
+        ],
+    )
+    result = _build(spec_to_code(PartSpec(geometry=MultiBodyGeometry(bodies=[plate]))))
+    bb = result.val().BoundingBox()
+    assert (bb.xlen, bb.ylen, bb.zlen) == pytest.approx((20, 20, 3))
+    assert result.val().Volume() < 20 * 20 * 3
+
+
+def test_run_code_persists_the_exact_source_spec(tmp_path):
+    spec = PartSpec(geometry=ExtrudedGeometry(
+        profile_kind="rectangle", width=10, height=8, thickness=2
+    ))
+    run_code(spec_to_code(spec), tmp_path, spec=spec)
+    persisted = PartSpec.model_validate_json((tmp_path / "partspec.json").read_text())
+    assert persisted == spec
+
+
 def test_multibody_box_with_diameter_is_coerced_to_cylinder():
     # LLM mislabels a round hole as a "box" but fills diameter/length
     spec = PartSpec(geometry=MultiBodyGeometry(bodies=[
@@ -108,6 +138,28 @@ def test_multibody_box_with_diameter_is_coerced_to_cylinder():
     assert spec.geometry.bodies[1].shape == "cylinder"
     assert spec.sanity_check() == []
     assert len(_build(spec_to_code(spec)).solids().vals()) == 1
+
+
+def test_multibody_validator_checks_cut_cylinder_on_its_actual_axis():
+    spec = PartSpec(geometry=MultiBodyGeometry(bodies=[
+        Body(shape="box", operation="add", dx=20, dy=4, dz=20),
+        Body(shape="cylinder", operation="cut", axis="y", x=10, y=-1, z=10,
+             diameter=6, length=6),
+    ]))
+    report = validate(spec, _build(spec_to_code(spec)))
+    cut_check = next(check for check in report.checks if check.name == "body1_cut_present")
+    assert cut_check.passed
+
+
+def test_reviewed_test_5_spec_builds_expected_bracket():
+    spec_path = Path("drawing2cad/outputs/test_5_corrected.json")
+    spec = PartSpec.model_validate_json(spec_path.read_text(encoding="utf-8"))
+    assert spec.sanity_check() == []
+    result = _build(spec_to_code(spec))
+    bb = result.val().BoundingBox()
+    assert (bb.xlen, bb.ylen, bb.zlen) == pytest.approx((116, 105, 100))
+    report = validate(spec, result)
+    assert report.ok()
 
 
 def test_unsupported_geometry_is_not_generated():

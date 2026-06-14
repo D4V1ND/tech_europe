@@ -10,6 +10,14 @@ class Point(BaseModel):
     y: float
 
 
+class ProfileSegment(BaseModel):
+    """One edge of a closed 2D prism profile."""
+
+    kind: Literal["line", "arc"] = "line"
+    end: Point
+    mid: Point | None = None
+
+
 class ExtrudedGeometry(BaseModel):
     kind: Literal["extruded"] = "extruded"
     profile_kind: Literal["rectangle", "circle", "polygon"] = "rectangle"
@@ -85,6 +93,8 @@ class Body(BaseModel):
     diameter: float | None = None
     length: float | None = None
     profile_points: list[Point] = Field(default_factory=list)
+    profile_start: Point | None = None
+    profile_segments: list[ProfileSegment] = Field(default_factory=list)
     axis: Literal["x", "y", "z"] = "z"
 
     @model_validator(mode="before")
@@ -95,7 +105,7 @@ class Body(BaseModel):
         or vice-versa. Re-classify so the generator builds the intended solid."""
         if not isinstance(data, dict):
             return data
-        if data.get("profile_points"):          # only a prism carries an outline
+        if data.get("profile_points") or data.get("profile_segments"):
             return data if data.get("shape") == "prism" else {**data, "shape": "prism"}
         shape = data.get("shape", "box")
         has_box = all(data.get(k) is not None for k in ("dx", "dy", "dz"))
@@ -108,8 +118,15 @@ class Body(BaseModel):
 
     def _profile_span(self) -> tuple[float, float, float, float]:
         """(min_u, min_v, max_u, max_v) of the prism profile points."""
-        us = [p.x for p in self.profile_points]
-        vs = [p.y for p in self.profile_points]
+        points = list(self.profile_points)
+        if self.profile_start is not None:
+            points.append(self.profile_start)
+        for segment in self.profile_segments:
+            points.append(segment.end)
+            if segment.mid is not None:
+                points.append(segment.mid)
+        us = [p.x for p in points]
+        vs = [p.y for p in points]
         return min(us), min(vs), max(us), max(vs)
 
     def aabb(self) -> tuple[tuple[float, float, float], tuple[float, float, float]]:
@@ -119,7 +136,7 @@ class Body(BaseModel):
             return (self.x, self.y, self.z), (self.x + dx, self.y + dy, self.z + dz)
         if self.shape == "prism":
             ln = self.length or 0.0
-            if not self.profile_points:
+            if not self.profile_points and not self.profile_segments:
                 return (self.x, self.y, self.z), (self.x, self.y, self.z)
             u0, v0, u1, v1 = self._profile_span()
             if self.axis == "x":     # profile in (y, z), extrude along x
@@ -283,13 +300,48 @@ class PartSpec(BaseModel):
             adds = [b for b in geometry.bodies if b.operation == "add"]
             if not adds:
                 return ["multibody needs at least one 'add' body"]
+            if len(geometry.bodies) > 128:
+                errors.append("multibody has more than 128 bodies; extraction is likely malformed")
             for i, b in enumerate(geometry.bodies):
-                if b.shape == "box" and not (b.dx and b.dy and b.dz):
+                if b.shape == "box" and not (
+                    b.dx is not None and b.dx > 0
+                    and b.dy is not None and b.dy > 0
+                    and b.dz is not None and b.dz > 0
+                ):
                     errors.append(f"body{i} box missing positive dx/dy/dz")
-                if b.shape == "cylinder" and not (b.diameter and b.length):
+                if b.shape == "cylinder" and not (
+                    b.diameter is not None and b.diameter > 0
+                    and b.length is not None and b.length > 0
+                ):
                     errors.append(f"body{i} cylinder missing positive diameter/length")
-                if b.shape == "prism" and not (len(b.profile_points) >= 3 and b.length):
-                    errors.append(f"body{i} prism needs >=3 profile_points and positive length")
+                if b.shape == "prism":
+                    legacy_valid = len(b.profile_points) >= 3
+                    segmented_valid = b.profile_start is not None and len(b.profile_segments) >= 2
+                    if not ((legacy_valid or segmented_valid) and b.length and b.length > 0):
+                        errors.append(
+                            f"body{i} prism needs >=3 profile_points or a profile_start with "
+                            ">=2 profile_segments, plus positive length"
+                        )
+                    for j, segment in enumerate(b.profile_segments):
+                        if segment.kind == "arc" and segment.mid is None:
+                            errors.append(f"body{i} profile segment{j} arc needs a mid point")
+            bbox = geometry.bbox()
+            overall_axes = {
+                "overall_width": (0, "width"),
+                "overall_height": (1, "height"),
+                "overall_depth": (2, "depth"),
+            }
+            for dimension in self.dimensions:
+                mapping = overall_axes.get(dimension.name.lower())
+                if mapping is None:
+                    continue
+                axis, label = mapping
+                tolerance = max(dimension.tol_plus, dimension.tol_minus)
+                if abs(bbox[axis] - dimension.nominal) > tolerance:
+                    errors.append(
+                        f"multibody {label} {bbox[axis]} does not match "
+                        f"{dimension.name} {dimension.nominal}"
+                    )
             return errors
 
         if isinstance(geometry, ExtrudedGeometry):

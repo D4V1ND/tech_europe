@@ -1,0 +1,441 @@
+{
+  "units": "mm",
+  "geometry": {
+    "kind": "multibody",
+    "bodies": [
+      {
+        "shape": "prism",
+        "operation": "add",
+        "x": 0.0,
+        "y": 0.0,
+        "z": 97.0,
+        "dx": null,
+        "dy": null,
+        "dz": null,
+        "diameter": null,
+        "length": 3.0,
+        "profile_points": [],
+        "profile_start": {
+          "x": 0.0,
+          "y": 8.0
+        },
+        "profile_segments": [
+          {
+            "kind": "line",
+            "end": {
+              "x": 116.0,
+              "y": 8.0
+            },
+            "mid": null
+          },
+          {
+            "kind": "line",
+            "end": {
+              "x": 116.0,
+              "y": 98.0
+            },
+            "mid": null
+          },
+          {
+            "kind": "arc",
+            "end": {
+              "x": 109.0,
+              "y": 105.0
+            },
+            "mid": {
+              "x": 113.95,
+              "y": 102.95
+            }
+          },
+          {
+            "kind": "line",
+            "end": {
+              "x": 7.0,
+              "y": 105.0
+            },
+            "mid": null
+          },
+          {
+            "kind": "arc",
+            "end": {
+              "x": 0.0,
+              "y": 98.0
+            },
+            "mid": {
+              "x": 2.05,
+              "y": 102.95
+            }
+          }
+        ],
+        "axis": "z"
+      },
+      {
+        "shape": "prism",
+        "operation": "add",
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "dx": null,
+        "dy": null,
+        "dz": null,
+        "diameter": null,
+        "length": 3.0,
+        "profile_points": [],
+        "profile_start": {
+          "x": 0.0,
+          "y": 7.0
+        },
+        "profile_segments": [
+          {
+            "kind": "arc",
+            "end": {
+              "x": 7.0,
+              "y": 0.0
+            },
+            "mid": {
+              "x": 2.05,
+              "y": 2.05
+            }
+          },
+          {
+            "kind": "line",
+            "end": {
+              "x": 28.0,
+              "y": 0.0
+            },
+            "mid": null
+          },
+          {
+            "kind": "arc",
+            "end": {
+              "x": 35.0,
+              "y": 7.0
+            },
+            "mid": {
+              "x": 32.95,
+              "y": 2.05
+            }
+          },
+          {
+            "kind": "line",
+            "end": {
+              "x": 35.0,
+              "y": 100.0
+            },
+            "mid": null
+          },
+          {
+            "kind": "line",
+            "end": {
+              "x": 0.0,
+              "y": 100.0
+            },
+            "mid": null
+          }
+        ],
+        "axis": "y"
+      },
+      {
+        "shape": "prism",
+        "operation": "add",
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "dx": null,
+        "dy": null,
+        "dz": null,
+        "diameter": null,
+        "length": 3.0,
+        "profile_points": [],
+        "profile_start": {
+          "x": 81.0,
+          "y": 7.0
+        },
+        "profile_segments": [
+          {
+            "kind": "arc",
+            "end": {
+              "x": 88.0,
+              "y": 0.0
+            },
+            "mid": {
+              "x": 83.05,
+              "y": 2.05
+            }
+          },
+          {
+            "kind": "line",
+            "end": {
+              "x": 109.0,
+              "y": 0.0
+            },
+            "mid": null
+          },
+          {
+            "kind": "arc",
+            "end": {
+              "x": 116.0,
+              "y": 7.0
+            },
+            "mid": {
+              "x": 113.95,
+              "y": 2.05
+            }
+          },
+          {
+            "kind": "line",
+            "end": {
+              "x": 116.0,
+              "y": 100.0
+            },
+            "mid": null
+          },
+          {
+            "kind": "line",
+            "end": {
+              "x": 81.0,
+              "y": 100.0
+            },
+            "mid": null
+          }
+        ],
+        "axis": "y"
+      },
+      {
+        "shape": "box",
+        "operation": "add",
+        "x": 0.0,
+        "y": 0.0,
+        "z": 70.0,
+        "dx": 116.0,
+        "dy": 3.0,
+        "dz": 30.0,
+        "diameter": null,
+        "length": null,
+        "profile_points": [],
+        "profile_start": null,
+        "profile_segments": [],
+        "axis": "z"
+      },
+      {
+        "shape": "prism",
+        "operation": "add",
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "dx": null,
+        "dy": null,
+        "dz": null,
+        "diameter": null,
+        "length": 3.0,
+        "profile_points": [],
+        "profile_start": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "profile_segments": [
+          {
+            "kind": "line",
+            "end": {
+              "x": 0.0,
+              "y": 100.0
+            },
+            "mid": null
+          },
+          {
+            "kind": "line",
+            "end": {
+              "x": 105.0,
+              "y": 100.0
+            },
+            "mid": null
+          },
+          {
+            "kind": "line",
+            "end": {
+              "x": 58.0,
+              "y": 25.0
+            },
+            "mid": null
+          },
+          {
+            "kind": "arc",
+            "end": {
+              "x": 30.0,
+              "y": 0.0
+            },
+            "mid": {
+              "x": 42.0,
+              "y": 8.0
+            }
+          }
+        ],
+        "axis": "x"
+      },
+      {
+        "shape": "prism",
+        "operation": "add",
+        "x": 113.0,
+        "y": 0.0,
+        "z": 0.0,
+        "dx": null,
+        "dy": null,
+        "dz": null,
+        "diameter": null,
+        "length": 3.0,
+        "profile_points": [],
+        "profile_start": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "profile_segments": [
+          {
+            "kind": "line",
+            "end": {
+              "x": 0.0,
+              "y": 100.0
+            },
+            "mid": null
+          },
+          {
+            "kind": "line",
+            "end": {
+              "x": 105.0,
+              "y": 100.0
+            },
+            "mid": null
+          },
+          {
+            "kind": "line",
+            "end": {
+              "x": 58.0,
+              "y": 25.0
+            },
+            "mid": null
+          },
+          {
+            "kind": "arc",
+            "end": {
+              "x": 30.0,
+              "y": 0.0
+            },
+            "mid": {
+              "x": 42.0,
+              "y": 8.0
+            }
+          }
+        ],
+        "axis": "x"
+      },
+      {
+        "shape": "cylinder",
+        "operation": "cut",
+        "x": 58.0,
+        "y": 55.0,
+        "z": 95.0,
+        "dx": null,
+        "dy": null,
+        "dz": null,
+        "diameter": 82.0,
+        "length": 8.0,
+        "profile_points": [],
+        "profile_start": null,
+        "profile_segments": [],
+        "axis": "z"
+      },
+      {
+        "shape": "cylinder",
+        "operation": "cut",
+        "x": 35.0,
+        "y": -1.0,
+        "z": 25.0,
+        "dx": null,
+        "dy": null,
+        "dz": null,
+        "diameter": 12.0,
+        "length": 6.0,
+        "profile_points": [],
+        "profile_start": null,
+        "profile_segments": [],
+        "axis": "y"
+      },
+      {
+        "shape": "cylinder",
+        "operation": "cut",
+        "x": 81.0,
+        "y": -1.0,
+        "z": 25.0,
+        "dx": null,
+        "dy": null,
+        "dz": null,
+        "diameter": 12.0,
+        "length": 6.0,
+        "profile_points": [],
+        "profile_start": null,
+        "profile_segments": [],
+        "axis": "y"
+      }
+    ]
+  },
+  "holes": [],
+  "cuts": [],
+  "fillets": [],
+  "chamfers": [],
+  "dimensions": [
+    {
+      "name": "overall_width",
+      "nominal": 116.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "overall_height",
+      "nominal": 105.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "overall_depth",
+      "nominal": 100.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "wall_thickness",
+      "nominal": 3.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "large_hole_diameter",
+      "nominal": 82.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "foot_hole_diameter",
+      "nominal": 12.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "side_profile_radius",
+      "nominal": 30.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "corner_radius_six_places",
+      "nominal": 7.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "inside_bend_radius",
+      "nominal": 5.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    }
+  ],
+  "notes": "Reviewed test_5 reconstruction. Uses true circular profile arcs for the six R7 corners and the curved side transition. The R5 sheet-metal bends remain approximated by overlapping 3 mm plates."
+}

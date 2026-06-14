@@ -73,31 +73,25 @@
       "tol_minus": 0.005
     },
     {
+      "name": "horizontal_leg_thickness",
+      "nominal": 0.5,
+      "tol_plus": 0.005,
+      "tol_minus": 0.005
+    },
+    {
       "name": "overall_height",
       "nominal": 1.25,
       "tol_plus": 0.005,
       "tol_minus": 0.005
     },
     {
-      "name": "horizontal_leg_height",
-      "nominal": 0.5,
-      "tol_plus": 0.005,
-      "tol_minus": 0.005
-    },
-    {
-      "name": "notch_width",
+      "name": "top_slot_width",
       "nominal": 0.75,
       "tol_plus": 0.005,
       "tol_minus": 0.005
     },
     {
-      "name": "notch_depth",
-      "nominal": 0.25,
-      "tol_plus": 0.005,
-      "tol_minus": 0.005
-    },
-    {
-      "name": "slot_width",
+      "name": "top_slot_depth",
       "nominal": 0.25,
       "tol_plus": 0.005,
       "tol_minus": 0.005
@@ -107,7 +101,13 @@
       "nominal": 1.25,
       "tol_plus": 0.005,
       "tol_minus": 0.005
+    },
+    {
+      "name": "right_slot_width",
+      "nominal": 0.25,
+      "tol_plus": 0.005,
+      "tol_minus": 0.005
     }
   ],
-  "notes": "Slot depth is not explicitly dimensioned; estimated as 0.75 based on visual proportions. Units inferred as inches."
+  "notes": "The depth of the slot on the right side of the horizontal leg is not explicitly dimensioned; it is estimated as 0.75 based on the position of the dashed line in the front view."
 }

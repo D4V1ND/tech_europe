@@ -150,6 +150,50 @@ def _require_done(run_id: str) -> dict:
     return job
 
 
+def _flatten_spec(spec) -> dict | None:
+    """Flatten the new discriminated-union PartSpec into the legacy flat shape the
+    frontend PartSpecTab expects: profile_kind/width/height/thickness at the top level,
+    holes with a boolean `through` field."""
+    if spec is None:
+        return None
+    from drawing2cad.partspec import ExtrudedGeometry, RevolvedGeometry
+
+    geo = spec.geometry
+    if isinstance(geo, ExtrudedGeometry):
+        flat = {
+            "profile_kind": geo.profile_kind,
+            "width": geo.width,
+            "height": geo.height,
+            "diameter": geo.diameter,
+            "thickness": geo.thickness,
+            "profile_points": [{"x": p.x, "y": p.y} for p in geo.profile_points],
+        }
+    elif isinstance(geo, RevolvedGeometry):
+        bw, _, bt = geo.bbox()
+        flat = {"profile_kind": "circle", "width": None, "height": None,
+                "diameter": bw, "thickness": bt, "profile_points": []}
+    else:
+        bw, bh, bt = geo.bbox()
+        flat = {"profile_kind": "rectangle", "width": bw, "height": bh,
+                "diameter": None, "thickness": bt, "profile_points": []}
+
+    return {
+        "units": spec.units,
+        **flat,
+        "holes": [{"x": h.x, "y": h.y, "diameter": h.diameter,
+                   "through": h.hole_type == "through", "depth": h.depth}
+                  for h in spec.holes],
+        "cuts": [{"x": c.x, "y": c.y, "z": c.z,
+                  "dx": c.dx, "dy": c.dy, "dz": c.dz} for c in spec.cuts],
+        "fillets": spec.fillets,
+        "chamfers": spec.chamfers,
+        "dimensions": [{"name": d.name, "nominal": d.nominal,
+                        "tol_plus": d.tol_plus, "tol_minus": d.tol_minus}
+                       for d in spec.dimensions],
+        "notes": spec.notes,
+    }
+
+
 def _build_response(run_id: str, job: dict, cache_bust: bool = False) -> dict:
     result = job["result"]
     spec = result.get("spec")
@@ -161,11 +205,13 @@ def _build_response(run_id: str, job: dict, cache_bust: bool = False) -> dict:
         "passed": result["passed"],
         "attempts": result["attempts"],
         "score": result["score"],
-        "spec": spec.model_dump() if spec else None,
+        "spec": _flatten_spec(spec),
         "report": {
-            "passed": report.passed,
+            "passed": report.ok(),
             "attempts": result["attempts"],
-            "checks": [c.model_dump() for c in report.checks],
+            "checks": [{"name": c.name, "target": c.expected, "actual": c.measured,
+                        "tolerance": c.tol, "passed": c.passed}
+                       for c in report.checks],
         } if report else None,
         "code": result.get("code") or "",
         "stl_url": f"/runs/{run_id}/stl{suffix}",
