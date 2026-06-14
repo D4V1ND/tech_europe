@@ -7,21 +7,13 @@ import { ScriptEditor } from '@/components/ScriptEditor'
 import { DrawingPanel } from '@/components/DrawingPanel'
 import { VisualReviewPanel } from '@/components/VisualReviewPanel'
 import { TavilyResearchPanel } from '@/components/TavilyResearchPanel'
-import { TavilySuggestionCard } from '@/components/TavilySuggestionCard'
-import { getResult, rerun, tavilySuggest, applySuggestion, ReconstructResult, TavilyQuestion, PartSpec } from '@/lib/api'
+import { getResult, rerun, ReconstructResult, PartSpec } from '@/lib/api'
 import type { ViewPreset } from '@/components/ModelViewer3D'
 
 const ModelViewer3D = dynamic(
   () => import('@/components/ModelViewer3D').then(m => m.ModelViewer3D),
   { ssr: false, loading: () => <div className="flex-1 rounded-xl" style={{ background: '#0a0a18', minHeight: 300 }} /> }
 )
-
-const MOCK_TAVILY_QUESTION: TavilyQuestion = {
-  field: 'thickness',
-  question: 'Wall thickness could not be read clearly. Tavily found: XY-300 series typically uses 5.0mm wall thickness.',
-  tavily_suggestion: 5.0,
-  source_url: 'https://manufacturer-specs.example.com/xy-300',
-}
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -190,33 +182,11 @@ export default function ResultPage() {
   const [result, setResult] = useState<ReconstructResult | null>(null)
   const [view, setView] = useState<ViewPreset>('iso')
   const [rerunLoading, setRerunLoading] = useState(false)
-  const [showTavily, setShowTavily] = useState(true)
-  const [tavilyQ, setTavilyQ] = useState<TavilyQuestion | null>(null)
   const [bottomTab, setBottomTab] = useState<BottomTab>('parameters')
 
   useEffect(() => {
     getResult(runId).then(setResult).catch(console.error)
   }, [runId])
-
-  // Real Tavily lookup for the floating card: fetch a standard wall-thickness suggestion
-  // once the run is loaded (the demo fixture keeps its canned card instead).
-  useEffect(() => {
-    if (runId === 'demo' || !result || result.status !== 'done') return
-    let cancelled = false
-    tavilySuggest(runId, 'thickness')
-      .then(q => { if (!cancelled && q.tavily_suggestion != null) setTavilyQ(q) })
-      .catch(() => {})
-    return () => { cancelled = true }
-  }, [runId, result?.status])
-
-  const handleAcceptSuggestion = async (field: string, value: number) => {
-    setShowTavily(false)
-    try {
-      setResult(await applySuggestion(runId, field, value))
-    } catch (e) {
-      console.error(e)
-    }
-  }
 
   const handleRerun = async (code: string) => {
     if (!result) return
@@ -278,17 +248,6 @@ export default function ResultPage() {
           />
         )}
       </div>
-
-      {/* Tavily suggestion — real lookup for actual runs, canned card for the demo fixture */}
-      {showTavily && result.status === 'done' && (runId === 'demo' || tavilyQ) && (
-        <div className="flex justify-start">
-          <TavilySuggestionCard
-            question={runId === 'demo' ? MOCK_TAVILY_QUESTION : (tavilyQ as TavilyQuestion)}
-            onAccept={runId === 'demo' ? () => setShowTavily(false) : handleAcceptSuggestion}
-            onIgnore={() => setShowTavily(false)}
-          />
-        </div>
-      )}
 
       {/* Tabbed bottom section */}
       <div style={{ background: 'var(--card-bg)', border: '1px solid var(--border)', borderRadius: 12 }}>
