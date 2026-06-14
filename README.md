@@ -29,27 +29,9 @@ Each completed run writes:
 
 ## Supported Geometry
 
-`PartSpec` currently supports:
+Drawing2CAD currently supports a broad set of common mechanical CAD features, including extrusions, revolved parts, multi-body operations, rounded boxes, cylinders, spheres, sweeps, slots, holes, counterbores, pockets, notches, and fillets.
 
-- Extruded rectangle, circle, and polygon profiles
-- Stepped revolved parts with coaxial bores
-- Multi-body unions and cuts
-- Boxes and rounded boxes
-- Cylinders on global or arbitrary 3D axes
-- Solid and hollow spheres
-- Polygon prisms with line and circular-arc outlines
-- Rectangular and circular sweeps along 3D line/arc paths
-- Capsule-shaped slots and drains
-- Through, blind, threaded, counterbored, and countersunk holes
-- Counterbores on the start, end, or both ends of an arbitrary-axis bore
-- Rectangular pockets and notches
-- Direction-specific body fillets
-- Rounded and scalloped profile corners
-- Inch-to-millimetre normalization
-
-These primitives cover plates, brackets, trays, stepped shafts, bent constant-section
-arms, forked mounts, sphere packings, and many machined parts. Freeform surfaces,
-variable-section lofts, and exact sheet-metal development remain approximation cases.
+These capabilities cover many typical engineering parts such as plates, brackets, trays, stepped shafts, bent arms, forked mounts, and machined components. More complex shapes like freeform surfaces, variable lofts, and exact sheet-metal development are still handled as approximation cases.
 
 ## Stack
 
