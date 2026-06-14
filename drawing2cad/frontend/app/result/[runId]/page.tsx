@@ -271,7 +271,7 @@ export default function ResultPage() {
               </div>
         )}
         {bottomTab === 'validation' && <ValidationPanel report={result.report} />}
-        {bottomTab === 'review'     && <VisualReviewPanel runId={result.run_id} />}
+        {bottomTab === 'review'     && <VisualReviewPanel runId={result.run_id} onRefined={setResult} />}
         {bottomTab === 'script'     && <ScriptEditor code={result.code} stepUrl={result.step_url} onRerun={handleRerun} />}
       </div>
     </div>

@@ -172,6 +172,31 @@ export async function visualValidate(runId: string): Promise<VisualVerdict> {
   return res.json()
 }
 
+export async function refine(runId: string, discrepancies: string[]): Promise<ReconstructResult> {
+  // Kick off the async refine job (re-extraction can take minutes).
+  const res = await fetch('/api/refine', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ run_id: runId, discrepancies }),
+  })
+  if (!res.ok) {
+    const detail = await res.json().catch(() => null)
+    throw new Error(detail?.detail ?? `Refine failed: ${res.status}`)
+  }
+
+  // Poll the run until it flips back to 'done' (or a refine error surfaces).
+  while (true) {
+    await sleep(2000)
+    const poll = await fetch(`/runs/${runId}`)
+    if (!poll.ok) throw new Error(`Poll failed: ${poll.status}`)
+    const data = await poll.json()
+    if (data.status === 'refining') continue
+    if (data.refine_error) throw new Error(data.refine_error)
+    if (data.status === 'done') return data
+    throw new Error(`Unexpected status: ${data.status}`)
+  }
+}
+
 export async function continueWithAnswers(
   _runId: string,
   _answers: { field: string; value: number | null }[]

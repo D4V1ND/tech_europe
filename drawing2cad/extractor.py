@@ -14,12 +14,17 @@ load_dotenv()
 DEFAULT_OUTPUT_DIR = Path(__file__).resolve().parent / "outputs"
 
 
-def extract(image_part: dict, model=model_gemini) -> PartSpec:
-    """Read a drawing image (LangChain image part) into a PartSpec via a vision LLM."""
-    message = HumanMessage(content=[
-        {"type": "text", "text": EXTRACTION_PROMPT},
-        image_part,
-    ])
+def extract(image_part: dict, model=model_gemini, feedback: str | None = None) -> PartSpec:
+    """Read a drawing image (LangChain image part) into a PartSpec via a vision LLM.
+
+    When `feedback` is given (e.g. discrepancies from the visual validator plus the prior
+    spec), it is appended after the base prompt so the model can produce a CORRECTED,
+    more detailed extraction on a second pass."""
+    content: list = [{"type": "text", "text": EXTRACTION_PROMPT}]
+    if feedback:
+        content.append({"type": "text", "text": feedback})
+    content.append(image_part)
+    message = HumanMessage(content=content)
     if isinstance(model, ChatOpenAI):
         # OpenAI strict JSON Schema rejects the geometry union's `oneOf`.
         structured = model.with_structured_output(
@@ -43,10 +48,11 @@ def extract_drawing_info(
     path: str | Path,
     model=model_gemini,
     output_path: str | Path | None = None,
+    feedback: str | None = None,
 ) -> PartSpec:
     """Load a drawing, extract its PartSpec, and optionally save it as JSON."""
     image_part = load_image_part(path)
-    spec = extract(image_part, model=model)
+    spec = extract(image_part, model=model, feedback=feedback)
     if output_path is not None:
         save_part_spec(spec, output_path)
     return spec

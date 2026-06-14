@@ -3,6 +3,7 @@ import time
 import uuid
 import mimetypes
 import threading
+import traceback
 from pathlib import Path
 
 # Ensure the parent directory is on sys.path so `drawing2cad` is importable
@@ -43,6 +44,11 @@ class VisualValidateBody(BaseModel):
     run_id: str
 
 
+class RefineBody(BaseModel):
+    run_id: str
+    discrepancies: list[str]
+
+
 # ── Endpoints ────────────────────────────────────────────────────────────────
 
 @app.post("/api/reconstruct")
@@ -79,9 +85,14 @@ def get_run(run_id: str):
         raise HTTPException(404, "Run not found")
     if job["status"] == "running":
         return {"run_id": run_id, "status": "running", "step": job["step"]}
+    if job["status"] == "refining":
+        return {"run_id": run_id, "status": "refining"}
     if job["status"] == "error":
         raise HTTPException(500, detail=job.get("error", "Reconstruction failed"))
-    return _build_response(run_id, job)
+    resp = _build_response(run_id, job)
+    if job.get("refine_error"):
+        resp["refine_error"] = job["refine_error"]
+    return resp
 
 
 @app.get("/runs/{run_id}/stl")
@@ -139,6 +150,45 @@ def visual_validate_run(body: VisualValidateBody):
     }
 
 
+@app.post("/api/refine")
+def refine_run(body: RefineBody):
+    """Second pass: feed the visual review's discrepancies back to the extractor, then
+    regenerate and re-validate. Runs ASYNC -- re-extraction can take minutes, which would
+    blow past the dev proxy's request timeout if done synchronously. Returns immediately;
+    the client polls GET /runs/{run_id} until status flips back to 'done'."""
+    job = _require_done(body.run_id)
+    if job["result"].get("spec") is None:
+        raise HTTPException(400, "No previous spec to refine")
+    job["status"] = "refining"
+    job["refine_error"] = None
+    threading.Thread(
+        target=_run_refine_job,
+        args=(body.run_id, body.discrepancies),
+        daemon=True,
+    ).start()
+    return {"run_id": body.run_id, "status": "refining"}
+
+
+def _run_refine_job(run_id: str, discrepancies: list[str]):
+    job = _jobs[run_id]
+    try:
+        from drawing2cad.refiner import refine
+        result = refine(
+            job["drawing_path"], job["result"]["spec"], discrepancies, Path(job["out_dir"])
+        )
+        if result.get("spec") is None or result["stop_reason"].startswith("sanity_check_failed"):
+            job["refine_error"] = f"refined extraction was invalid: {result['stop_reason']}"
+        else:
+            job["result"] = result
+            job["stl_version"] = int(time.time())   # new geometry -> bust the viewer cache
+            job["refine_error"] = None
+    except Exception as e:
+        traceback.print_exc()                 # full traceback to the server console
+        job["refine_error"] = f"refine failed: {type(e).__name__}: {e}"
+    finally:
+        job["status"] = "done"
+
+
 @app.get("/runs/{run_id}/render")
 def get_render(run_id: str):
     job = _require_done(run_id)
@@ -159,6 +209,7 @@ async def rerun(body: RerunBody):
         raise HTTPException(400, detail=str(e))
 
     job["result"]["code"] = body.code
+    job["stl_version"] = int(time.time())
     # Bust the browser cache so the 3D viewer reloads the new STL
     return _build_response(body.run_id, job, cache_bust=True)
 
@@ -172,8 +223,9 @@ def _run_job(run_id: str, drawing_path: Path, out_dir: Path):
     try:
         from drawing2cad.orchestrator import reconstruct
         result = reconstruct(drawing_path, out_dir=out_dir, on_step=on_step)
-        _jobs[run_id]["status"] = "done"
         _jobs[run_id]["result"] = result
+        _jobs[run_id]["stl_version"] = int(time.time())
+        _jobs[run_id]["status"] = "done"
     except Exception as e:
         _jobs[run_id]["status"] = "error"
         _jobs[run_id]["error"] = str(e)
@@ -236,7 +288,14 @@ def _build_response(run_id: str, job: dict, cache_bust: bool = False) -> dict:
     result = job["result"]
     spec = result.get("spec")
     report = result.get("report")
-    suffix = f"?t={int(time.time())}" if cache_bust else ""
+    # Stamp the model URLs with a version that bumps whenever the geometry is rebuilt
+    # (initial run, refine, rerun). This makes the URL change so the 3D viewer reloads
+    # the NEW mesh instead of serving the cached old one -- regardless of which endpoint
+    # delivers the response (direct return or the poll on GET /runs/{id}).
+    version = job.get("stl_version")
+    if cache_bust and not version:
+        version = int(time.time())
+    suffix = f"?t={version}" if version else ""
     return {
         "run_id": run_id,
         "status": "done",

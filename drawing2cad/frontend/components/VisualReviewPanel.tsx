@@ -1,25 +1,45 @@
 'use client'
 import { useState } from 'react'
-import { visualValidate, VisualVerdict } from '@/lib/api'
+import { visualValidate, refine, VisualVerdict, ReconstructResult } from '@/lib/api'
 
 interface VisualReviewPanelProps {
   runId: string
+  onRefined?: (result: ReconstructResult) => void
 }
 
-export function VisualReviewPanel({ runId }: VisualReviewPanelProps) {
+export function VisualReviewPanel({ runId, onRefined }: VisualReviewPanelProps) {
   const [loading, setLoading] = useState(false)
   const [verdict, setVerdict] = useState<VisualVerdict | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [refining, setRefining] = useState(false)
+  const [refined, setRefined] = useState(false)
 
   const run = async () => {
     setLoading(true)
     setError(null)
+    setRefined(false)
     try {
       setVerdict(await visualValidate(runId))
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Visual review failed')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const runRefine = async () => {
+    if (!verdict) return
+    setRefining(true)
+    setError(null)
+    try {
+      const updated = await refine(runId, verdict.discrepancies)
+      onRefined?.(updated)
+      setRefined(true)
+      setVerdict(null)   // verdict is stale now — the model changed
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Refine failed')
+    } finally {
+      setRefining(false)
     }
   }
 
@@ -104,9 +124,38 @@ export function VisualReviewPanel({ runId }: VisualReviewPanelProps) {
                     </li>
                   ))}
                 </ul>
+
+                {/* Feed the findings back into the extractor for a corrected spec */}
+                <button
+                  onClick={runRefine}
+                  disabled={refining}
+                  style={{
+                    marginTop: 16,
+                    padding: '9px 18px', fontSize: 13, fontWeight: 600,
+                    color: refining ? 'rgba(255,255,255,0.4)' : 'white',
+                    background: refining ? 'rgba(255,255,255,0.06)' : 'rgba(255,170,51,0.85)',
+                    border: 'none', borderRadius: 8,
+                    cursor: refining ? 'default' : 'pointer',
+                    transition: 'background 0.15s',
+                  }}
+                >
+                  {refining ? 'Re-extracting with feedback…' : '↻ Refine extraction with this feedback'}
+                </button>
+                <div style={{ marginTop: 8, fontSize: 11, color: 'rgba(255,255,255,0.35)', lineHeight: 1.5 }}>
+                  Sends these findings back to the extractor to produce a corrected, more
+                  detailed spec, then rebuilds and re-validates the model.
+                </div>
               </div>
             )}
           </div>
+        </div>
+      )}
+
+      {refined && (
+        <div style={{ marginTop: 16, padding: '12px 16px', borderRadius: 8, fontSize: 13,
+          background: 'rgba(52,211,153,0.1)', color: '#34d399', border: '1px solid rgba(52,211,153,0.3)' }}>
+          ✓ Model refined. The 3D view, parameters, and validation have been updated with the
+          new extraction. Run the review again to check the improved result.
         </div>
       )}
     </div>

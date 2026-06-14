@@ -144,6 +144,33 @@ the part and any interpretation that needs review.
 """
 
 
+REFINEMENT_TEMPLATE = """SECOND-PASS REFINEMENT. A previous extraction of THIS SAME drawing
+produced the PartSpec below. An automated visual review -- which rendered a 3D model from
+that spec and compared it against the drawing -- found the problems listed afterwards.
+
+Produce a NEW, corrected PartSpec that FIXES these specific problems while KEEPING every
+feature that was already correct. Look again, more carefully, at exactly the features the
+review flagged: add what is missing, fix wrong shapes/positions, remove anything spurious.
+Do not regress the parts that were already right. Re-read all dimensions to stay consistent.
+
+PREVIOUS PARTSPEC (to correct, not to copy blindly):
+{spec_json}
+
+VISUAL REVIEW FOUND THESE PROBLEMS:
+{discrepancies}
+"""
+
+
+def build_refinement_feedback(previous_spec, notes: list[str]) -> str:
+    """Compose the second-pass feedback block from the prior spec and the review findings.
+
+    `previous_spec` is a PartSpec (or anything with model_dump_json); `notes` is the list
+    of discrepancy strings from the visual validator."""
+    spec_json = previous_spec.model_dump_json(indent=2)
+    bullets = "\n".join(f"- {note}" for note in notes) or "- (no specific notes)"
+    return REFINEMENT_TEMPLATE.format(spec_json=spec_json, discrepancies=bullets)
+
+
 GEN_SYSTEM = """You are a CAD engineer. Given a PartSpec as JSON, write a CadQuery
 (Python) script that reconstructs it. Put every dimension in a named variable, build the
 solid into `result`, preserve the PartSpec coordinate frame, and output Python code only.
