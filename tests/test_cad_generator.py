@@ -1,4 +1,5 @@
 from pathlib import Path
+import math
 
 import pytest
 
@@ -160,6 +161,41 @@ def test_reviewed_test_5_spec_builds_expected_bracket():
     assert (bb.xlen, bb.ylen, bb.zlen) == pytest.approx((116, 105, 100))
     report = validate(spec, result)
     assert report.ok()
+
+
+def test_generates_connected_tetrahedron_of_20_hollow_spheres():
+    spacing = 10.0
+    outside_diameter = 11.0
+    b1 = (spacing, 0.0, 0.0)
+    b2 = (spacing / 2, math.sqrt(3) * spacing / 2, 0.0)
+    b3 = (spacing / 2, math.sqrt(3) * spacing / 6, math.sqrt(2 / 3) * spacing)
+    bodies = []
+    for i in range(4):
+        for j in range(4 - i):
+            for k in range(4 - i - j):
+                bodies.append(Body(
+                    shape="sphere",
+                    x=i * b1[0] + j * b2[0] + k * b3[0],
+                    y=i * b1[1] + j * b2[1] + k * b3[1],
+                    z=i * b1[2] + j * b2[2] + k * b3[2],
+                    diameter=outside_diameter,
+                    wall_thickness=1.0,
+                ))
+    assert len(bodies) == 20
+    spec = PartSpec(geometry=MultiBodyGeometry(bodies=bodies))
+    assert spec.sanity_check() == []
+    result = _build(spec_to_code(spec))
+    bb = result.val().BoundingBox()
+    assert bb.xlen == pytest.approx(41.0)
+    assert bb.zlen == pytest.approx(35.4949, rel=1e-4)
+    assert len(result.solids().vals()) == 1
+
+
+def test_hollow_sphere_rejects_wall_thicker_than_radius():
+    spec = PartSpec(geometry=MultiBodyGeometry(bodies=[
+        Body(shape="sphere", diameter=10, wall_thickness=5),
+    ]))
+    assert any("invalid wall_thickness" in error for error in spec.sanity_check())
 
 
 def test_unsupported_geometry_is_not_generated():

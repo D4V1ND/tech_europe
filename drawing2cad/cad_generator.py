@@ -69,6 +69,9 @@ def normalize_to_mm(spec: PartSpec) -> PartSpec:
                 "dz": None if b.dz is None else b.dz * scale,
                 "diameter": None if b.diameter is None else b.diameter * scale,
                 "length": None if b.length is None else b.length * scale,
+                "wall_thickness": (
+                    None if b.wall_thickness is None else b.wall_thickness * scale
+                ),
                 "profile_points": [
                     p.model_copy(update={"x": p.x * scale, "y": p.y * scale})
                     for p in b.profile_points
@@ -227,7 +230,7 @@ def _prism_expr(body) -> str:
 
 
 def _body_expr(body) -> str:
-    """CadQuery expression for one multi-body Body (box, oriented cylinder, or prism)."""
+    """CadQuery expression for one multi-body Body."""
     if body.shape == "prism":
         return _prism_expr(body)
     if body.shape == "box":
@@ -236,6 +239,21 @@ def _body_expr(body) -> str:
             f"{float(body.dz)}, centered=(False, False, False))"
             f".translate(({float(body.x)}, {float(body.y)}, {float(body.z)}))"
         )
+    if body.shape == "sphere":
+        outer = (
+            f"cq.Workplane('XY').add(cq.Solid.makeSphere({float(body.diameter / 2)}, "
+            f"cq.Vector({float(body.x)}, {float(body.y)}, {float(body.z)}), "
+            "cq.Vector(0, 0, 1), -90, 90, 360))"
+        )
+        if body.wall_thickness is None:
+            return outer
+        inner_radius = body.diameter / 2 - body.wall_thickness
+        inner = (
+            f"cq.Workplane('XY').add(cq.Solid.makeSphere({float(inner_radius)}, "
+            f"cq.Vector({float(body.x)}, {float(body.y)}, {float(body.z)}), "
+            "cq.Vector(0, 0, 1), -90, 90, 360))"
+        )
+        return f"({outer}).cut({inner})"
     radius = (body.diameter or 0.0) / 2.0
     length = body.length or 0.0
     x, y, z = body.x, body.y, body.z

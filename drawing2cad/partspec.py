@@ -69,12 +69,13 @@ class RevolvedGeometry(BaseModel):
 
 
 class Body(BaseModel):
-    """One sub-solid of a multi-body part: an axis-aligned box or a cylinder, placed in
+    """One sub-solid of a multi-body part: a box, cylinder, sphere, or prism placed in
     the shared part frame. operation 'add' unions it in, 'cut' subtracts it (use a cut
     cylinder for a hole/opening in any face -- pick its axis to match the face normal).
 
     box:      size (dx, dy, dz); (x, y, z) is the MIN corner.
     cylinder: diameter + length along `axis`; (x, y, z) is the CENTER of the base face.
+    sphere:   diameter; (x, y, z) is its CENTER. Set wall_thickness for a hollow shell.
     prism:    a 2D polygon profile_points extruded `length` along `axis`. The points are
               ABSOLUTE coordinates in the plane perpendicular to `axis` (axis x -> (y, z),
               axis y -> (x, z), axis z -> (x, y)); (x, y, z) positions the base only along
@@ -82,7 +83,7 @@ class Body(BaseModel):
               with a non-rectangular outline -- a sloped/tapered or curve-topped sheet-metal
               side wall, a gusset, a trapezoidal flange."""
 
-    shape: Literal["box", "cylinder", "prism"] = "box"
+    shape: Literal["box", "cylinder", "sphere", "prism"] = "box"
     operation: Literal["add", "cut"] = "add"
     x: float = 0.0
     y: float = 0.0
@@ -92,6 +93,7 @@ class Body(BaseModel):
     dz: float | None = None
     diameter: float | None = None
     length: float | None = None
+    wall_thickness: float | None = None
     profile_points: list[Point] = Field(default_factory=list)
     profile_start: Point | None = None
     profile_segments: list[ProfileSegment] = Field(default_factory=list)
@@ -110,6 +112,8 @@ class Body(BaseModel):
         shape = data.get("shape", "box")
         has_box = all(data.get(k) is not None for k in ("dx", "dy", "dz"))
         has_cyl = data.get("diameter") is not None and data.get("length") is not None
+        if shape == "sphere":
+            return data
         if shape == "box" and not has_box and has_cyl:
             return {**data, "shape": "cylinder"}
         if shape == "cylinder" and not has_cyl and has_box:
@@ -152,6 +156,11 @@ class Body(BaseModel):
                 return (u0, self.y, v0), (u1, self.y + ln, v1)
             return (u0, v0, self.z), (u1, v1, self.z + ln)   # axis z: (x, y)
         r = (self.diameter or 0.0) / 2.0
+        if self.shape == "sphere":
+            return (
+                (self.x - r, self.y - r, self.z - r),
+                (self.x + r, self.y + r, self.z + r),
+            )
         ln = self.length or 0.0
         if self.axis == "z":
             return (self.x - r, self.y - r, self.z), (self.x + r, self.y + r, self.z + ln)
@@ -321,6 +330,13 @@ class PartSpec(BaseModel):
                     and b.length is not None and b.length > 0
                 ):
                     errors.append(f"body{i} cylinder missing positive diameter/length")
+                if b.shape == "sphere":
+                    if b.diameter is None or b.diameter <= 0:
+                        errors.append(f"body{i} sphere missing positive diameter")
+                    if b.wall_thickness is not None and not (
+                        0 < b.wall_thickness < b.diameter / 2
+                    ):
+                        errors.append(f"body{i} sphere has invalid wall_thickness")
                 if b.shape == "prism":
                     legacy_valid = len(b.profile_points) >= 3
                     segmented_valid = b.profile_start is not None and len(b.profile_segments) >= 2

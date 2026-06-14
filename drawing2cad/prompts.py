@@ -50,7 +50,7 @@ Choose exactly one geometry variant:
 
 3. multibody: a part made of several flat plates / blocks at different orientations --
    brackets, weldments, angle/gusset plates, and bent sheet metal approximated as plates.
-   Provide a `bodies` list. Each body is a "box" or a "cylinder" placed in ONE shared 3D
+   Provide a `bodies` list. Each body is a "box", "cylinder", "sphere", or "prism" placed in ONE shared 3D
    frame whose origin is the overall bounding-box bottom-left corner: X = width (front
    view), Y = height (vertical), Z = depth (into the page). A box has size dx, dy, dz with
    (x, y, z) at its MIN corner -- model each plate/leg as a thin box (thickness = wall
@@ -92,6 +92,16 @@ Choose exactly one geometry variant:
    drawing states a 3 mm default wall thickness. A hole's cylinder axis must be normal to
    the face containing that hole: holes in horizontal feet usually use axis y in this
    coordinate frame; holes in the rear X-Y plate use axis z.
+
+   Repeated balls, hollow spheres, and sphere packings are multibody geometry, NOT
+   unsupported. Use shape "sphere", put its CENTER in (x, y, z), fill diameter with the
+   outside diameter, and fill wall_thickness for a hollow sphere. Emit one add body per
+   physical sphere. For a regular tetrahedral packing with equal adjacent center spacing
+   d, use lattice basis vectors (d,0,0), (d/2,sqrt(3)d/2,0), and
+   (d/2,sqrt(3)d/6,sqrt(2/3)d). For an n-layer tetrahedron, emit integer combinations
+   i*b1+j*b2+k*b3 where i,j,k >= 0 and i+j+k < n; n=4 gives 20 spheres. Reconcile the
+   inferred outside diameter and d against the printed overall dimensions. If overall
+   width is 41 across four sphere centers, then 3*d + outside_diameter = 41.
 
 4. unsupported: use ONLY when the part cannot be represented as extruded, revolved, OR a
    multibody assembly of plates -- true freeform/cast/lofted/swept bodies. Do NOT mark a
