@@ -127,27 +127,53 @@ def get_drawing(run_id: str):
 
 @app.post("/api/visual-validate")
 def visual_validate_run(body: VisualValidateBody):
-    """Layer 2 check: render the built solid and ask the vision LLM to compare it to
-    the original drawing. On-demand only (a vision call); advisory, never a gate."""
+    """Layer 2 check: render the built solid and ask the vision LLM to compare it to the
+    original drawing. Runs ASYNC -- the vision call's latency is highly variable and a slow
+    one would blow past the dev proxy's request timeout if done synchronously. Returns
+    immediately; the client polls GET /runs/{run_id}/visual. Advisory, never a gate."""
     job = _require_done(body.run_id)
     out_dir = Path(job["out_dir"])
-    stl_path = out_dir / "part.stl"
-    if not stl_path.exists():
+    if not (out_dir / "part.stl").exists():
         raise HTTPException(404, "STL not generated")
+    job["visual"] = {"status": "running", "result": None, "error": None}
+    threading.Thread(target=_run_visual_job, args=(body.run_id,), daemon=True).start()
+    return {"run_id": body.run_id, "status": "running"}
+
+
+def _run_visual_job(run_id: str):
+    job = _jobs[run_id]
+    out_dir = Path(job["out_dir"])
     try:
         from drawing2cad.visual_validator import visual_validate
         verdict, _ = visual_validate(
-            job["drawing_path"], stl_path, render_path=out_dir / "render.png"
+            job["drawing_path"], out_dir / "part.stl", render_path=out_dir / "render.png"
         )
+        job["visual"] = {"status": "done", "error": None, "result": {
+            "matches": verdict.matches,
+            "confidence": verdict.confidence,
+            "discrepancies": verdict.discrepancies,
+            "assessment": verdict.assessment,
+            "render_url": f"/runs/{run_id}/render?t={int(time.time())}",
+        }}
     except Exception as e:
-        raise HTTPException(500, detail=f"visual validation failed: {e}")
-    return {
-        "matches": verdict.matches,
-        "confidence": verdict.confidence,
-        "discrepancies": verdict.discrepancies,
-        "assessment": verdict.assessment,
-        "render_url": f"/runs/{body.run_id}/render?t={int(time.time())}",
-    }
+        traceback.print_exc()                 # full traceback to the server console
+        job["visual"] = {"status": "done", "result": None,
+                         "error": f"visual validation failed: {type(e).__name__}: {e}"}
+
+
+@app.get("/runs/{run_id}/visual")
+def get_visual(run_id: str):
+    job = _jobs.get(run_id)
+    if not job:
+        raise HTTPException(404, "Run not found")
+    visual = job.get("visual")
+    if not visual:
+        return {"status": "idle"}
+    if visual["status"] == "running":
+        return {"status": "running"}
+    if visual["error"]:
+        return {"status": "done", "error": visual["error"]}
+    return {"status": "done", **visual["result"]}
 
 
 @app.post("/api/refine")

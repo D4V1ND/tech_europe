@@ -163,13 +163,28 @@ export interface VisualVerdict {
 }
 
 export async function visualValidate(runId: string): Promise<VisualVerdict> {
+  // Kick off the async review job (vision-call latency is highly variable).
   const res = await fetch('/api/visual-validate', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ run_id: runId }),
   })
-  if (!res.ok) throw new Error(`Visual validation failed: ${res.status}`)
-  return res.json()
+  if (!res.ok) {
+    const detail = await res.json().catch(() => null)
+    throw new Error(detail?.detail ?? `Visual validation failed: ${res.status}`)
+  }
+
+  // Poll until the review finishes (or surfaces an error).
+  while (true) {
+    await sleep(2000)
+    const poll = await fetch(`/runs/${runId}/visual`)
+    if (!poll.ok) throw new Error(`Poll failed: ${poll.status}`)
+    const data = await poll.json()
+    if (data.status === 'running') continue
+    if (data.error) throw new Error(data.error)
+    if (data.status === 'done') return data as VisualVerdict
+    throw new Error(`Unexpected status: ${data.status}`)
+  }
 }
 
 export async function refine(runId: string, discrepancies: string[]): Promise<ReconstructResult> {
