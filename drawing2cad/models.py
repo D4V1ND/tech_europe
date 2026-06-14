@@ -8,7 +8,10 @@ load_dotenv()
 
 model_gemini = ChatGoogleGenerativeAI(
                             model="gemini-3.1-pro-preview",
-                            temperature=0.0)
+                            thinking_level="high",
+                            temperature=0.0, 
+                            top_p=0.1,
+                            media_resolution="MEDIA_RESOLUTION_HIGH")
 
 model_openai = ChatOpenAI(
                             model="gpt-5.5", 

@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic'
 import { ValidationPanel } from '@/components/ValidationPanel'
 import { ScriptEditor } from '@/components/ScriptEditor'
 import { DrawingPanel } from '@/components/DrawingPanel'
+import { VisualReviewPanel } from '@/components/VisualReviewPanel'
 import { TavilySuggestionCard } from '@/components/TavilySuggestionCard'
 import { getResult, rerun, ReconstructResult, TavilyQuestion, PartSpec } from '@/lib/api'
 import type { ViewPreset } from '@/components/ModelViewer3D'
@@ -171,11 +172,12 @@ function PartSpecTab({ spec }: { spec: PartSpec }) {
 
 // ── Page ─────────────────────────────────────────────────────────────────────
 
-type BottomTab = 'parameters' | 'validation' | 'script'
+type BottomTab = 'parameters' | 'validation' | 'review' | 'script'
 
 const BOTTOM_TABS: { id: BottomTab; label: string }[] = [
   { id: 'parameters', label: 'Parameters' },
   { id: 'validation', label: 'Validation' },
+  { id: 'review',     label: 'AI Review' },
   { id: 'script',     label: 'Parametric Script' },
 ]
 
@@ -269,6 +271,7 @@ export default function ResultPage() {
               </div>
         )}
         {bottomTab === 'validation' && <ValidationPanel report={result.report} />}
+        {bottomTab === 'review'     && <VisualReviewPanel runId={result.run_id} />}
         {bottomTab === 'script'     && <ScriptEditor code={result.code} stepUrl={result.step_url} onRerun={handleRerun} />}
       </div>
     </div>

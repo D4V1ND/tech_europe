@@ -1,83 +1,74 @@
 {
   "units": "in",
   "geometry": {
-    "kind": "multibody",
-    "bodies": [
+    "kind": "extruded",
+    "profile_kind": "polygon",
+    "width": null,
+    "height": null,
+    "diameter": null,
+    "profile_points": [
       {
-        "shape": "box",
-        "operation": "add",
         "x": 0.0,
-        "y": 0.0,
-        "z": 0.0,
-        "dx": 1.75,
-        "dy": 0.5,
-        "dz": 1.25,
-        "diameter": null,
-        "length": null,
-        "axis": "z"
+        "y": 0.0
       },
       {
-        "shape": "box",
-        "operation": "add",
+        "x": 1.75,
+        "y": 0.0
+      },
+      {
+        "x": 1.75,
+        "y": 0.5
+      },
+      {
+        "x": 0.5,
+        "y": 0.5
+      },
+      {
+        "x": 0.5,
+        "y": 1.25
+      },
+      {
         "x": 0.0,
-        "y": 0.0,
-        "z": 0.0,
-        "dx": 0.5,
-        "dy": 1.25,
-        "dz": 1.25,
-        "diameter": null,
-        "length": null,
-        "axis": "z"
-      },
-      {
-        "shape": "box",
-        "operation": "add",
-        "x": 0.0,
-        "y": 1.0,
-        "z": 0.0,
-        "dx": 1.75,
-        "dy": 0.25,
-        "dz": 1.25,
-        "diameter": null,
-        "length": null,
-        "axis": "z"
-      },
-      {
-        "shape": "box",
-        "operation": "cut",
-        "x": 1.0,
-        "y": 0.0,
-        "z": 0.25,
-        "dx": 0.75,
-        "dy": 0.5,
-        "dz": 0.5,
-        "diameter": null,
-        "length": null,
-        "axis": "z"
-      },
-      {
-        "shape": "box",
-        "operation": "cut",
-        "x": 1.0,
-        "y": 1.0,
-        "z": 0.25,
-        "dx": 0.75,
-        "dy": 0.25,
-        "dz": 0.75,
-        "diameter": null,
-        "length": null,
-        "axis": "z"
+        "y": 1.25
       }
-    ]
+    ],
+    "thickness": 1.25,
+    "corner_radius": 0.0,
+    "corner_style": "round"
   },
   "holes": [],
-  "cuts": [],
+  "cuts": [
+    {
+      "x": 0.0,
+      "y": 1.0,
+      "z": 0.25,
+      "dx": 0.5,
+      "dy": 0.25,
+      "dz": 0.75,
+      "corner_radius": 0.0
+    },
+    {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.5,
+      "dx": 0.75,
+      "dy": 0.5,
+      "dz": 0.25,
+      "corner_radius": 0.0
+    }
+  ],
   "fillets": [],
   "chamfers": [],
   "dimensions": [
     {
-      "name": "overall_width",
+      "name": "overall_length",
       "nominal": 1.75,
+      "tol_plus": 0.005,
+      "tol_minus": 0.005
+    },
+    {
+      "name": "horizontal_leg_length",
+      "nominal": 1.25,
       "tol_plus": 0.005,
       "tol_minus": 0.005
     },
@@ -88,14 +79,14 @@
       "tol_minus": 0.005
     },
     {
-      "name": "side_extension_length",
-      "nominal": 1.25,
+      "name": "horizontal_leg_height",
+      "nominal": 0.5,
       "tol_plus": 0.005,
       "tol_minus": 0.005
     },
     {
-      "name": "bottom_leg_thickness",
-      "nominal": 0.5,
+      "name": "overall_depth",
+      "nominal": 1.25,
       "tol_plus": 0.005,
       "tol_minus": 0.005
     },
@@ -112,11 +103,11 @@
       "tol_minus": 0.005
     },
     {
-      "name": "front_slot_height",
+      "name": "right_slot_width",
       "nominal": 0.25,
       "tol_plus": 0.005,
       "tol_minus": 0.005
     }
   ],
-  "notes": "Best-effort multibody/block model of the forked bracket shown. Inch units inferred from decimal dimensions. Overall bounding box interpreted as X=1.75 wide, Y=1.25 high, Z=1.25 deep. Model uses three rectangular add bodies for the lower/base mass, left upright/web, and upper arm, plus two rectangular cut bodies for the front lower fork opening and the top rear U-notch. Several undimensioned positions/thicknesses are estimated from view proportions: left upright/web thickness about 0.50 in, upper arm thickness 0.25 in, front lower fork opening starts about x=1.00 and z=0.25, top notch located approximately x=1.00 to 1.75 and z=0.25 to 1.00. No holes, fillets, or chamfers are shown."
+  "notes": "Depth of the slot on the right side is not explicitly dimensioned; estimated as 0.75 based on visual proportions in the front and top views."
 }

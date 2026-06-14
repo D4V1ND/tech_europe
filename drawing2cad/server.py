@@ -39,6 +39,10 @@ class RerunBody(BaseModel):
     code: str
 
 
+class VisualValidateBody(BaseModel):
+    run_id: str
+
+
 # ── Endpoints ────────────────────────────────────────────────────────────────
 
 @app.post("/api/reconstruct")
@@ -108,6 +112,40 @@ def get_drawing(run_id: str):
         raise HTTPException(404, "Drawing not found")
     mime, _ = mimetypes.guess_type(str(path))
     return FileResponse(path, media_type=mime or "image/png")
+
+
+@app.post("/api/visual-validate")
+def visual_validate_run(body: VisualValidateBody):
+    """Layer 2 check: render the built solid and ask the vision LLM to compare it to
+    the original drawing. On-demand only (a vision call); advisory, never a gate."""
+    job = _require_done(body.run_id)
+    out_dir = Path(job["out_dir"])
+    stl_path = out_dir / "part.stl"
+    if not stl_path.exists():
+        raise HTTPException(404, "STL not generated")
+    try:
+        from drawing2cad.visual_validator import visual_validate
+        verdict, _ = visual_validate(
+            job["drawing_path"], stl_path, render_path=out_dir / "render.png"
+        )
+    except Exception as e:
+        raise HTTPException(500, detail=f"visual validation failed: {e}")
+    return {
+        "matches": verdict.matches,
+        "confidence": verdict.confidence,
+        "discrepancies": verdict.discrepancies,
+        "assessment": verdict.assessment,
+        "render_url": f"/runs/{body.run_id}/render?t={int(time.time())}",
+    }
+
+
+@app.get("/runs/{run_id}/render")
+def get_render(run_id: str):
+    job = _require_done(run_id)
+    path = Path(job["out_dir"]) / "render.png"
+    if not path.exists():
+        raise HTTPException(404, "Render not generated")
+    return FileResponse(path, media_type="image/png", filename="render.png")
 
 
 @app.post("/api/rerun")

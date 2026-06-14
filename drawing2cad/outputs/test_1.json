@@ -26,12 +26,12 @@
   },
   "holes": [
     {
-      "id": "bolt_hole_top",
+      "id": "hole_cbore_top",
       "x": 38.0,
       "y": 66.0,
       "diameter": 5.3,
       "hole_type": "counterbore",
-      "depth": 18.0,
+      "depth": null,
       "counterbore_diameter": 7.8,
       "counterbore_depth": 4.0,
       "countersink_diameter": null,
@@ -39,25 +39,12 @@
       "thread": null
     },
     {
-      "id": "bolt_hole_right",
-      "x": 66.0,
-      "y": 38.0,
-      "diameter": 5.3,
-      "hole_type": "counterbore",
-      "depth": 18.0,
-      "counterbore_diameter": 7.8,
-      "counterbore_depth": 4.0,
-      "countersink_diameter": null,
-      "countersink_angle": null,
-      "thread": null
-    },
-    {
-      "id": "bolt_hole_bottom",
+      "id": "hole_cbore_bottom",
       "x": 38.0,
       "y": 10.0,
       "diameter": 5.3,
       "hole_type": "counterbore",
-      "depth": 18.0,
+      "depth": null,
       "counterbore_diameter": 7.8,
       "counterbore_depth": 4.0,
       "countersink_diameter": null,
@@ -65,12 +52,25 @@
       "thread": null
     },
     {
-      "id": "bolt_hole_left",
+      "id": "hole_cbore_right",
+      "x": 66.0,
+      "y": 38.0,
+      "diameter": 5.3,
+      "hole_type": "counterbore",
+      "depth": null,
+      "counterbore_diameter": 7.8,
+      "counterbore_depth": 4.0,
+      "countersink_diameter": null,
+      "countersink_angle": null,
+      "thread": null
+    },
+    {
+      "id": "hole_cbore_left",
       "x": 10.0,
       "y": 38.0,
       "diameter": 5.3,
       "hole_type": "counterbore",
-      "depth": 18.0,
+      "depth": null,
       "counterbore_diameter": 7.8,
       "counterbore_depth": 4.0,
       "countersink_diameter": null,
@@ -85,95 +85,89 @@
   "chamfers": [],
   "dimensions": [
     {
-      "name": "overall_outer_diameter",
+      "name": "flange_outer_diameter",
       "nominal": 76.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "overall_axial_length",
-      "nominal": 26.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "rear_boss_outer_diameter",
+      "name": "hub_outer_diameter",
       "nominal": 48.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "central_counterbore_diameter",
+      "name": "large_bore_diameter",
       "nominal": 38.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "central_through_bore_diameter",
+      "name": "small_bore_diameter",
       "nominal": 28.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "central_counterbore_depth",
-      "nominal": 16.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "flange_to_boss_shoulder_length",
-      "nominal": 18.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "bolt_circle_diameter",
+      "name": "pitch_circle_diameter",
       "nominal": 56.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "bolt_hole_pilot_diameter",
-      "nominal": 5.3,
+      "name": "overall_length",
+      "nominal": 26.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "bolt_hole_counterbore_diameter",
-      "nominal": 7.8,
+      "name": "flange_thickness",
+      "nominal": 18.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "bolt_hole_counterbore_depth",
-      "nominal": 4.0,
+      "name": "large_bore_depth",
+      "nominal": 16.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "central_counterbore_internal_fillet_radius",
-      "nominal": 2.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "radial_cross_hole_diameter",
-      "nominal": 5.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "radial_cross_hole_axial_position_from_front",
+      "name": "radial_hole_z_position",
       "nominal": 7.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "radial_cross_hole_angular_position_degrees",
-      "nominal": 30.0,
-      "tol_plus": 0.5,
-      "tol_minus": 0.5
+      "name": "counterbore_depth",
+      "nominal": 4.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "counterbore_diameter",
+      "nominal": 7.8,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "through_hole_diameter",
+      "nominal": 5.3,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "radial_hole_diameter",
+      "nominal": 5.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "internal_fillet_radius",
+      "nominal": 2.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
     }
   ],
-  "notes": "Views identified as front view looking along the part axis and section A-A through the axis/selected holes. Model is a stepped revolved flange: OD 76 flange, rear OD 48 boss, overall axial length 26, central through bore Ø28 with front counterbore Ø38 x 16 deep and R2 internal corner. Four axial counterbored bolt holes are on Ø56 bolt circle at 90 degree spacing; pilot Ø5.3 through the 18 mm flange thickness with Ø7.8 counterbore 4 deep from the front face. Drawing also shows a radial/cross drilled Ø5 passage located 7 mm from the front face and at 30 degrees in the front view, opening from the outside diameter into the central counterbore; this radial hole is not directly representable in the revolved PartSpec geometry/holes schema and is recorded here for review. No title-block tolerances shown; provisional ±0.1 mm used for linear/diameter dimensions and ±0.5 deg for the angular callout."
+  "notes": "Part is a revolved flange. Includes 4 axial counterbored holes on a 56mm PCD. There is one radial hole of diameter 5mm located at Z=7mm from the front face, which is not modeled in the holes array as it is radial."
 }

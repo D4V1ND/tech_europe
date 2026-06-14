@@ -154,6 +154,24 @@ export async function rerun(runId: string, code: string): Promise<ReconstructRes
   return res.json()
 }
 
+export interface VisualVerdict {
+  matches: boolean
+  confidence: number
+  discrepancies: string[]
+  assessment: string
+  render_url: string
+}
+
+export async function visualValidate(runId: string): Promise<VisualVerdict> {
+  const res = await fetch('/api/visual-validate', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ run_id: runId }),
+  })
+  if (!res.ok) throw new Error(`Visual validation failed: ${res.status}`)
+  return res.json()
+}
+
 export async function continueWithAnswers(
   _runId: string,
   _answers: { field: string; value: number | null }[]

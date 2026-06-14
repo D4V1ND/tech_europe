@@ -1,82 +1,74 @@
 {
   "units": "in",
   "geometry": {
-    "kind": "multibody",
-    "bodies": [
+    "kind": "extruded",
+    "profile_kind": "polygon",
+    "width": null,
+    "height": null,
+    "diameter": null,
+    "profile_points": [
       {
-        "shape": "box",
-        "operation": "add",
         "x": 0.0,
-        "y": 0.0,
-        "z": 0.0,
-        "dx": 1.75,
-        "dy": 0.5,
-        "dz": 1.25,
-        "diameter": null,
-        "length": null,
-        "profile_points": [],
-        "profile_start": null,
-        "profile_segments": [],
-        "axis": "z"
+        "y": 0.0
       },
       {
-        "shape": "box",
-        "operation": "add",
-        "x": 0.0,
-        "y": 0.0,
-        "z": 0.0,
-        "dx": 0.5,
-        "dy": 1.25,
-        "dz": 1.25,
-        "diameter": null,
-        "length": null,
-        "profile_points": [],
-        "profile_start": null,
-        "profile_segments": [],
-        "axis": "z"
+        "x": 1.75,
+        "y": 0.0
       },
       {
-        "shape": "box",
-        "operation": "cut",
-        "x": 0.75,
-        "y": 0.0,
-        "z": 0.5,
-        "dx": 1.0,
-        "dy": 0.5,
-        "dz": 0.25,
-        "diameter": null,
-        "length": null,
-        "profile_points": [],
-        "profile_start": null,
-        "profile_segments": [],
-        "axis": "z"
+        "x": 1.75,
+        "y": 0.5
       },
       {
-        "shape": "box",
-        "operation": "cut",
+        "x": 0.5,
+        "y": 0.5
+      },
+      {
+        "x": 0.5,
+        "y": 1.25
+      },
+      {
         "x": 0.0,
-        "y": 1.0,
-        "z": 0.25,
-        "dx": 0.5,
-        "dy": 0.25,
-        "dz": 0.75,
-        "diameter": null,
-        "length": null,
-        "profile_points": [],
-        "profile_start": null,
-        "profile_segments": [],
-        "axis": "z"
+        "y": 1.25
       }
-    ]
+    ],
+    "thickness": 1.25,
+    "corner_radius": 0.0,
+    "corner_style": "round"
   },
   "holes": [],
-  "cuts": [],
+  "cuts": [
+    {
+      "x": 0.0,
+      "y": 1.0,
+      "z": 0.25,
+      "dx": 0.5,
+      "dy": 0.25,
+      "dz": 0.75,
+      "corner_radius": 0.0
+    },
+    {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.5,
+      "dx": 0.75,
+      "dy": 0.5,
+      "dz": 0.25,
+      "corner_radius": 0.0
+    }
+  ],
   "fillets": [],
   "chamfers": [],
   "dimensions": [
     {
-      "name": "overall_width",
+      "name": "overall_length",
       "nominal": 1.75,
+      "tol_plus": 0.005,
+      "tol_minus": 0.005
+    },
+    {
+      "name": "horizontal_leg_length",
+      "nominal": 1.25,
       "tol_plus": 0.005,
       "tol_minus": 0.005
     },
@@ -87,47 +79,35 @@
       "tol_minus": 0.005
     },
     {
+      "name": "horizontal_leg_height",
+      "nominal": 0.5,
+      "tol_plus": 0.005,
+      "tol_minus": 0.005
+    },
+    {
       "name": "overall_depth",
       "nominal": 1.25,
       "tol_plus": 0.005,
       "tol_minus": 0.005
     },
     {
-      "name": "base_extension_from_upright_inner_face",
-      "nominal": 1.25,
-      "tol_plus": 0.005,
-      "tol_minus": 0.005
-    },
-    {
-      "name": "base_thickness",
-      "nominal": 0.5,
-      "tol_plus": 0.005,
-      "tol_minus": 0.005
-    },
-    {
-      "name": "base_fork_slot_width",
-      "nominal": 0.25,
-      "tol_plus": 0.005,
-      "tol_minus": 0.005
-    },
-    {
-      "name": "upright_top_notch_width",
+      "name": "top_slot_width",
       "nominal": 0.75,
       "tol_plus": 0.005,
       "tol_minus": 0.005
     },
     {
-      "name": "upright_top_notch_depth",
+      "name": "top_slot_depth",
       "nominal": 0.25,
       "tol_plus": 0.005,
       "tol_minus": 0.005
     },
     {
-      "name": "upright_width_thickness",
-      "nominal": 0.5,
+      "name": "right_slot_width",
+      "nominal": 0.25,
       "tol_plus": 0.005,
       "tol_minus": 0.005
     }
   ],
-  "notes": "Views interpreted as third-angle: top view above the front view, right-side view at lower right, plus isometric. Units are inches from decimal dimensions. Model is an L-shaped block/bracket with a 0.50 high base/floor, a 0.50 wide upright at the left, a centered 0.25 wide fork slot cut into the base from the right end, and a centered 0.75 wide by 0.25 deep notch in the top of the upright. The base fork slot length was not explicitly dimensioned; estimated as 1.00 in long, starting at X=0.75 and opening through the right face, based on the top view/isometric proportions. Upright width/thickness of 0.50 in is deduced from 1.75 overall width minus the 1.25 extension dimension."
+  "notes": "Depth of the slot on the right side is not explicitly dimensioned; estimated as 0.75 based on visual proportions in the front and top views."
 }
