@@ -65,9 +65,16 @@ Choose exactly one geometry variant:
    a hole/opening in ANY face by choosing its axis to match that face's normal (a hole in
    a horizontal floor is a cut cylinder with axis y; a hole in a vertical plate, axis z).
    Make the plates overlap slightly where they join so the union stays a single solid.
-   Prefer multibody over unsupported for bent sheet metal whenever you can read the plate
-   sizes and bend locations -- it scores far better than a plain block. Triangular webs
-   and small bend radii may be approximated by rectangular plates; note the approximation.
+   For a flat plate whose OUTLINE is NOT rectangular -- a side wall that slopes or tapers,
+   a curve-topped or trapezoidal wall, a triangular gusset -- use shape "prism" instead of
+   forcing a full rectangle: give profile_points as the 2D outline (absolute coordinates in
+   the plane perpendicular to `axis`: axis x -> (y, z), axis y -> (x, z), axis z -> (x, y),
+   counter-clockwise, first point not repeated) and `length` = the plate thickness along
+   `axis`; (x, y, z) only sets the base position along `axis`. Approximate a curved edge
+   (a radius like R30) with a few polygon points. A prism plate is far more faithful than a
+   rectangular box for sloped/curved sheet-metal walls -- prefer it whenever the silhouette
+   is clearly non-rectangular. Triangular webs and small bend radii may still be approximated
+   by rectangular plates when the outline is unclear; note the approximation.
 
 4. unsupported: use ONLY when the part cannot be represented as extruded, revolved, OR a
    multibody assembly of plates -- true freeform/cast/lofted/swept bodies. Do NOT mark a

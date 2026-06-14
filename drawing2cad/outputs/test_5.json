@@ -7,113 +7,226 @@
         "shape": "box",
         "operation": "add",
         "x": 0.0,
-        "y": 0.0,
-        "z": 0.0,
+        "y": 8.0,
+        "z": 97.0,
         "dx": 116.0,
-        "dy": 8.0,
-        "dz": 100.0,
+        "dy": 97.0,
+        "dz": 3.0,
         "diameter": null,
         "length": null,
+        "profile_points": [],
         "axis": "z"
       },
       {
         "shape": "box",
         "operation": "add",
         "x": 0.0,
-        "y": 8.0,
+        "y": 0.0,
         "z": 0.0,
-        "dx": 8.0,
-        "dy": 97.0,
-        "dz": 100.0,
-        "diameter": null,
-        "length": null,
-        "axis": "z"
-      },
-      {
-        "shape": "box",
-        "operation": "add",
-        "x": 108.0,
-        "y": 8.0,
-        "z": 0.0,
-        "dx": 8.0,
-        "dy": 97.0,
-        "dz": 100.0,
-        "diameter": null,
-        "length": null,
-        "axis": "z"
-      },
-      {
-        "shape": "box",
-        "operation": "add",
-        "x": 8.0,
-        "y": 8.0,
-        "z": 88.0,
-        "dx": 100.0,
-        "dy": 97.0,
-        "dz": 12.0,
-        "diameter": null,
-        "length": null,
-        "axis": "z"
-      },
-      {
-        "shape": "box",
-        "operation": "add",
-        "x": 23.0,
-        "y": 8.0,
-        "z": 0.0,
-        "dx": 70.0,
+        "dx": 35.0,
         "dy": 3.0,
         "dz": 100.0,
         "diameter": null,
         "length": null,
+        "profile_points": [],
+        "axis": "z"
+      },
+      {
+        "shape": "box",
+        "operation": "add",
+        "x": 81.0,
+        "y": 0.0,
+        "z": 0.0,
+        "dx": 35.0,
+        "dy": 3.0,
+        "dz": 100.0,
+        "diameter": null,
+        "length": null,
+        "profile_points": [],
+        "axis": "z"
+      },
+      {
+        "shape": "box",
+        "operation": "add",
+        "x": 0.0,
+        "y": 0.0,
+        "z": 70.0,
+        "dx": 116.0,
+        "dy": 3.0,
+        "dz": 30.0,
+        "diameter": null,
+        "length": null,
+        "profile_points": [],
+        "axis": "z"
+      },
+      {
+        "shape": "prism",
+        "operation": "add",
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "dx": null,
+        "dy": null,
+        "dz": null,
+        "diameter": null,
+        "length": 3.0,
+        "profile_points": [
+          {
+            "x": 0.0,
+            "y": 0.0
+          },
+          {
+            "x": 0.0,
+            "y": 100.0
+          },
+          {
+            "x": 105.0,
+            "y": 100.0
+          },
+          {
+            "x": 82.0,
+            "y": 60.0
+          },
+          {
+            "x": 58.0,
+            "y": 25.0
+          },
+          {
+            "x": 30.0,
+            "y": 0.0
+          }
+        ],
+        "axis": "x"
+      },
+      {
+        "shape": "prism",
+        "operation": "add",
+        "x": 113.0,
+        "y": 0.0,
+        "z": 0.0,
+        "dx": null,
+        "dy": null,
+        "dz": null,
+        "diameter": null,
+        "length": 3.0,
+        "profile_points": [
+          {
+            "x": 0.0,
+            "y": 0.0
+          },
+          {
+            "x": 0.0,
+            "y": 100.0
+          },
+          {
+            "x": 105.0,
+            "y": 100.0
+          },
+          {
+            "x": 82.0,
+            "y": 60.0
+          },
+          {
+            "x": 58.0,
+            "y": 25.0
+          },
+          {
+            "x": 30.0,
+            "y": 0.0
+          }
+        ],
+        "axis": "x"
+      },
+      {
+        "shape": "cylinder",
+        "operation": "cut",
+        "x": 58.0,
+        "y": 55.0,
+        "z": 95.0,
+        "dx": null,
+        "dy": null,
+        "dz": null,
+        "diameter": 82.0,
+        "length": 8.0,
+        "profile_points": [],
         "axis": "z"
       },
       {
         "shape": "cylinder",
         "operation": "cut",
         "x": 35.0,
-        "y": 0.0,
+        "y": -1.0,
         "z": 25.0,
         "dx": null,
         "dy": null,
         "dz": null,
         "diameter": 12.0,
-        "length": 12.0,
+        "length": 6.0,
+        "profile_points": [],
         "axis": "y"
       },
       {
         "shape": "cylinder",
         "operation": "cut",
         "x": 81.0,
-        "y": 0.0,
+        "y": -1.0,
         "z": 25.0,
         "dx": null,
         "dy": null,
         "dz": null,
         "diameter": 12.0,
-        "length": 12.0,
+        "length": 6.0,
+        "profile_points": [],
         "axis": "y"
-      },
-      {
-        "shape": "cylinder",
-        "operation": "cut",
-        "x": 58.0,
-        "y": 56.0,
-        "z": 85.0,
-        "dx": null,
-        "dy": null,
-        "dz": null,
-        "diameter": 82.0,
-        "length": 20.0,
-        "axis": "z"
       }
     ]
   },
-  "holes": [],
+  "holes": [
+    {
+      "id": "large_back_plate_hole",
+      "x": 58.0,
+      "y": 55.0,
+      "diameter": 82.0,
+      "hole_type": "through",
+      "depth": null,
+      "counterbore_diameter": null,
+      "counterbore_depth": null,
+      "countersink_diameter": null,
+      "countersink_angle": null,
+      "thread": null
+    },
+    {
+      "id": "left_foot_hole",
+      "x": 35.0,
+      "y": 1.5,
+      "diameter": 12.0,
+      "hole_type": "through",
+      "depth": null,
+      "counterbore_diameter": null,
+      "counterbore_depth": null,
+      "countersink_diameter": null,
+      "countersink_angle": null,
+      "thread": null
+    },
+    {
+      "id": "right_foot_hole",
+      "x": 81.0,
+      "y": 1.5,
+      "diameter": 12.0,
+      "hole_type": "through",
+      "depth": null,
+      "counterbore_diameter": null,
+      "counterbore_depth": null,
+      "countersink_diameter": null,
+      "countersink_angle": null,
+      "thread": null
+    }
+  ],
   "cuts": [],
   "fillets": [
     7.0,
-    8.0
+    30.0,
+    5.0
   ],
   "chamfers": [],
   "dimensions": [
@@ -142,119 +255,101 @@
       "tol_minus": 0.1
     },
     {
-      "name": "front_flange_height",
-      "nominal": 8.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "base_front_corner_radius",
-      "nominal": 8.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "side_wall_thickness",
-      "nominal": 8.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "top_flange_outer_width",
-      "nominal": 100.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "top_flange_inner_width",
-      "nominal": 70.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "top_flange_corner_radius",
-      "nominal": 7.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "top_flange_left_margin",
-      "nominal": 8.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "small_hole_diameter",
-      "nominal": 12.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "small_hole_count",
-      "nominal": 2.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "small_hole_x_from_left",
-      "nominal": 35.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "small_hole_y_from_front",
-      "nominal": 25.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "right_leg_height",
-      "nominal": 50.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "large_hole_diameter",
-      "nominal": 82.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "large_hole_vertical_center_from_base",
-      "nominal": 50.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "side_profile_length",
-      "nominal": 100.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "back_wall_offset_or_thickness",
-      "nominal": 12.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "sloped_side_angle",
-      "nominal": 37.0,
-      "tol_plus": 0.1,
-      "tol_minus": 0.1
-    },
-    {
-      "name": "inside_bend_radius",
+      "name": "default_inside_bend_radius",
       "nominal": 5.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "inner_step_or_bend_location",
+      "name": "back_hole_diameter",
+      "nominal": 82.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "back_hole_center_from_top",
+      "nominal": 50.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "foot_hole_diameter",
+      "nominal": 12.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "foot_hole_count",
+      "nominal": 2.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "foot_hole_center_from_front",
+      "nominal": 25.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "left_foot_hole_center_from_left",
+      "nominal": 35.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "base_rear_cross_piece_depth_estimated_from_top_view",
       "nominal": 30.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "top_view_length_callout",
+      "nominal": 100.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "top_view_inner_opening_callout",
+      "nominal": 70.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "top_view_side_offset_callout",
+      "nominal": 8.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "lower_front_lip_or_bend_height",
+      "nominal": 8.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "side_profile_rear_flat_length",
+      "nominal": 30.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "side_profile_angle",
+      "nominal": 37.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "side_profile_radius",
+      "nominal": 30.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "small_corner_radius_six_places",
+      "nominal": 7.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     }
   ],
-  "notes": "Views identified as a bent sheet-metal angle bracket: front/top views show overall width and holes; side view shows depth profile with sloped side plates and rear upright; isometric confirms two base feet, side webs, and rear vertical plate with large circular through hole. Modeled as multibody plate approximation in a shared frame X=116 width, Y=105 height, Z=100 depth. Default sheet thickness is 3 mm and inside bend radius R5 per notes, but several edge returns/side lips are dimensioned 8/12 mm; complex bent/sloped sheet geometry and bend radii are approximated by rectangular plates. Large Ø82 through hole is encoded as a cut cylinder through the rear vertical plate, centered on X=58 and estimated Y=56 from the 50 mm center dimension in the front view plus base flange; z position through rear plate estimated. Two Ø12 through holes in horizontal front feet are cut along Y, centers at x=35 and 81 by symmetry, z=25 estimated from top/front view callout; through length extended to ensure cut. Top U-shaped/front return with R7 six places approximated as plates; six rounded corners and sloped side outline not fully represented by box bodies. Question/tolerance note in title block is mass tolerance ±1 g, not dimensional tolerance; provisional ±0.1 mm used for dimensions without explicit tolerances."
+  "notes": "Views interpreted as a sheet-metal angle bracket in third-angle projection: front view is the vertical back plate with the Ø82 through hole; top/plan view shows the two foot flanges with two Ø12 holes and rounded R7 corners; side view gives the 100 mm depth, 105 mm height, 37 degree sloped side profile, R30 front/upper curve, 3 mm sheet thickness, and R5 default inside bend radius. Modelled as a multibody approximation of 3 mm plates: rear vertical plate, U-shaped horizontal base/feet, and two non-rectangular side plates. The side plates use prism outlines approximating the R30 curved/sloped top edge; exact sheet-metal bend radii and R7 rounded tab corners are recorded as fillets/notes but not fully resolved in the plate bodies. Base central opening/rear cross-piece depth and side-profile polygon points were estimated from the views where dimensions were incomplete. Material in title block: plain carbon steel, density 7800 kg/m^3; mass question tolerance ±1 g."
 }

@@ -66,9 +66,15 @@ class Body(BaseModel):
     cylinder for a hole/opening in any face -- pick its axis to match the face normal).
 
     box:      size (dx, dy, dz); (x, y, z) is the MIN corner.
-    cylinder: diameter + length along `axis`; (x, y, z) is the CENTER of the base face."""
+    cylinder: diameter + length along `axis`; (x, y, z) is the CENTER of the base face.
+    prism:    a 2D polygon profile_points extruded `length` along `axis`. The points are
+              ABSOLUTE coordinates in the plane perpendicular to `axis` (axis x -> (y, z),
+              axis y -> (x, z), axis z -> (x, y)); (x, y, z) positions the base only along
+              `axis` (its other two components are ignored). Use a prism for a flat plate
+              with a non-rectangular outline -- a sloped/tapered or curve-topped sheet-metal
+              side wall, a gusset, a trapezoidal flange."""
 
-    shape: Literal["box", "cylinder"] = "box"
+    shape: Literal["box", "cylinder", "prism"] = "box"
     operation: Literal["add", "cut"] = "add"
     x: float = 0.0
     y: float = 0.0
@@ -78,6 +84,7 @@ class Body(BaseModel):
     dz: float | None = None
     diameter: float | None = None
     length: float | None = None
+    profile_points: list[Point] = Field(default_factory=list)
     axis: Literal["x", "y", "z"] = "z"
 
     @model_validator(mode="before")
@@ -88,6 +95,8 @@ class Body(BaseModel):
         or vice-versa. Re-classify so the generator builds the intended solid."""
         if not isinstance(data, dict):
             return data
+        if data.get("profile_points"):          # only a prism carries an outline
+            return data if data.get("shape") == "prism" else {**data, "shape": "prism"}
         shape = data.get("shape", "box")
         has_box = all(data.get(k) is not None for k in ("dx", "dy", "dz"))
         has_cyl = data.get("diameter") is not None and data.get("length") is not None
@@ -97,11 +106,27 @@ class Body(BaseModel):
             return {**data, "shape": "box"}
         return data
 
+    def _profile_span(self) -> tuple[float, float, float, float]:
+        """(min_u, min_v, max_u, max_v) of the prism profile points."""
+        us = [p.x for p in self.profile_points]
+        vs = [p.y for p in self.profile_points]
+        return min(us), min(vs), max(us), max(vs)
+
     def aabb(self) -> tuple[tuple[float, float, float], tuple[float, float, float]]:
         """Axis-aligned (min_corner, max_corner) of this body in the part frame."""
         if self.shape == "box":
             dx, dy, dz = self.dx or 0.0, self.dy or 0.0, self.dz or 0.0
             return (self.x, self.y, self.z), (self.x + dx, self.y + dy, self.z + dz)
+        if self.shape == "prism":
+            ln = self.length or 0.0
+            if not self.profile_points:
+                return (self.x, self.y, self.z), (self.x, self.y, self.z)
+            u0, v0, u1, v1 = self._profile_span()
+            if self.axis == "x":     # profile in (y, z), extrude along x
+                return (self.x, u0, v0), (self.x + ln, u1, v1)
+            if self.axis == "y":     # profile in (x, z), extrude along y
+                return (u0, self.y, v0), (u1, self.y + ln, v1)
+            return (u0, v0, self.z), (u1, v1, self.z + ln)   # axis z: (x, y)
         r = (self.diameter or 0.0) / 2.0
         ln = self.length or 0.0
         if self.axis == "z":
@@ -263,6 +288,8 @@ class PartSpec(BaseModel):
                     errors.append(f"body{i} box missing positive dx/dy/dz")
                 if b.shape == "cylinder" and not (b.diameter and b.length):
                     errors.append(f"body{i} cylinder missing positive diameter/length")
+                if b.shape == "prism" and not (len(b.profile_points) >= 3 and b.length):
+                    errors.append(f"body{i} prism needs >=3 profile_points and positive length")
             return errors
 
         if isinstance(geometry, ExtrudedGeometry):

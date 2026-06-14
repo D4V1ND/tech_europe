@@ -2,9 +2,12 @@ import pytest
 
 from drawing2cad.cad_generator import spec_to_code
 from drawing2cad.partspec import (
+    Body,
     ExtrudedGeometry,
     Hole,
+    MultiBodyGeometry,
     PartSpec,
+    Point,
     RevolvedGeometry,
     RevolvedSegment,
     UnsupportedGeometry,
@@ -78,6 +81,33 @@ def test_corner_radius_too_large_fails_sanity():
         profile_kind="rectangle", width=50, height=30, thickness=5, corner_radius=20,
     ))
     assert any("corner_radius" in e for e in spec.sanity_check())
+
+
+def test_multibody_prism_plate_builds_sloped_profile():
+    # right-triangle side wall (in y,z), 8 mm thick along x at x=0
+    wall = Body(
+        shape="prism", operation="add", axis="x", x=0.0, length=8.0,
+        profile_points=[Point(x=0, y=0), Point(x=0, y=100), Point(x=80, y=100)],
+    )
+    spec = PartSpec(geometry=MultiBodyGeometry(bodies=[wall]))
+    result = _build(spec_to_code(spec))
+    bb = result.val().BoundingBox()
+    assert (bb.xlen, bb.ylen, bb.zlen) == pytest.approx((8, 80, 100))
+    assert len(result.solids().vals()) == 1
+    # triangular profile => half the volume of its bounding prism
+    assert result.val().Volume() == pytest.approx(0.5 * 80 * 100 * 8, rel=1e-3)
+
+
+def test_multibody_box_with_diameter_is_coerced_to_cylinder():
+    # LLM mislabels a round hole as a "box" but fills diameter/length
+    spec = PartSpec(geometry=MultiBodyGeometry(bodies=[
+        Body(shape="box", operation="add", dx=40, dy=40, dz=10),
+        Body(shape="box", operation="cut", axis="z", x=20, y=20, z=-1,
+             diameter=10, length=12),
+    ]))
+    assert spec.geometry.bodies[1].shape == "cylinder"
+    assert spec.sanity_check() == []
+    assert len(_build(spec_to_code(spec)).solids().vals()) == 1
 
 
 def test_unsupported_geometry_is_not_generated():

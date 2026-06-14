@@ -65,6 +65,10 @@ def normalize_to_mm(spec: PartSpec) -> PartSpec:
                 "dz": None if b.dz is None else b.dz * scale,
                 "diameter": None if b.diameter is None else b.diameter * scale,
                 "length": None if b.length is None else b.length * scale,
+                "profile_points": [
+                    p.model_copy(update={"x": p.x * scale, "y": p.y * scale})
+                    for p in b.profile_points
+                ],
             }) for b in geometry.bodies]
         })
     elif isinstance(geometry, UnsupportedGeometry):
@@ -165,8 +169,36 @@ def _append_hole_cuts(lines: list[str], spec: PartSpec, thickness: float) -> Non
 _AXIS_DIR = {"x": "(1, 0, 0)", "y": "(0, 1, 0)", "z": "(0, 0, 1)"}
 
 
+_PRISM_PLANE = {"x": "YZ", "y": "XZ", "z": "XY"}
+
+
+def _prism_expr(body) -> str:
+    """A polygon profile extruded `length` along `axis`. profile_points are absolute
+    coordinates in the plane perpendicular to the axis; (x/y/z) offsets the base ALONG
+    the axis only. Built on a named workplane (offset along the axis) then extruded."""
+    length = body.length or 0.0
+    offset = {"x": body.x, "y": body.y, "z": body.z}[body.axis]
+    if body.operation == "cut":               # overshoot both faces for a clean cut
+        offset -= _EPS
+        length += 2 * _EPS
+    points = ", ".join(f"({float(p.x)}, {float(p.y)})" for p in body.profile_points)
+    # 'XZ' has a -Y normal in CadQuery: workplane(offset=-o) sits at global y=+o, and
+    # extrude(-length) then advances toward +Y, so the prism spans y in [offset, offset+length].
+    if body.axis == "y":
+        return (
+            f"cq.Workplane('XZ').workplane(offset={float(-offset)})"
+            f".polyline([{points}]).close().extrude({float(-length)})"
+        )
+    return (
+        f"cq.Workplane('{_PRISM_PLANE[body.axis]}').workplane(offset={float(offset)})"
+        f".polyline([{points}]).close().extrude({float(length)})"
+    )
+
+
 def _body_expr(body) -> str:
-    """CadQuery expression for one multi-body Body (box or oriented cylinder)."""
+    """CadQuery expression for one multi-body Body (box, oriented cylinder, or prism)."""
+    if body.shape == "prism":
+        return _prism_expr(body)
     if body.shape == "box":
         return (
             f"cq.Workplane('XY').box({float(body.dx)}, {float(body.dy)}, "
@@ -369,7 +401,7 @@ def generate_code(spec: PartSpec, feedback: str | None = None, *, model=None, us
 if __name__ == "__main__":
     import sys
 
-    json_path = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("drawing2cad/outputs/test_5.json")
+    json_path = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("drawing2cad/outputs/test_1.json")
     loaded_spec = PartSpec.model_validate_json(json_path.read_text(encoding="utf-8"))
     generated_code = generate_code(loaded_spec)
     output_dir = Path("out") / json_path.stem
