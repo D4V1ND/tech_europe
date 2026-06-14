@@ -53,7 +53,7 @@ def extract_drawing_info(
 
 
 if __name__ == "__main__":
-    drawing_path = Path("tests/images/test_2.png")
+    drawing_path = Path("tests/images/test_5.png")
     json_path = DEFAULT_OUTPUT_DIR / f"{drawing_path.stem}.json"
     spec = extract_drawing_info(drawing_path, model=model_openai, output_path=json_path)
     print(spec.model_dump_json(indent=2))

@@ -7,7 +7,9 @@
     "height": 30.0,
     "diameter": null,
     "profile_points": [],
-    "thickness": 7.0
+    "thickness": 7.0,
+    "corner_radius": 8.0,
+    "corner_style": "round"
   },
   "holes": [],
   "cuts": [
@@ -17,13 +19,11 @@
       "z": 1.6,
       "dx": 51.8,
       "dy": 26.8,
-      "dz": 5.4
+      "dz": 5.4,
+      "corner_radius": 6.4
     }
   ],
-  "fillets": [
-    8.0,
-    6.4
-  ],
+  "fillets": [],
   "chamfers": [],
   "dimensions": [
     {
@@ -69,5 +69,5 @@
       "tol_minus": 0.1
     }
   ],
-  "notes": "Rectangular tray with rounded corners. Modeled as an extruded rectangle with a rectangular cut for the interior. The inner and outer corner radii are captured in the fillets array."
+  "notes": "Rectangular tray with rounded corners and uniform wall thickness. Modeled as an extruded rectangle with a pocket cut."
 }

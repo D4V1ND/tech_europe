@@ -20,7 +20,11 @@ hole3_dia = 5.08
 
 # --- base geometry ---
 result = cq.Workplane('XY').box(width, height, part_thickness, centered=(False, False, False))
-result = result.edges('|Z').fillet(2.54)
+corner_radius = 2.54
+result = result.cut(cq.Workplane('XY').pushPoints([(0.0, 0.0)]).circle(corner_radius).extrude(part_thickness + 0.02).translate((0, 0, -0.01)))
+result = result.cut(cq.Workplane('XY').pushPoints([(44.449999999999996, 0.0)]).circle(corner_radius).extrude(part_thickness + 0.02).translate((0, 0, -0.01)))
+result = result.cut(cq.Workplane('XY').pushPoints([(0.0, 31.75)]).circle(corner_radius).extrude(part_thickness + 0.02).translate((0, 0, -0.01)))
+result = result.cut(cq.Workplane('XY').pushPoints([(44.449999999999996, 31.75)]).circle(corner_radius).extrude(part_thickness + 0.02).translate((0, 0, -0.01)))
 result = result.cut(cq.Workplane('XY').workplane(offset=part_thickness + 0.01).pushPoints([(hole0_x, hole0_y)]).circle(hole0_dia / 2).extrude(-(part_thickness + 0.02)))
 result = result.cut(cq.Workplane('XY').workplane(offset=part_thickness + 0.01).pushPoints([(hole1_x, hole1_y)]).circle(hole1_dia / 2).extrude(-(part_thickness + 0.02)))
 result = result.cut(cq.Workplane('XY').workplane(offset=part_thickness + 0.01).pushPoints([(hole2_x, hole2_y)]).circle(hole2_dia / 2).extrude(-(part_thickness + 0.02)))

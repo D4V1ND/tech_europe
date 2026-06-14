@@ -47,6 +47,39 @@ def test_legacy_extruded_part_still_generates():
     assert (bbox.xlen, bbox.ylen, bbox.zlen) == pytest.approx((50, 30, 5))
 
 
+def test_rectangle_rounded_corners_keep_bbox_and_single_solid():
+    spec = PartSpec(geometry=ExtrudedGeometry(
+        profile_kind="rectangle", width=50, height=30, thickness=5,
+        corner_radius=5, corner_style="round",
+    ))
+    result = _build(spec_to_code(spec))
+    bbox = result.val().BoundingBox()
+    assert (bbox.xlen, bbox.ylen, bbox.zlen) == pytest.approx((50, 30, 5))
+    assert len(result.solids().vals()) == 1
+    # rounding the corners removes material from the plain prism
+    assert result.val().Volume() < 50 * 30 * 5
+
+
+def test_rectangle_scalloped_corners_remove_corner_material():
+    spec = PartSpec(geometry=ExtrudedGeometry(
+        profile_kind="rectangle", width=50, height=30, thickness=5,
+        corner_radius=5, corner_style="scallop",
+    ))
+    result = _build(spec_to_code(spec))
+    bbox = result.val().BoundingBox()
+    # a corner notch leaves the overall envelope intact (edges still span full size)
+    assert (bbox.xlen, bbox.ylen, bbox.zlen) == pytest.approx((50, 30, 5))
+    assert len(result.solids().vals()) == 1
+    assert result.val().Volume() < 50 * 30 * 5
+
+
+def test_corner_radius_too_large_fails_sanity():
+    spec = PartSpec(geometry=ExtrudedGeometry(
+        profile_kind="rectangle", width=50, height=30, thickness=5, corner_radius=20,
+    ))
+    assert any("corner_radius" in e for e in spec.sanity_check())
+
+
 def test_unsupported_geometry_is_not_generated():
     spec = PartSpec(geometry=UnsupportedGeometry(reason="bent sheet metal"))
     with pytest.raises(ValueError, match="unsupported geometry"):

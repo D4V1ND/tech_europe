@@ -45,6 +45,7 @@ def normalize_to_mm(spec: PartSpec) -> PartSpec:
                 for point in geometry.profile_points
             ],
             "thickness": geometry.thickness * scale,
+            "corner_radius": geometry.corner_radius * scale,
         })
     elif isinstance(geometry, RevolvedGeometry):
         geometry = geometry.model_copy(update={
@@ -272,9 +273,25 @@ def spec_to_code(spec: PartSpec) -> str:
         else:
             lines.append("result = cq.Workplane('XY').polyline(profile_points).close().extrude(part_thickness)")
         if geometry.profile_kind != "circle":
-            if spec.fillets:
+            if geometry.profile_kind == "rectangle" and geometry.corner_radius > 0:
+                if geometry.corner_style == "round":
+                    lines.append(
+                        f"result = result.edges('|Z').fillet({float(geometry.corner_radius)})"
+                    )
+                else:
+                    # scallop: cut a quarter-cylinder notch out of each of the 4 corners.
+                    cw, ch, _ = geometry.bbox()
+                    lines.append(f"corner_radius = {float(geometry.corner_radius)}")
+                    for cx, cy in ((0.0, 0.0), (cw, 0.0), (0.0, ch), (cw, ch)):
+                        lines.append(
+                            f"result = result.cut(cq.Workplane('XY')"
+                            f".pushPoints([({float(cx)}, {float(cy)})]).circle(corner_radius)"
+                            f".extrude(part_thickness + {2 * _EPS}).translate((0, 0, -{_EPS})))"
+                        )
+            elif spec.fillets:
                 lines.append(f"result = result.edges('|Z').fillet({float(max(spec.fillets))})")
-            if spec.chamfers:
+            # skip |Z chamfer when corner_radius already consumed those edges
+            if spec.chamfers and not (geometry.profile_kind == "rectangle" and geometry.corner_radius > 0):
                 lines.append(f"result = result.edges('|Z').chamfer({float(max(spec.chamfers))})")
     else:
         lines.append("result = None")
@@ -352,7 +369,7 @@ def generate_code(spec: PartSpec, feedback: str | None = None, *, model=None, us
 if __name__ == "__main__":
     import sys
 
-    json_path = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("drawing2cad/outputs/test_1.json")
+    json_path = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("drawing2cad/outputs/test_5.json")
     loaded_spec = PartSpec.model_validate_json(json_path.read_text(encoding="utf-8"))
     generated_code = generate_code(loaded_spec)
     output_dir = Path("out") / json_path.stem

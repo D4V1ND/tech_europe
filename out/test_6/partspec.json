@@ -1,0 +1,92 @@
+{
+  "units": "mm",
+  "geometry": {
+    "kind": "multibody",
+    "bodies": [
+      {
+        "shape": "cylinder",
+        "operation": "add",
+        "x": 25.0,
+        "y": 0.0,
+        "z": 25.0,
+        "dx": null,
+        "dy": null,
+        "dz": null,
+        "diameter": 50.0,
+        "length": 15.0,
+        "axis": "y"
+      },
+      {
+        "shape": "cylinder",
+        "operation": "add",
+        "x": 25.0,
+        "y": 35.0,
+        "z": 25.0,
+        "dx": null,
+        "dy": null,
+        "dz": null,
+        "diameter": 50.0,
+        "length": 15.0,
+        "axis": "y"
+      },
+      {
+        "shape": "box",
+        "operation": "add",
+        "x": 0.0,
+        "y": 0.0,
+        "z": 24.9,
+        "dx": 50.0,
+        "dy": 50.0,
+        "dz": 25.2,
+        "diameter": null,
+        "length": null,
+        "axis": "z"
+      },
+      {
+        "shape": "box",
+        "operation": "add",
+        "x": 15.0,
+        "y": 0.0,
+        "z": 50.0,
+        "dx": 20.0,
+        "dy": 50.0,
+        "dz": 25.0,
+        "diameter": null,
+        "length": null,
+        "axis": "z"
+      },
+      {
+        "shape": "cylinder",
+        "operation": "cut",
+        "x": 25.0,
+        "y": 0.0,
+        "z": 25.0,
+        "dx": null,
+        "dy": null,
+        "dz": null,
+        "diameter": 20.0,
+        "length": 50.0,
+        "axis": "y"
+      },
+      {
+        "shape": "box",
+        "operation": "cut",
+        "x": 14.0,
+        "y": 35.0,
+        "z": 60.0,
+        "dx": 22.0,
+        "dy": 16.0,
+        "dz": 16.0,
+        "diameter": null,
+        "length": null,
+        "axis": "z"
+      }
+    ]
+  },
+  "holes": [],
+  "cuts": [],
+  "fillets": [],
+  "chamfers": [],
+  "dimensions": [],
+  "notes": "Part dimensions are estimated as the drawing contains no explicit measurements. Assumed overall bounding box is 50x50x75mm. Modeled using multibody to capture the true cylindrical front prongs. The chamfer on the rear block is approximated with a rectangular cut due to multibody primitive limitations. The central hole is modeled as a cut cylinder along the Y axis."
+}

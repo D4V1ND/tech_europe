@@ -1,44 +1,76 @@
 {
   "units": "in",
-  "profile_kind": "rectangle",
-  "width": 1.75,
-  "height": 1.25,
-  "thickness": 0.5,
+  "geometry": {
+    "kind": "extruded",
+    "profile_kind": "rectangle",
+    "width": 1.75,
+    "height": 1.25,
+    "diameter": null,
+    "profile_points": [],
+    "thickness": 0.5,
+    "corner_radius": 0.1,
+    "corner_style": "scallop"
+  },
   "holes": [
     {
-      "x": 0.25,
-      "y": 0.25,
-      "diameter": 0.2,
-      "through": true,
-      "depth": null
-    },
-    {
-      "x": 1.5,
-      "y": 0.25,
-      "diameter": 0.2,
-      "through": true,
-      "depth": null
-    },
-    {
+      "id": "upper_left_thru",
       "x": 0.25,
       "y": 1.0,
       "diameter": 0.2,
-      "through": true,
-      "depth": null
+      "hole_type": "through",
+      "depth": null,
+      "counterbore_diameter": null,
+      "counterbore_depth": null,
+      "countersink_diameter": null,
+      "countersink_angle": null,
+      "thread": null
     },
     {
+      "id": "upper_right_thru",
       "x": 1.5,
       "y": 1.0,
       "diameter": 0.2,
-      "through": true,
-      "depth": null
+      "hole_type": "through",
+      "depth": null,
+      "counterbore_diameter": null,
+      "counterbore_depth": null,
+      "countersink_diameter": null,
+      "countersink_angle": null,
+      "thread": null
+    },
+    {
+      "id": "lower_left_thru",
+      "x": 0.25,
+      "y": 0.25,
+      "diameter": 0.2,
+      "hole_type": "through",
+      "depth": null,
+      "counterbore_diameter": null,
+      "counterbore_depth": null,
+      "countersink_diameter": null,
+      "countersink_angle": null,
+      "thread": null
+    },
+    {
+      "id": "lower_right_thru",
+      "x": 1.5,
+      "y": 0.25,
+      "diameter": 0.2,
+      "hole_type": "through",
+      "depth": null,
+      "counterbore_diameter": null,
+      "counterbore_depth": null,
+      "countersink_diameter": null,
+      "countersink_angle": null,
+      "thread": null
     }
   ],
   "cuts": [],
-  "fillets": [
-    0.1
+  "fillets": [],
+  "chamfers": [
+    0.005,
+    0.01
   ],
-  "chamfers": [],
   "dimensions": [
     {
       "name": "overall_width",
@@ -59,29 +91,41 @@
       "tol_minus": 0.01
     },
     {
-      "name": "hole_spacing_x",
+      "name": "hole_diameter",
+      "nominal": 0.2,
+      "tol_plus": 0.005,
+      "tol_minus": 0.005
+    },
+    {
+      "name": "horizontal_hole_spacing",
       "nominal": 1.25,
       "tol_plus": 0.01,
       "tol_minus": 0.01
     },
     {
-      "name": "hole_spacing_y",
+      "name": "vertical_hole_spacing",
       "nominal": 0.75,
       "tol_plus": 0.01,
       "tol_minus": 0.01
     },
     {
-      "name": "hole_diameter",
-      "nominal": 0.2,
-      "tol_plus": 0.01,
-      "tol_minus": 0.01
+      "name": "corner_radius_4x",
+      "nominal": 0.1,
+      "tol_plus": 0.005,
+      "tol_minus": 0.005
     },
     {
-      "name": "fillet_radius",
-      "nominal": 0.1,
-      "tol_plus": 0.01,
-      "tol_minus": 0.01
+      "name": "edge_break",
+      "nominal": 0.005,
+      "tol_plus": 0.005,
+      "tol_minus": 0.0
+    },
+    {
+      "name": "edge_break_max",
+      "nominal": 0.01,
+      "tol_plus": 0.0,
+      "tol_minus": 0.005
     }
   ],
-  "notes": "Mounting plate with 4 equally spaced through holes and rounded corners."
+  "notes": "Mounting plate, aluminum 6061. Drawing units are inches. Rectangular extruded plate 1.75 x 1.25 x 0.50 with four outside rounded corners R0.10. Four Ø0.20 through holes are equally spaced from edges per note; hole centers estimated from given 1.25 horizontal and 0.75 vertical spacings as 0.25 in from left/right edges and 0.25 in from top/bottom edges. General title-block tolerances applied: ±.01 for 2-place dimensions and ±.005 for 3-place dimensions. Break all sharp edges .005-.010 represented as chamfer callouts/notes."
 }

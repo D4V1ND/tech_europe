@@ -1,0 +1,227 @@
+{
+  "units": "mm",
+  "geometry": {
+    "kind": "multibody",
+    "bodies": [
+      {
+        "shape": "box",
+        "operation": "add",
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "dx": 50.0,
+        "dy": 12.0,
+        "dz": 70.0,
+        "diameter": null,
+        "length": null,
+        "axis": "z"
+      },
+      {
+        "shape": "box",
+        "operation": "add",
+        "x": 0.0,
+        "y": 48.0,
+        "z": 0.0,
+        "dx": 50.0,
+        "dy": 12.0,
+        "dz": 70.0,
+        "diameter": null,
+        "length": null,
+        "axis": "z"
+      },
+      {
+        "shape": "box",
+        "operation": "add",
+        "x": 32.0,
+        "y": 0.0,
+        "z": 30.0,
+        "dx": 18.0,
+        "dy": 60.0,
+        "dz": 40.0,
+        "diameter": null,
+        "length": null,
+        "axis": "z"
+      },
+      {
+        "shape": "box",
+        "operation": "add",
+        "x": 18.0,
+        "y": 0.0,
+        "z": 58.0,
+        "dx": 32.0,
+        "dy": 60.0,
+        "dz": 12.0,
+        "diameter": null,
+        "length": null,
+        "axis": "z"
+      },
+      {
+        "shape": "cylinder",
+        "operation": "add",
+        "x": 15.0,
+        "y": 0.0,
+        "z": 20.0,
+        "dx": null,
+        "dy": null,
+        "dz": null,
+        "diameter": 30.0,
+        "length": 12.0,
+        "axis": "y"
+      },
+      {
+        "shape": "cylinder",
+        "operation": "add",
+        "x": 15.0,
+        "y": 48.0,
+        "z": 20.0,
+        "dx": null,
+        "dy": null,
+        "dz": null,
+        "diameter": 30.0,
+        "length": 12.0,
+        "axis": "y"
+      },
+      {
+        "shape": "cylinder",
+        "operation": "cut",
+        "x": 15.0,
+        "y": -1.0,
+        "z": 20.0,
+        "dx": null,
+        "dy": null,
+        "dz": null,
+        "diameter": 16.0,
+        "length": 14.0,
+        "axis": "y"
+      },
+      {
+        "shape": "cylinder",
+        "operation": "cut",
+        "x": 15.0,
+        "y": 47.0,
+        "z": 20.0,
+        "dx": null,
+        "dy": null,
+        "dz": null,
+        "diameter": 16.0,
+        "length": 14.0,
+        "axis": "y"
+      },
+      {
+        "shape": "box",
+        "operation": "cut",
+        "x": 0.0,
+        "y": 12.0,
+        "z": 0.0,
+        "dx": 32.0,
+        "dy": 36.0,
+        "dz": 58.0,
+        "diameter": null,
+        "length": null,
+        "axis": "z"
+      },
+      {
+        "shape": "box",
+        "operation": "cut",
+        "x": 0.0,
+        "y": 12.0,
+        "z": 58.0,
+        "dx": 18.0,
+        "dy": 36.0,
+        "dz": 13.0,
+        "diameter": null,
+        "length": null,
+        "axis": "z"
+      },
+      {
+        "shape": "box",
+        "operation": "cut",
+        "x": 42.0,
+        "y": 48.0,
+        "z": 0.0,
+        "dx": 10.0,
+        "dy": 14.0,
+        "dz": 18.0,
+        "diameter": null,
+        "length": null,
+        "axis": "z"
+      }
+    ]
+  },
+  "holes": [
+    {
+      "id": "top_lug_through_hole",
+      "x": 15.0,
+      "y": 54.0,
+      "diameter": 16.0,
+      "hole_type": "through",
+      "depth": null,
+      "counterbore_diameter": null,
+      "counterbore_depth": null,
+      "countersink_diameter": null,
+      "countersink_angle": null,
+      "thread": null
+    },
+    {
+      "id": "bottom_lug_through_hole",
+      "x": 15.0,
+      "y": 6.0,
+      "diameter": 16.0,
+      "hole_type": "through",
+      "depth": null,
+      "counterbore_diameter": null,
+      "counterbore_depth": null,
+      "countersink_diameter": null,
+      "countersink_angle": null,
+      "thread": null
+    }
+  ],
+  "cuts": [],
+  "fillets": [],
+  "chamfers": [],
+  "dimensions": [
+    {
+      "name": "overall_width_estimated",
+      "nominal": 50.0,
+      "tol_plus": 0.5,
+      "tol_minus": 0.5
+    },
+    {
+      "name": "overall_height_estimated",
+      "nominal": 60.0,
+      "tol_plus": 0.5,
+      "tol_minus": 0.5
+    },
+    {
+      "name": "overall_depth_estimated",
+      "nominal": 70.0,
+      "tol_plus": 0.5,
+      "tol_minus": 0.5
+    },
+    {
+      "name": "lug_thickness_estimated",
+      "nominal": 12.0,
+      "tol_plus": 0.5,
+      "tol_minus": 0.5
+    },
+    {
+      "name": "fork_gap_estimated",
+      "nominal": 36.0,
+      "tol_plus": 0.5,
+      "tol_minus": 0.5
+    },
+    {
+      "name": "lug_hole_diameter_estimated",
+      "nominal": 16.0,
+      "tol_plus": 0.5,
+      "tol_minus": 0.5
+    },
+    {
+      "name": "rounded_lug_outer_diameter_estimated",
+      "nominal": 30.0,
+      "tol_plus": 0.5,
+      "tol_minus": 0.5
+    }
+  ],
+  "notes": "Units read from title block: millimetres. General tolerance unless noted otherwise is ±0.5 mm; no individual feature dimensions are printed in the provided drawing, so all modeled sizes are proportional estimates from the views. Best-effort multibody model of a clevis/yoke bracket: two horizontal fork lugs with coaxial vertical through holes, a rear upright/body joining the lugs, a rectangular back strap/web, rounded front lug ends approximated with added vertical-axis cylinders, central fork opening represented by subtractive boxes, and the small top/rear step/chamfer indicated in the right-side/isometric view approximated as a rectangular notch because angled wedge cuts are not available in the schema."
+}

@@ -10,6 +10,23 @@ in one view must also appear as a cut in the model.
 
 Read the title block and dimensions to determine units first. Use one unit system.
 
+IDENTIFY THE VIEWS BEFORE MODELLING. One PNG usually holds several orthographic views of
+the SAME part (front, top, side/end, section, isometric), each labelled or placed by
+standard convention (third-angle: top view ABOVE the front view, right-side view to the
+RIGHT of the front view, bottom view below; first-angle is mirrored). Do NOT treat each
+view as a separate part or stack them -- they are the same body seen from different
+directions. Establish the part's 3D frame X=width, Y=height, Z=depth, then map each view:
+  - front view  -> the X-Y face (gives width and height)
+  - top view    -> the X-Z face (gives width and depth)
+  - side/end view -> the Z-Y face (gives depth and height)
+  - section view (e.g. A-A) -> an interior cut; use it for wall thickness, bores, internal
+    steps, and counterbores, NOT as an outer profile.
+A length that appears in two views is ONE dimension, not two -- cross-check rather than
+double-count. Pick the extrude/revolve direction so the most detailed silhouette becomes
+the profile (see below), and read the remaining size (thickness/depth) from the view that
+shows that axis edge-on. A feature seen in one view must be consistent with how it appears
+in the others (a hole through the front face shows as a dashed line crossing the side view).
+
 Choose exactly one geometry variant:
 
 1. extruded: a constant rectangle, circle, or straight-edged polygon extruded along Z.
@@ -39,7 +56,11 @@ Choose exactly one geometry variant:
    (x, y, z) at its MIN corner -- model each plate/leg as a thin box (thickness = wall
    thickness) oriented along the face it lies in (a horizontal floor plate is thin in Y,
    a vertical front/back plate is thin in Z, a side web is thin in X). A cylinder has
-   diameter + length along `axis` (x/y/z) with (x, y, z) at its base-face center. Set
+   diameter + length along `axis` (x/y/z) with (x, y, z) at its base-face center. MATCH
+   shape to the fields: a round hole/boss/pin is shape "cylinder" (fill diameter+length,
+   leave dx/dy/dz null); a rectangular plate/block is shape "box" (fill dx/dy/dz, leave
+   diameter/length null). NEVER set shape "box" while giving a diameter, or "cylinder"
+   while giving dx/dy/dz. Set
    operation "add" to union a body in, or "cut" to remove one -- use a "cut" cylinder for
    a hole/opening in ANY face by choosing its axis to match that face's normal (a hole in
    a horizontal floor is a cut cylinder with axis y; a hole in a vertical plate, axis z).
@@ -75,8 +96,22 @@ to the minimum: if the silhouette already removes material there, do not add a r
 cut. Before emitting each cut, state to yourself which face it opens onto and confirm its
 x/y/z match that face in the profile frame. Set corner_radius when the cavity has rounded
 inner corners (e.g. a tray pocket with an inner_corner_radius): use that inner radius so
-the wall stays continuous; leave it 0 for sharp-cornered slots. Fillets and chamfers
-contain explicitly shown sizes (fillets are the OUTER corner radii of the profile).
+the wall stays continuous; leave it 0 for sharp-cornered slots.
+
+For rectangle profiles with a corner treatment on ALL FOUR corners (callouts like
+"R0.10 TYP 4 CORNERS" or "ROUNDED CORNERS"): set geometry.corner_radius to the radius
+value and pick geometry.corner_style by LOOKING AT THE CORNER OUTLINE in the view, not
+the title-block wording:
+  - "round"   = the outline curves OUTWARD, smoothly bridging the two edges; the corner
+    is filled. The material outline is convex there.
+  - "scallop" = a concave notch is CUT INTO the corner; the outline dips inward, leaving
+    a bite/relief out of each corner. If you can see material removed at the corner
+    (a small arc or diagonal cutting across it), it is a scallop.
+Decide from the geometry: text like "ROUNDED CORNERS" can accompany EITHER -- a corner
+relief notch is still loosely called "rounded". When the corner clearly has material
+removed, use "scallop" even if the note says rounded. Do NOT put these in fillets.
+Fillets and chamfers contain explicitly shown sizes for specific partial edge callouts
+only (e.g. only selected edges called out, not a uniform 4-corner treatment).
 
 Record every explicit callout in dimensions as {name, nominal, tol_plus, tol_minus} with
 a clear snake_case name. Use the printed tolerance. If no individual tolerance is shown,

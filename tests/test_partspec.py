@@ -63,5 +63,5 @@ def test_unsupported_geometry_fails_sanity_check():
         visible_features=["two bends"],
     ))
     assert spec.sanity_check() == [
-        "unsupported geometry: bent sheet metal is not supported"
+        "unsupported geometry (no envelope): bent sheet metal is not supported"
     ]

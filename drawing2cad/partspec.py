@@ -18,6 +18,11 @@ class ExtrudedGeometry(BaseModel):
     diameter: float | None = None
     profile_points: list[Point] = Field(default_factory=list)
     thickness: float
+    # Radius applied to the four corners of a RECTANGLE profile (0 = sharp 90 deg).
+    # "round"   = convex fillet of the vertical corner edges (typical "ROUNDED CORNERS").
+    # "scallop" = concave quarter-cylinder notch cut out of each corner (corner relief).
+    corner_radius: float = 0.0
+    corner_style: Literal["round", "scallop"] = "round"
 
     def bbox(self) -> tuple[float, float, float]:
         if self.profile_kind == "circle":
@@ -74,6 +79,23 @@ class Body(BaseModel):
     diameter: float | None = None
     length: float | None = None
     axis: Literal["x", "y", "z"] = "z"
+
+    @model_validator(mode="before")
+    @classmethod
+    def infer_shape(cls, data):
+        """Trust the populated fields over the `shape` label: LLMs often tag a round
+        hole/boss as a 'box' while filling diameter+length (and leaving dx/dy/dz null),
+        or vice-versa. Re-classify so the generator builds the intended solid."""
+        if not isinstance(data, dict):
+            return data
+        shape = data.get("shape", "box")
+        has_box = all(data.get(k) is not None for k in ("dx", "dy", "dz"))
+        has_cyl = data.get("diameter") is not None and data.get("length") is not None
+        if shape == "box" and not has_box and has_cyl:
+            return {**data, "shape": "cylinder"}
+        if shape == "cylinder" and not has_cyl and has_box:
+            return {**data, "shape": "box"}
+        return data
 
     def aabb(self) -> tuple[tuple[float, float, float], tuple[float, float, float]]:
         """Axis-aligned (min_corner, max_corner) of this body in the part frame."""
@@ -254,6 +276,15 @@ class PartSpec(BaseModel):
                     errors.append("polygon profile needs at least 3 points")
             elif not geometry.width or not geometry.height:
                 errors.append("rectangle profile missing width/height")
+            if geometry.corner_radius < 0:
+                errors.append("corner_radius must be non-negative")
+            elif (
+                geometry.corner_radius > 0
+                and geometry.profile_kind == "rectangle"
+                and geometry.width and geometry.height
+                and geometry.corner_radius >= min(geometry.width, geometry.height) / 2
+            ):
+                errors.append("corner_radius too large for the rectangle profile")
         elif isinstance(geometry, RevolvedGeometry):
             if not geometry.segments:
                 errors.append("revolved geometry needs at least one segment")

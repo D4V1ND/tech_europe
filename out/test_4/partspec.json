@@ -7,11 +7,13 @@
     "height": 1.25,
     "diameter": null,
     "profile_points": [],
-    "thickness": 0.5
+    "thickness": 0.5,
+    "corner_radius": 0.1,
+    "corner_style": "scallop"
   },
   "holes": [
     {
-      "id": "hole_bl",
+      "id": "hole_bottom_left",
       "x": 0.25,
       "y": 0.25,
       "diameter": 0.2,
@@ -24,7 +26,7 @@
       "thread": null
     },
     {
-      "id": "hole_br",
+      "id": "hole_bottom_right",
       "x": 1.5,
       "y": 0.25,
       "diameter": 0.2,
@@ -37,7 +39,7 @@
       "thread": null
     },
     {
-      "id": "hole_tl",
+      "id": "hole_top_left",
       "x": 0.25,
       "y": 1.0,
       "diameter": 0.2,
@@ -50,7 +52,7 @@
       "thread": null
     },
     {
-      "id": "hole_tr",
+      "id": "hole_top_right",
       "x": 1.5,
       "y": 1.0,
       "diameter": 0.2,
@@ -64,9 +66,7 @@
     }
   ],
   "cuts": [],
-  "fillets": [
-    0.1
-  ],
+  "fillets": [],
   "chamfers": [],
   "dimensions": [
     {
@@ -112,5 +112,5 @@
       "tol_minus": 0.01
     }
   ],
-  "notes": "Corners are shown as concave scallops (R0.10) rather than standard convex fillets. Modeled as a rectangular profile with the corner radius noted."
+  "notes": "Mounting plate with 4 through holes. Hole positions are derived from the 'EQUALLY SPACED FROM EDGES' note and the spacing dimensions. The corners are visually scalloped inward, so corner_style is set to 'scallop' despite the 'ROUNDED CORNERS' note in the title block."
 }
