@@ -49,6 +49,21 @@ class RefineBody(BaseModel):
     discrepancies: list[str]
 
 
+class TavilySuggestBody(BaseModel):
+    run_id: str
+    field: str
+
+
+class TavilySearchBody(BaseModel):
+    query: str
+
+
+class ApplySuggestionBody(BaseModel):
+    run_id: str
+    field: str
+    value: float
+
+
 # ── Endpoints ────────────────────────────────────────────────────────────────
 
 @app.post("/api/reconstruct")
@@ -215,6 +230,69 @@ def _run_refine_job(run_id: str, discrepancies: list[str]):
         job["status"] = "done"
 
 
+@app.post("/api/tavily-suggest")
+def tavily_suggest(body: TavilySuggestBody):
+    """Use Tavily's live web search to look up a standard value for a missing/uncertain
+    field, given the part's context. Advisory; separate from the core pipeline."""
+    job = _require_done(body.run_id)
+    spec = job["result"].get("spec")
+    if spec is None:
+        raise HTTPException(400, "No spec available for this run")
+    try:
+        from drawing2cad.tavily_lookup import research_field
+        return research_field(spec, body.field)
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(500, detail=f"Tavily lookup failed: {type(e).__name__}: {e}")
+
+
+@app.post("/api/tavily-search")
+def tavily_search(body: TavilySearchBody):
+    """Free-form Tavily research about the part; returns an answer plus its sources."""
+    try:
+        from drawing2cad.tavily_lookup import research_query
+        return research_query(body.query)
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(500, detail=f"Tavily search failed: {type(e).__name__}: {e}")
+
+
+@app.post("/api/apply-suggestion")
+def apply_suggestion(body: ApplySuggestionBody):
+    """Patch an accepted value (e.g. from Tavily) into the spec, then regenerate and
+    re-validate. Deterministic (no LLM) -> fast enough to run synchronously."""
+    job = _require_done(body.run_id)
+    spec = job["result"].get("spec")
+    if spec is None:
+        raise HTTPException(400, "No spec available for this run")
+    try:
+        from drawing2cad.spec_patch import apply_field
+        from drawing2cad.cad_generator import generate_code, run_code
+        from drawing2cad.validator import validate as run_validate
+
+        new_spec = apply_field(spec, body.field, body.value)
+        errors = new_spec.sanity_check()
+        if errors:
+            raise HTTPException(400, detail=f"patched spec is invalid: {errors}")
+
+        out_dir = Path(job["out_dir"])
+        code = generate_code(new_spec)
+        solid = run_code(code, out_dir, spec=new_spec)
+        report = run_validate(new_spec, solid)
+        score = (sum(1 for c in report.checks if c.passed) / len(report.checks)
+                 if report.checks else 0.0)
+
+        job["result"] = {**job["result"], "spec": new_spec, "code": code,
+                         "report": report, "score": score, "passed": score >= 0.9}
+        job["stl_version"] = int(time.time())
+        return _build_response(body.run_id, job, cache_bust=True)
+    except HTTPException:
+        raise
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(500, detail=f"apply failed: {type(e).__name__}: {e}")
+
+
 @app.get("/runs/{run_id}/render")
 def get_render(run_id: str):
     job = _require_done(run_id)
@@ -322,12 +400,15 @@ def _build_response(run_id: str, job: dict, cache_bust: bool = False) -> dict:
     if cache_bust and not version:
         version = int(time.time())
     suffix = f"?t={version}" if version else ""
+    model_available = (Path(job["out_dir"]) / "part.stl").exists()
     return {
         "run_id": run_id,
         "status": "done",
         "passed": result["passed"],
         "attempts": result["attempts"],
         "score": result["score"],
+        "model_available": model_available,
+        "stop_reason": result.get("stop_reason"),
         "spec": _flatten_spec(spec),
         "report": {
             "passed": report.ok(),

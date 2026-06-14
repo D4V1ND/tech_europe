@@ -1,5 +1,5 @@
 'use client'
-import { Suspense, useEffect, useState, useMemo, useRef } from 'react'
+import { Component, ReactNode, Suspense, useEffect, useState, useMemo, useRef } from 'react'
 import { Canvas, ThreeEvent, useThree } from '@react-three/fiber'
 import { OrbitControls, Grid, Line, Html } from '@react-three/drei'
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js'
@@ -238,6 +238,25 @@ function CameraController({ view }: { view: ViewPreset }) {
   return <OrbitControls enableDamping dampingFactor={0.05} makeDefault />
 }
 
+// Catches a failed STL load (e.g. the model file is missing or 404s) so the canvas shows
+// a message instead of white-screening. Keyed by url so it resets when the model changes.
+class ModelErrorBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+  state = { failed: false }
+  static getDerivedStateFromError() { return { failed: true } }
+  render() {
+    if (this.state.failed) {
+      return (
+        <Html center>
+          <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: 13, textAlign: 'center', width: 220 }}>
+            ⚠️ Could not load the 3D model.
+          </div>
+        </Html>
+      )
+    }
+    return this.props.children
+  }
+}
+
 function Scene({
   stlUrl, view, activeCheck,
 }: {
@@ -249,10 +268,12 @@ function Scene({
       <directionalLight position={[50, 80, 60]} intensity={1.2} castShadow />
       <directionalLight position={[-50, -60, -60]} intensity={0.45} />
       <directionalLight position={[-20, -30, 30]} intensity={0.2} />
+      <ModelErrorBoundary key={stlUrl}>
       <Suspense fallback={null}>
         <STLModel url={stlUrl} />
         <DimensionArrows stlUrl={stlUrl} check={activeCheck} />
       </Suspense>
+      </ModelErrorBoundary>
       <Grid
         args={[200, 200]}
         cellSize={5} cellThickness={0.5} cellColor="#3e3281"

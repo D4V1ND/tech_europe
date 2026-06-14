@@ -6,8 +6,9 @@ import { ValidationPanel } from '@/components/ValidationPanel'
 import { ScriptEditor } from '@/components/ScriptEditor'
 import { DrawingPanel } from '@/components/DrawingPanel'
 import { VisualReviewPanel } from '@/components/VisualReviewPanel'
+import { TavilyResearchPanel } from '@/components/TavilyResearchPanel'
 import { TavilySuggestionCard } from '@/components/TavilySuggestionCard'
-import { getResult, rerun, ReconstructResult, TavilyQuestion, PartSpec } from '@/lib/api'
+import { getResult, rerun, tavilySuggest, applySuggestion, ReconstructResult, TavilyQuestion, PartSpec } from '@/lib/api'
 import type { ViewPreset } from '@/components/ModelViewer3D'
 
 const ModelViewer3D = dynamic(
@@ -172,12 +173,13 @@ function PartSpecTab({ spec }: { spec: PartSpec }) {
 
 // ── Page ─────────────────────────────────────────────────────────────────────
 
-type BottomTab = 'parameters' | 'validation' | 'review' | 'script'
+type BottomTab = 'parameters' | 'validation' | 'review' | 'research' | 'script'
 
 const BOTTOM_TABS: { id: BottomTab; label: string }[] = [
   { id: 'parameters', label: 'Parameters' },
   { id: 'validation', label: 'Validation' },
   { id: 'review',     label: 'AI Review' },
+  { id: 'research',   label: 'Research' },
   { id: 'script',     label: 'Parametric Script' },
 ]
 
@@ -189,11 +191,32 @@ export default function ResultPage() {
   const [view, setView] = useState<ViewPreset>('iso')
   const [rerunLoading, setRerunLoading] = useState(false)
   const [showTavily, setShowTavily] = useState(true)
+  const [tavilyQ, setTavilyQ] = useState<TavilyQuestion | null>(null)
   const [bottomTab, setBottomTab] = useState<BottomTab>('parameters')
 
   useEffect(() => {
     getResult(runId).then(setResult).catch(console.error)
   }, [runId])
+
+  // Real Tavily lookup for the floating card: fetch a standard wall-thickness suggestion
+  // once the run is loaded (the demo fixture keeps its canned card instead).
+  useEffect(() => {
+    if (runId === 'demo' || !result || result.status !== 'done') return
+    let cancelled = false
+    tavilySuggest(runId, 'thickness')
+      .then(q => { if (!cancelled && q.tavily_suggestion != null) setTavilyQ(q) })
+      .catch(() => {})
+    return () => { cancelled = true }
+  }, [runId, result?.status])
+
+  const handleAcceptSuggestion = async (field: string, value: number) => {
+    setShowTavily(false)
+    try {
+      setResult(await applySuggestion(runId, field, value))
+    } catch (e) {
+      console.error(e)
+    }
+  }
 
   const handleRerun = async (code: string) => {
     if (!result) return
@@ -226,22 +249,42 @@ export default function ResultPage() {
       {/* Top: Drawing LEFT, 3D Model RIGHT */}
       <div className="grid grid-cols-2 gap-6" style={{ height: 450 }}>
         <DrawingPanel src={result.drawing_url} filename="technical_drawing.png" stlUrl={result.stl_url} />
-        <ModelViewer3D
-          stlUrl={result.stl_url}
-          view={view}
-          onViewChange={setView}
-          loading={rerunLoading}
-          drawingUrl={result.drawing_url}
-          report={result.report ?? undefined}
-        />
+        {result.model_available === false ? (
+          <div className="flex flex-col items-center justify-center rounded-xl text-center px-8"
+            style={{ background: '#0a0a18', border: '1px solid var(--border)' }}>
+            <div style={{ fontSize: 32, marginBottom: 12 }}>⚠️</div>
+            <div style={{ fontSize: 15, fontWeight: 600, color: 'white', marginBottom: 8 }}>
+              No 3D model was generated
+            </div>
+            <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', lineHeight: 1.6, maxWidth: 420 }}>
+              The extraction for this drawing couldn’t be turned into a valid part, so nothing
+              was built to display.
+              {result.stop_reason && (
+                <div style={{ marginTop: 12, fontFamily: 'monospace', fontSize: 11.5,
+                  color: 'rgba(255,170,51,0.9)', wordBreak: 'break-word' }}>
+                  {result.stop_reason}
+                </div>
+              )}
+            </div>
+          </div>
+        ) : (
+          <ModelViewer3D
+            stlUrl={result.stl_url}
+            view={view}
+            onViewChange={setView}
+            loading={rerunLoading}
+            drawingUrl={result.drawing_url}
+            report={result.report ?? undefined}
+          />
+        )}
       </div>
 
-      {/* Tavily suggestion */}
-      {showTavily && result.status === 'done' && (
+      {/* Tavily suggestion — real lookup for actual runs, canned card for the demo fixture */}
+      {showTavily && result.status === 'done' && (runId === 'demo' || tavilyQ) && (
         <div className="flex justify-start">
           <TavilySuggestionCard
-            question={MOCK_TAVILY_QUESTION}
-            onAccept={() => setShowTavily(false)}
+            question={runId === 'demo' ? MOCK_TAVILY_QUESTION : (tavilyQ as TavilyQuestion)}
+            onAccept={runId === 'demo' ? () => setShowTavily(false) : handleAcceptSuggestion}
             onIgnore={() => setShowTavily(false)}
           />
         </div>
@@ -272,6 +315,7 @@ export default function ResultPage() {
         )}
         {bottomTab === 'validation' && <ValidationPanel report={result.report} />}
         {bottomTab === 'review'     && <VisualReviewPanel runId={result.run_id} onRefined={setResult} />}
+        {bottomTab === 'research'   && <TavilyResearchPanel runId={result.run_id} spec={result.spec} onApplied={setResult} />}
         {bottomTab === 'script'     && <ScriptEditor code={result.code} stepUrl={result.step_url} onRerun={handleRerun} />}
       </div>
     </div>

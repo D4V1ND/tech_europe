@@ -12,11 +12,61 @@ export interface ValidationReport {
   checks: Check[]
 }
 
+export interface TavilySource {
+  title: string
+  url: string
+}
+
 export interface TavilyQuestion {
   field: string
   question: string
-  tavily_suggestion: number
+  tavily_suggestion: number | null
   source_url: string
+  sources?: TavilySource[]
+}
+
+export interface TavilyAnswer {
+  answer: string
+  sources: TavilySource[]
+}
+
+export async function tavilySuggest(runId: string, field: string): Promise<TavilyQuestion> {
+  const res = await fetch('/api/tavily-suggest', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ run_id: runId, field }),
+  })
+  if (!res.ok) {
+    const detail = await res.json().catch(() => null)
+    throw new Error(detail?.detail ?? `Tavily lookup failed: ${res.status}`)
+  }
+  return res.json()
+}
+
+export async function applySuggestion(runId: string, field: string, value: number): Promise<ReconstructResult> {
+  const res = await fetch('/api/apply-suggestion', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ run_id: runId, field, value }),
+  })
+  if (!res.ok) {
+    const detail = await res.json().catch(() => null)
+    throw new Error(detail?.detail ?? `Apply failed: ${res.status}`)
+  }
+  return res.json()
+}
+
+export async function tavilySearch(query: string): Promise<TavilyAnswer> {
+  const res = await fetch('/api/tavily-search', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ query }),
+  })
+  if (!res.ok) {
+    const detail = await res.json().catch(() => null)
+    throw new Error(detail?.detail ?? `Tavily search failed: ${res.status}`)
+  }
+  return res.json()
 }
 
 // PartSpec types — mirror drawing2cad/partspec.py exactly
@@ -68,6 +118,8 @@ export interface ReconstructResult {
   step_url: string
   drawing_url: string
   status: 'done' | 'needs_input'
+  model_available?: boolean
+  stop_reason?: string | null
   pending_questions?: TavilyQuestion[]
 }
 
