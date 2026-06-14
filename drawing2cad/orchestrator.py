@@ -40,10 +40,10 @@ def reconstruct(
 
     # --- Step 1: Extract PartSpec from drawing ---
     if on_step: on_step(1)
-    from drawing2cad.extractor import extract_drawing_info   # lazy: needs API key at runtime
+    from drawing2cad.extractor import extract_drawing_info 
     if model is None:
-        from drawing2cad.models import model_gemini
-        model = model_gemini
+        from drawing2cad.models import model_openai
+        model = model_openai
     spec = extract_drawing_info(image_path, model=model,
                                 output_path=out_dir / "partspec.json")
 
@@ -136,6 +136,6 @@ def reconstruct(
     }
 
 if __name__ == "__main__":
-    result = reconstruct("tests/images/test_2.png", out_dir="out/test_3_reconstruct",
+    result = reconstruct("tests/images/test_1.png", out_dir="out/test_1_reconstruct",
                          model=None, use_llm=False, threshold=0.9, tol=0.5, validate=True)
     print(f"Final score: {result['score']:.0%}  Passed:{result['passed']}  Attempts: {result['attempts']}  Stop reason: {result['stop_reason']}")

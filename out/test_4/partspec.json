@@ -9,11 +9,11 @@
     "profile_points": [],
     "thickness": 0.5,
     "corner_radius": 0.1,
-    "corner_style": "scallop"
+    "corner_style": "round"
   },
   "holes": [
     {
-      "id": "hole_bottom_left",
+      "id": "lower_left_through",
       "x": 0.25,
       "y": 0.25,
       "diameter": 0.2,
@@ -26,20 +26,7 @@
       "thread": null
     },
     {
-      "id": "hole_bottom_right",
-      "x": 1.5,
-      "y": 0.25,
-      "diameter": 0.2,
-      "hole_type": "through",
-      "depth": null,
-      "counterbore_diameter": null,
-      "counterbore_depth": null,
-      "countersink_diameter": null,
-      "countersink_angle": null,
-      "thread": null
-    },
-    {
-      "id": "hole_top_left",
+      "id": "upper_left_through",
       "x": 0.25,
       "y": 1.0,
       "diameter": 0.2,
@@ -52,7 +39,20 @@
       "thread": null
     },
     {
-      "id": "hole_top_right",
+      "id": "lower_right_through",
+      "x": 1.5,
+      "y": 0.25,
+      "diameter": 0.2,
+      "hole_type": "through",
+      "depth": null,
+      "counterbore_diameter": null,
+      "counterbore_depth": null,
+      "countersink_diameter": null,
+      "countersink_angle": null,
+      "thread": null
+    },
+    {
+      "id": "upper_right_through",
       "x": 1.5,
       "y": 1.0,
       "diameter": 0.2,
@@ -67,9 +67,7 @@
   ],
   "cuts": [],
   "fillets": [],
-  "chamfers": [
-    0.005
-  ],
+  "chamfers": [],
   "dimensions": [
     {
       "name": "overall_width",
@@ -84,35 +82,41 @@
       "tol_minus": 0.01
     },
     {
-      "name": "thickness",
+      "name": "thickness_depth",
       "nominal": 0.5,
       "tol_plus": 0.01,
       "tol_minus": 0.01
     },
     {
-      "name": "hole_spacing_x",
+      "name": "hole_horizontal_spacing",
       "nominal": 1.25,
       "tol_plus": 0.01,
       "tol_minus": 0.01
     },
     {
-      "name": "hole_spacing_y",
+      "name": "hole_vertical_spacing",
       "nominal": 0.75,
       "tol_plus": 0.01,
       "tol_minus": 0.01
     },
     {
-      "name": "hole_diameter",
+      "name": "through_hole_diameter",
       "nominal": 0.2,
-      "tol_plus": 0.01,
-      "tol_minus": 0.01
+      "tol_plus": 0.005,
+      "tol_minus": 0.005
     },
     {
       "name": "corner_radius",
       "nominal": 0.1,
-      "tol_plus": 0.01,
-      "tol_minus": 0.01
+      "tol_plus": 0.005,
+      "tol_minus": 0.005
+    },
+    {
+      "name": "edge_break",
+      "nominal": 0.005,
+      "tol_plus": 0.005,
+      "tol_minus": 0.0
     }
   ],
-  "notes": "Mounting plate with 4 through holes and scalloped corners. Break all sharp edges 0.005-0.010."
+  "notes": "Identified front view as X-Y outline and side view as X-Z depth check. Mounting plate, aluminum 6061, 1.75 in wide x 1.25 in high x 0.50 in thick/deep. Four Ø0.20 through holes are equally spaced from edges per note; positions inferred from 1.25 horizontal center spacing and 0.75 vertical center spacing, giving 0.25 in edge margins in X and Y. Four outside corners are shown/notes as rounded R0.10. General tolerance from title block: ±.01 for 2-place dimensions and ±.005 for 3-place dimensions; edge break .005-.010 noted but not modeled as full chamfers."
 }

@@ -78,6 +78,12 @@ Choose exactly one geometry variant:
    Keep all body fields complete: never emit placeholder bodies, and never emit a box
    without positive dx/dy/dz or a cylinder without positive diameter/length. Triangular
    webs and unclear bend radii may still be approximated; note the approximation.
+   PRISM HARD RULE: only use shape "prism" when you can explicitly list the profile polygon
+   coordinates. If you cannot determine the polygon points, use shape "box" instead -- an
+   approximate box is better than an invalid prism. A prism with an empty profile_points
+   list will fail validation. Never emit more than 20 bodies total; if you find yourself
+   approaching that count you are decomposing at too fine a level -- merge plates and
+   approximate.
 
    MULTIBODY FINAL CHECK: compute the union bounding box of every operation="add" body
    before returning JSON. Its X, Y, Z spans must match the drawing's explicit overall

@@ -1,63 +1,20 @@
-import math
 import cadquery as cq
 
-# --- parameters ---
-part_diameter = 76.0
-part_radius = part_diameter / 2
-part_thickness = 26.0
-segment0_z = 0.0
-segment0_length = 16.0
-segment0_outer_dia = 76.0
-segment0_inner_dia = 38.0
-segment1_z = 16.0
-segment1_length = 2.0
-segment1_outer_dia = 76.0
-segment1_inner_dia = 28.0
-segment2_z = 18.0
-segment2_length = 8.0
-segment2_outer_dia = 48.0
-segment2_inner_dia = 28.0
-hole0_x = 38.0
-hole0_y = 66.0
-hole0_dia = 5.3
-hole0_depth = 18.0
-hole0_cbore_dia = 7.8
-hole0_cbore_depth = 4.0
-hole1_x = 66.0
-hole1_y = 38.0
-hole1_dia = 5.3
-hole1_depth = 18.0
-hole1_cbore_dia = 7.8
-hole1_cbore_depth = 4.0
-hole2_x = 38.0
-hole2_y = 10.0
-hole2_dia = 5.3
-hole2_depth = 18.0
-hole2_cbore_dia = 7.8
-hole2_cbore_depth = 4.0
-hole3_x = 10.0
-hole3_y = 38.0
-hole3_dia = 5.3
-hole3_depth = 18.0
-hole3_cbore_dia = 7.8
-hole3_cbore_depth = 4.0
-
-# --- base geometry ---
+# --- multi-body assembly ---
 result = None
-segment0 = (cq.Workplane('XY').center(part_radius, part_radius).circle(segment0_outer_dia / 2).extrude(segment0_length).translate((0, 0, segment0_z)))
-segment0 = segment0.cut(cq.Workplane('XY').center(part_radius, part_radius).circle(segment0_inner_dia / 2).extrude(segment0_length + 0.02).translate((0, 0, segment0_z - 0.01)))
-result = segment0 if result is None else result.union(segment0)
-segment1 = (cq.Workplane('XY').center(part_radius, part_radius).circle(segment1_outer_dia / 2).extrude(segment1_length).translate((0, 0, segment1_z)))
-segment1 = segment1.cut(cq.Workplane('XY').center(part_radius, part_radius).circle(segment1_inner_dia / 2).extrude(segment1_length + 0.02).translate((0, 0, segment1_z - 0.01)))
-result = segment1 if result is None else result.union(segment1)
-segment2 = (cq.Workplane('XY').center(part_radius, part_radius).circle(segment2_outer_dia / 2).extrude(segment2_length).translate((0, 0, segment2_z)))
-segment2 = segment2.cut(cq.Workplane('XY').center(part_radius, part_radius).circle(segment2_inner_dia / 2).extrude(segment2_length + 0.02).translate((0, 0, segment2_z - 0.01)))
-result = segment2 if result is None else result.union(segment2)
-result = result.cut(cq.Workplane('XY').workplane(offset=part_thickness + 0.01).pushPoints([(hole0_x, hole0_y)]).circle(hole0_dia / 2).extrude(-(hole0_depth + 0.01)))
-result = result.cut(cq.Workplane('XY').workplane(offset=part_thickness + 0.01).pushPoints([(hole0_x, hole0_y)]).circle(hole0_cbore_dia / 2).extrude(-(hole0_cbore_depth + 0.01)))
-result = result.cut(cq.Workplane('XY').workplane(offset=part_thickness + 0.01).pushPoints([(hole1_x, hole1_y)]).circle(hole1_dia / 2).extrude(-(hole1_depth + 0.01)))
-result = result.cut(cq.Workplane('XY').workplane(offset=part_thickness + 0.01).pushPoints([(hole1_x, hole1_y)]).circle(hole1_cbore_dia / 2).extrude(-(hole1_cbore_depth + 0.01)))
-result = result.cut(cq.Workplane('XY').workplane(offset=part_thickness + 0.01).pushPoints([(hole2_x, hole2_y)]).circle(hole2_dia / 2).extrude(-(hole2_depth + 0.01)))
-result = result.cut(cq.Workplane('XY').workplane(offset=part_thickness + 0.01).pushPoints([(hole2_x, hole2_y)]).circle(hole2_cbore_dia / 2).extrude(-(hole2_cbore_depth + 0.01)))
-result = result.cut(cq.Workplane('XY').workplane(offset=part_thickness + 0.01).pushPoints([(hole3_x, hole3_y)]).circle(hole3_dia / 2).extrude(-(hole3_depth + 0.01)))
-result = result.cut(cq.Workplane('XY').workplane(offset=part_thickness + 0.01).pushPoints([(hole3_x, hole3_y)]).circle(hole3_cbore_dia / 2).extrude(-(hole3_cbore_depth + 0.01)))
+add0 = cq.Workplane('XY').box(116.0, 105.0, 3.0, centered=(False, False, False)).translate((0.0, 0.0, 97.0))
+result = add0 if result is None else result.union(add0)
+add1 = cq.Workplane('XY').box(43.0, 3.0, 100.0, centered=(False, False, False)).translate((0.0, 0.0, 0.0))
+result = add1 if result is None else result.union(add1)
+add2 = cq.Workplane('XY').box(43.0, 3.0, 100.0, centered=(False, False, False)).translate((73.0, 0.0, 0.0))
+result = add2 if result is None else result.union(add2)
+add3 = cq.Workplane('YZ').workplane(offset=0.0).polyline([(0.0, 0.0), (0.0, 100.0), (105.0, 100.0), (88.0, 72.0), (64.0, 45.0), (42.0, 20.0), (30.0, 0.0)]).close().extrude(3.0)
+result = add3 if result is None else result.union(add3)
+add4 = cq.Workplane('YZ').workplane(offset=113.0).polyline([(0.0, 0.0), (0.0, 100.0), (105.0, 100.0), (88.0, 72.0), (64.0, 45.0), (42.0, 20.0), (30.0, 0.0)]).close().extrude(3.0)
+result = add4 if result is None else result.union(add4)
+cut0 = cq.Workplane('XY').add(cq.Solid.makeCylinder(41.0, 8.02, cq.Vector(58.0, 55.0, 94.99), cq.Vector(0, 0, 1)))
+result = result.cut(cut0)
+cut1 = cq.Workplane('XY').add(cq.Solid.makeCylinder(6.0, 6.02, cq.Vector(35.0, -1.01, 25.0), cq.Vector(0, 1, 0)))
+result = result.cut(cut1)
+cut2 = cq.Workplane('XY').add(cq.Solid.makeCylinder(6.0, 6.02, cq.Vector(81.0, -1.01, 25.0), cq.Vector(0, 1, 0)))
+result = result.cut(cut2)

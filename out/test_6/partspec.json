@@ -4,89 +4,258 @@
     "kind": "multibody",
     "bodies": [
       {
-        "shape": "cylinder",
-        "operation": "add",
-        "x": 25.0,
-        "y": 0.0,
-        "z": 25.0,
-        "dx": null,
-        "dy": null,
-        "dz": null,
-        "diameter": 50.0,
-        "length": 15.0,
-        "axis": "y"
-      },
-      {
-        "shape": "cylinder",
-        "operation": "add",
-        "x": 25.0,
-        "y": 35.0,
-        "z": 25.0,
-        "dx": null,
-        "dy": null,
-        "dz": null,
-        "diameter": 50.0,
-        "length": 15.0,
-        "axis": "y"
-      },
-      {
         "shape": "box",
+        "operation": "add",
+        "x": 42.0,
+        "y": 0.0,
+        "z": 54.0,
+        "dx": 28.0,
+        "dy": 60.0,
+        "dz": 26.0,
+        "diameter": null,
+        "length": null,
+        "profile_points": [],
+        "profile_start": null,
+        "profile_segments": [],
+        "axis": "z"
+      },
+      {
+        "shape": "prism",
+        "operation": "add",
+        "x": 0.0,
+        "y": 50.0,
+        "z": 0.0,
+        "dx": null,
+        "dy": null,
+        "dz": null,
+        "diameter": null,
+        "length": 10.0,
+        "profile_points": [
+          {
+            "x": 17.0,
+            "y": 0.0
+          },
+          {
+            "x": 42.0,
+            "y": 0.0
+          },
+          {
+            "x": 42.0,
+            "y": 54.0
+          },
+          {
+            "x": 17.0,
+            "y": 54.0
+          },
+          {
+            "x": 5.0,
+            "y": 48.0
+          },
+          {
+            "x": 0.0,
+            "y": 38.0
+          },
+          {
+            "x": 0.0,
+            "y": 16.0
+          },
+          {
+            "x": 5.0,
+            "y": 6.0
+          }
+        ],
+        "profile_start": null,
+        "profile_segments": [],
+        "axis": "y"
+      },
+      {
+        "shape": "prism",
         "operation": "add",
         "x": 0.0,
         "y": 0.0,
-        "z": 24.9,
-        "dx": 50.0,
-        "dy": 50.0,
-        "dz": 25.2,
+        "z": 0.0,
+        "dx": null,
+        "dy": null,
+        "dz": null,
         "diameter": null,
-        "length": null,
-        "axis": "z"
+        "length": 10.0,
+        "profile_points": [
+          {
+            "x": 17.0,
+            "y": 0.0
+          },
+          {
+            "x": 42.0,
+            "y": 0.0
+          },
+          {
+            "x": 42.0,
+            "y": 54.0
+          },
+          {
+            "x": 17.0,
+            "y": 54.0
+          },
+          {
+            "x": 5.0,
+            "y": 48.0
+          },
+          {
+            "x": 0.0,
+            "y": 38.0
+          },
+          {
+            "x": 0.0,
+            "y": 16.0
+          },
+          {
+            "x": 5.0,
+            "y": 6.0
+          }
+        ],
+        "profile_start": null,
+        "profile_segments": [],
+        "axis": "y"
       },
       {
-        "shape": "box",
+        "shape": "prism",
         "operation": "add",
-        "x": 15.0,
+        "x": 42.0,
         "y": 0.0,
-        "z": 50.0,
-        "dx": 20.0,
-        "dy": 50.0,
-        "dz": 25.0,
+        "z": 54.0,
+        "dx": null,
+        "dy": null,
+        "dz": null,
         "diameter": null,
-        "length": null,
-        "axis": "z"
+        "length": 28.0,
+        "profile_points": [
+          {
+            "x": 0.0,
+            "y": 0.0
+          },
+          {
+            "x": 26.0,
+            "y": 0.0
+          },
+          {
+            "x": 26.0,
+            "y": 30.0
+          },
+          {
+            "x": 12.0,
+            "y": 48.0
+          },
+          {
+            "x": 0.0,
+            "y": 60.0
+          }
+        ],
+        "profile_start": null,
+        "profile_segments": [],
+        "axis": "x"
       },
       {
         "shape": "cylinder",
         "operation": "cut",
-        "x": 25.0,
-        "y": 0.0,
-        "z": 25.0,
+        "x": 21.0,
+        "y": 50.0,
+        "z": 27.0,
         "dx": null,
         "dy": null,
         "dz": null,
-        "diameter": 20.0,
-        "length": 50.0,
+        "diameter": 18.0,
+        "length": 12.0,
+        "profile_points": [],
+        "profile_start": null,
+        "profile_segments": [],
         "axis": "y"
       },
       {
-        "shape": "box",
+        "shape": "cylinder",
         "operation": "cut",
-        "x": 14.0,
-        "y": 35.0,
-        "z": 60.0,
-        "dx": 22.0,
-        "dy": 16.0,
-        "dz": 16.0,
-        "diameter": null,
-        "length": null,
-        "axis": "z"
+        "x": 21.0,
+        "y": -1.0,
+        "z": 27.0,
+        "dx": null,
+        "dy": null,
+        "dz": null,
+        "diameter": 18.0,
+        "length": 12.0,
+        "profile_points": [],
+        "profile_start": null,
+        "profile_segments": [],
+        "axis": "y"
       }
     ]
   },
-  "holes": [],
+  "holes": [
+    {
+      "id": "top_lug_vertical_through_hole",
+      "x": 21.0,
+      "y": 55.0,
+      "diameter": 18.0,
+      "hole_type": "through",
+      "depth": null,
+      "counterbore_diameter": null,
+      "counterbore_depth": null,
+      "countersink_diameter": null,
+      "countersink_angle": null,
+      "thread": null
+    },
+    {
+      "id": "bottom_lug_vertical_through_hole",
+      "x": 21.0,
+      "y": 5.0,
+      "diameter": 18.0,
+      "hole_type": "through",
+      "depth": null,
+      "counterbore_diameter": null,
+      "counterbore_depth": null,
+      "countersink_diameter": null,
+      "countersink_angle": null,
+      "thread": null
+    }
+  ],
   "cuts": [],
   "fillets": [],
   "chamfers": [],
-  "dimensions": [],
-  "notes": "Part dimensions are estimated as the drawing contains no explicit measurements. Assumed overall bounding box is 50x50x75mm. Modeled using multibody to capture the true cylindrical front prongs. The chamfer on the rear block is approximated with a rectangular cut due to multibody primitive limitations. The central hole is modeled as a cut cylinder along the Y axis."
+  "dimensions": [
+    {
+      "name": "estimated_overall_width_x",
+      "nominal": 70.0,
+      "tol_plus": 0.5,
+      "tol_minus": 0.5
+    },
+    {
+      "name": "estimated_overall_height_y",
+      "nominal": 60.0,
+      "tol_plus": 0.5,
+      "tol_minus": 0.5
+    },
+    {
+      "name": "estimated_overall_depth_z",
+      "nominal": 80.0,
+      "tol_plus": 0.5,
+      "tol_minus": 0.5
+    },
+    {
+      "name": "estimated_lug_thickness_y",
+      "nominal": 10.0,
+      "tol_plus": 0.5,
+      "tol_minus": 0.5
+    },
+    {
+      "name": "estimated_fork_gap_y",
+      "nominal": 40.0,
+      "tol_plus": 0.5,
+      "tol_minus": 0.5
+    },
+    {
+      "name": "estimated_hole_diameter",
+      "nominal": 18.0,
+      "tol_plus": 0.5,
+      "tol_minus": 0.5
+    }
+  ],
+  "notes": "Views identified as top, front, right-side, and isometric of the same clevis/yoke-style bracket. Title block states dimensions in millimetres and general tolerance +/-0.5; no feature dimensions are legible in the supplied image, so all geometry dimensions are estimated from proportions. Model uses X=front-view width, Y=vertical height, Z=depth. The two horizontal fork lugs are approximated as prism plates with octagonal/straight-segment rounded noses; true circular nose arcs are estimated. Rear upright block and sloped rear top seen in right-side/isometric views are represented by an added rear block plus a sloped side-web prism. Two coaxial vertical through holes in the top and bottom lugs are included as cut cylinders; the duplicate Hole entries record the physical holes in the requested XY hole list. Internal fork opening is represented by the gap between the two lug plates."
 }

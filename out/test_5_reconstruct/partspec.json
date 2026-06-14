@@ -1,0 +1,269 @@
+{
+  "units": "mm",
+  "geometry": {
+    "kind": "multibody",
+    "bodies": [
+      {
+        "shape": "box",
+        "operation": "add",
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "dx": 116.0,
+        "dy": 105.0,
+        "dz": 3.0,
+        "diameter": null,
+        "length": null,
+        "profile_points": [],
+        "profile_start": null,
+        "profile_segments": [],
+        "axis": "z"
+      },
+      {
+        "shape": "box",
+        "operation": "add",
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "dx": 3.0,
+        "dy": 105.0,
+        "dz": 100.0,
+        "diameter": null,
+        "length": null,
+        "profile_points": [],
+        "profile_start": null,
+        "profile_segments": [],
+        "axis": "z"
+      },
+      {
+        "shape": "box",
+        "operation": "add",
+        "x": 113.0,
+        "y": 0.0,
+        "z": 0.0,
+        "dx": 3.0,
+        "dy": 105.0,
+        "dz": 100.0,
+        "diameter": null,
+        "length": null,
+        "profile_points": [],
+        "profile_start": null,
+        "profile_segments": [],
+        "axis": "z"
+      },
+      {
+        "shape": "box",
+        "operation": "add",
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "dx": 116.0,
+        "dy": 3.0,
+        "dz": 100.0,
+        "diameter": null,
+        "length": null,
+        "profile_points": [],
+        "profile_start": null,
+        "profile_segments": [],
+        "axis": "z"
+      },
+      {
+        "shape": "box",
+        "operation": "add",
+        "x": 0.0,
+        "y": 0.0,
+        "z": 97.0,
+        "dx": 116.0,
+        "dy": 105.0,
+        "dz": 3.0,
+        "diameter": null,
+        "length": null,
+        "profile_points": [],
+        "profile_start": null,
+        "profile_segments": [],
+        "axis": "z"
+      },
+      {
+        "shape": "cylinder",
+        "operation": "cut",
+        "x": 58.0,
+        "y": 50.0,
+        "z": -1.0,
+        "dx": null,
+        "dy": null,
+        "dz": null,
+        "diameter": 82.0,
+        "length": 5.0,
+        "profile_points": [],
+        "profile_start": null,
+        "profile_segments": [],
+        "axis": "z"
+      },
+      {
+        "shape": "cylinder",
+        "operation": "cut",
+        "x": 35.0,
+        "y": 0.0,
+        "z": 25.0,
+        "dx": null,
+        "dy": null,
+        "dz": null,
+        "diameter": 12.0,
+        "length": 5.0,
+        "profile_points": [],
+        "profile_start": null,
+        "profile_segments": [],
+        "axis": "y"
+      },
+      {
+        "shape": "cylinder",
+        "operation": "cut",
+        "x": 81.0,
+        "y": 0.0,
+        "z": 25.0,
+        "dx": null,
+        "dy": null,
+        "dz": null,
+        "diameter": 12.0,
+        "length": 5.0,
+        "profile_points": [],
+        "profile_start": null,
+        "profile_segments": [],
+        "axis": "y"
+      }
+    ]
+  },
+  "holes": [],
+  "cuts": [],
+  "fillets": [],
+  "chamfers": [],
+  "dimensions": [
+    {
+      "name": "overall_width",
+      "nominal": 116.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "overall_height",
+      "nominal": 105.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "overall_depth",
+      "nominal": 100.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "wall_thickness_default",
+      "nominal": 3.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "inside_bend_radius_default",
+      "nominal": 5.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "large_rear_hole_diameter",
+      "nominal": 82.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "large_rear_hole_center_height",
+      "nominal": 50.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "small_mounting_hole_diameter",
+      "nominal": 12.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "small_mounting_hole_count",
+      "nominal": 2.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "small_mounting_hole_x_from_outer_side",
+      "nominal": 35.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "small_mounting_hole_y_from_front",
+      "nominal": 25.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "top_slot_width",
+      "nominal": 70.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "top_slot_overall_width",
+      "nominal": 100.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "side_profile_depth",
+      "nominal": 100.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "side_flange_projection",
+      "nominal": 30.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "front_lip_height",
+      "nominal": 8.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "rear_vertical_offset",
+      "nominal": 12.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "side_wall_slope_angle",
+      "nominal": 37.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "outer_corner_radius",
+      "nominal": 7.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "outer_corner_radius_count",
+      "nominal": 6.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    },
+    {
+      "name": "side_wall_transition_radius",
+      "nominal": 30.0,
+      "tol_plus": 0.1,
+      "tol_minus": 0.1
+    }
+  ],
+  "notes": "Sheet-metal angle bracket in millimeters, material plain carbon steel. Third-angle-style drawing interpreted as front/back plate with Ø82 through opening, two horizontal feet with Ø12 through holes, and two sloped side webs. Model is an approximate multibody sheet-metal representation using 3 mm default wall thickness. Several formed/bent surfaces, R5 inside bend radii, R7 outside corner radii in 6 places, R30 side transition, and 37 degree side profile are recorded as dimensions/notes but approximated with rectangular plates because exact non-rectangular side plate polygon and bend geometry are not fully encoded. The top/front view shows a 100 mm wide by 8 mm deep rounded rectangular top opening/slot with 70 mm internal straight span; approximated by the open U-shaped bracket/plate layout rather than a separate cut. Small foot hole z positions estimated as 25 mm from the front edge based on the 25 mm dimension in the top view; x positions set 35 mm from each outer side, symmetric about centerline. Overall bounding box assumed X=116 width, Y=105 height, Z=100 depth."
+}

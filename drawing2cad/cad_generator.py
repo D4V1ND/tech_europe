@@ -437,8 +437,8 @@ if __name__ == "__main__":
         output_name = json_path.stem
     else:
         # json_path = Path("drawing2cad/outputs/test_5_corrected.json")
-        json_path = Path("drawing2cad/outputs/test_1.json")
-        output_name = "test_1"
+        json_path = Path("drawing2cad/outputs/test_5.json")
+        output_name = json_path.stem
     loaded_spec = PartSpec.model_validate_json(json_path.read_text(encoding="utf-8"))
     generated_code = generate_code(loaded_spec)
     output_dir = Path("out") / output_name

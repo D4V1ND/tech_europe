@@ -27,47 +27,47 @@
   "chamfers": [],
   "dimensions": [
     {
-      "name": "overall_width",
+      "name": "overall_length",
       "nominal": 55.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "overall_height",
+      "name": "overall_width",
       "nominal": 30.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "overall_thickness",
+      "name": "overall_height",
       "nominal": 7.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "wall_thickness",
+      "name": "wall_thickness_typ",
       "nominal": 1.6,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "floor_thickness",
+      "name": "bottom_thickness",
       "nominal": 1.6,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "outer_corner_radius",
+      "name": "outer_corner_radius_4_places",
       "nominal": 8.0,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     },
     {
-      "name": "inner_corner_radius",
+      "name": "inner_corner_radius_4_places",
       "nominal": 6.4,
       "tol_plus": 0.1,
       "tol_minus": 0.1
     }
   ],
-  "notes": "Rectangular tray/lid with rounded corners and uniform wall thickness."
+  "notes": "Open rounded-rectangle tray. Top view used as the extruded outline: 55 mm by 30 mm with convex R8 outer corners, extruded to 7 mm height. The interior pocket opens through the top face and is offset inward by the 1.6 mm typical wall thickness, leaving a 1.6 mm bottom; resulting estimated pocket size is 51.8 x 26.8 x 5.4 mm with R6.4 inner vertical corners. No holes or chamfers are shown."
 }

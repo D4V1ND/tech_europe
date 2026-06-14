@@ -72,9 +72,9 @@ def test_unsupported_geometry_fails_sanity_check():
 
 def test_multibody_rejects_placeholder_cylinders_and_excessive_body_counts():
     bodies = [Body(shape="box", dx=10, dy=10, dz=2)]
-    bodies.extend(Body(shape="cylinder", operation="cut") for _ in range(129))
+    bodies.extend(Body(shape="cylinder", operation="cut") for _ in range(21))
     errors = PartSpec(geometry=MultiBodyGeometry(bodies=bodies)).sanity_check()
-    assert any("more than 128 bodies" in error for error in errors)
+    assert any("more than 20 bodies" in error for error in errors)
     assert any("cylinder missing positive diameter/length" in error for error in errors)
 
 

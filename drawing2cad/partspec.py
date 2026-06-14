@@ -114,6 +114,13 @@ class Body(BaseModel):
             return {**data, "shape": "cylinder"}
         if shape == "cylinder" and not has_cyl and has_box:
             return {**data, "shape": "box"}
+        # prism with no profile_points: the LLM used the label but forgot the polygon.
+        # Fall back to box or cylinder based on whichever fields are actually populated.
+        if shape == "prism":
+            if has_box:
+                return {**data, "shape": "box"}
+            if has_cyl:
+                return {**data, "shape": "cylinder"}
         return data
 
     def _profile_span(self) -> tuple[float, float, float, float]:
@@ -300,8 +307,8 @@ class PartSpec(BaseModel):
             adds = [b for b in geometry.bodies if b.operation == "add"]
             if not adds:
                 return ["multibody needs at least one 'add' body"]
-            if len(geometry.bodies) > 128:
-                errors.append("multibody has more than 128 bodies; extraction is likely malformed")
+            if len(geometry.bodies) > 20:
+                errors.append("multibody has more than 20 bodies; extraction is likely malformed")
             for i, b in enumerate(geometry.bodies):
                 if b.shape == "box" and not (
                     b.dx is not None and b.dx > 0
