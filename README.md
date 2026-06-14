@@ -10,7 +10,7 @@ spec, and an optional LLM repair loop can revise models that fail validation.
 ## Pipeline
 
 ```text
-PNG/JPG/PDF drawing
+PNG/JPG drawing
   -> vision extraction
   -> Pydantic PartSpec
   -> sanity checks
