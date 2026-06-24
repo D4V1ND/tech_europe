@@ -31,6 +31,19 @@ Upload a PNG or JPG engineering drawing — get back an editable CadQuery script
 
 ---
 
+## Gallery
+
+<div align="center">
+
+| Curved bracket clamp | Forked mount | Tetrahedral sphere array |
+|:---:|:---:|:---:|
+| ![Bracket clamp result](gif/p1.jpeg) | ![Forked mount result](gif/p2.jpeg) | ![Sphere pyramid result](gif/p3.jpeg) |
+| 10/10 checks passed | 11/11 checks passed | 5/6 checks passed |
+
+</div>
+
+---
+
 ## How It Works
 
 ```
