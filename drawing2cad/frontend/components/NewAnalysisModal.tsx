@@ -115,7 +115,7 @@ export function NewAnalysisModal({ open, onClose }: Props) {
             ref={inputRef}
             type="file"
             multiple
-            accept="image/*,.pdf"
+            accept="image/png,image/jpeg,image/webp"
             style={{ display: 'none' }}
             onChange={e => addFiles(e.target.files)}
           />
@@ -130,7 +130,7 @@ export function NewAnalysisModal({ open, onClose }: Props) {
                 Drop drawings here or click to browse
               </p>
               <p style={{ color: 'var(--text-muted)', fontSize: 12, margin: 0 }}>
-                PNG · JPG · PDF — multiple files supported
+                PNG · JPG · WebP - multiple files supported
               </p>
             </div>
           ) : (
